@@ -1,0 +1,3647 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        0
+      ],
+      "id": "b31a92ff-42c8-42a1-b6c3-c9714002dde4",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1aXII4gJz9R_0iPiQi5EWFQjCyXytxUAccprF7IMxgno",
+          "mode": "list",
+          "cachedResultName": "База Кардинал",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aXII4gJz9R_0iPiQi5EWFQjCyXytxUAccprF7IMxgno/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "База данных",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aXII4gJz9R_0iPiQi5EWFQjCyXytxUAccprF7IMxgno/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -672,
+        0
+      ],
+      "id": "9ac40f84-773b-418a-aaaa-cee429ea1515",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "zAll3ZOs311mAMWP",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ",
+          "mode": "list",
+          "cachedResultName": "Копия Маршрути Онлайн / ОПТ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 4436557,
+          "mode": "list",
+          "cachedResultName": "ПН-ВТ На Львів",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ/edit#gid=4436557"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        0
+      ],
+      "id": "519579ac-6574-4435-984d-9d9f91918313",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleApi": {
+          "id": "zAll3ZOs311mAMWP",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ",
+          "mode": "list",
+          "cachedResultName": "Копия Маршрути Онлайн / ОПТ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 647849754,
+          "mode": "list",
+          "cachedResultName": "Настройки_Логистики",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ/edit#gid=647849754"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -240,
+        0
+      ],
+      "id": "198876b6-847f-44d9-a098-b23dd3967cae",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleApi": {
+          "id": "zAll3ZOs311mAMWP",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-google-maps.googleMaps",
+      "typeVersion": 1,
+      "position": [
+        256,
+        0
+      ],
+      "id": "33b865d6-e152-4f5f-8e24-4dd93925e24b",
+      "name": "Google Maps",
+      "credentials": {
+        "googleMapsApi": {
+          "id": "Kx1P9TsroG67j7D3",
+          "name": "Google Maps account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "origin": "Жмеринка",
+        "destination": "Киев"
+      },
+      "type": "n8n-nodes-google-maps.googleMaps",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        512
+      ],
+      "id": "e0e6c7dd-60cd-48da-a787-f6c4bd1ad634",
+      "name": "Маршрут Киев",
+      "credentials": {
+        "googleMapsApi": {
+          "id": "Kx1P9TsroG67j7D3",
+          "name": "Google Maps account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $node[\"Get row(s) in sheet2\"].json;\nconst rawAddress = item[\"Адрес\"] || item[\"адрес\"] || \"Ірпінь, Теліги 28\"; \n\n// Чистим адрес и отделяем город для интерфейса\nconst addressParts = rawAddress.split(',');\nconst detectedCity = addressParts[0].trim(); // Берем первое слово до запятой\n\nlet googleAddress = rawAddress.trim();\nif (!googleAddress.toLowerCase().includes(\"україна\") && !googleAddress.toLowerCase().includes(\"украина\")) {\n    googleAddress += \", Україна\";\n}\n\nreturn [{\n  json: {\n    address_for_google: googleAddress, \n    інтерфейс: {\n        заголовок: \"Розрахунок доставки VerbaDom\",\n        місто: detectedCity, // Теперь здесь будет \"Ірпінь\" или то, что ввел клиент\n        статус: \"Дані отримано\"\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -192,
+        608
+      ],
+      "id": "1730af10-70cc-4920-8e77-ab4052ca6049",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "origin": "={{ $json.address_for_google }}"
+      },
+      "type": "n8n-nodes-google-maps.googleMaps",
+      "typeVersion": 1,
+      "position": [
+        0,
+        608
+      ],
+      "id": "c42c15a4-9c24-4353-8424-b6ff978b85f3",
+      "name": "Google Maps1",
+      "credentials": {
+        "googleMapsApi": {
+          "id": "Kx1P9TsroG67j7D3",
+          "name": "Google Maps account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. ПОЛУЧАЕМ ДАННЫЕ ИЗ ТЕКУЩЕГО МАРШРУТА\n// Берем дистанцию напрямую из узла \"Маршрут Киев\"\nconst distanceKm = Math.round($node[\"Маршрут Киев\"].json[\"distanceValue\"] / 1000);\n\nlet finalCost = 0;\nlet statusMessage = \"Дані отримано\";\n\n// 2. РАСЧЕТ СТОИМОСТИ (Логика VerbaDom)\nif (distanceKm === 0) {\n  finalCost = 350;\n  statusMessage = \"Зустріч на маршруті (Траса)\";\n} else if (distanceKm <= 15) {\n  finalCost = 900;\n} else if (distanceKm > 15 && distanceKm <= 20) {\n  finalCost = 1100;\n} else if (distanceKm > 20 && distanceKm <= 40) {\n  finalCost = 1100 + ((distanceKm - 20) * 35);\n} else {\n  finalCost = 3000;\n  statusMessage = \"Потребує індивідуального узгодження\";\n}\n\n// 3. ОКРУГЛЕНИЕ ДО ДЕСЯТКОВ\nconst roundedCost = Math.ceil(finalCost / 10) * 10;\n\n// 4. ПЕРЕДАЕМ ДАННЫЕ ДАЛЬШЕ\n// Мы УДАЛИЛИ привязку к Жмеринке. \n// Теперь код просто передает расчеты, а город \"Ирпень\" \n// будет браться из настроек вашего последнего узла Google Maps2.\nreturn [{\n  json: {\n    finalCost: roundedCost,\n    distanceKm: distanceKm,\n    status: statusMessage\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        512
+      ],
+      "id": "c65d2556-7fba-40aa-a30a-1c8ce0cdb726",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ",
+          "mode": "list",
+          "cachedResultName": "Копия Маршрути Онлайн / ОПТ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 4436557,
+          "mode": "list",
+          "cachedResultName": "ПН-ВТ На Львів",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_Jk4_fB4PtGENsgcYKTXx2up5_Kf1no4sT2nVG2DvDQ/edit#gid=4436557"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -928,
+        304
+      ],
+      "id": "a2be6d9f-b012-4ba0-a6df-ec01604d9db4",
+      "name": "ПН- Вінниця-Вороновиця",
+      "credentials": {
+        "googleApi": {
+          "id": "zAll3ZOs311mAMWP",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "origin": "Ирпень",
+        "destination": "Вінниця to:Тиврів to:Сутиски to:Вороновиця to:Дашів to:Гайсин"
+      },
+      "type": "n8n-nodes-google-maps.googleMaps",
+      "typeVersion": 1,
+      "position": [
+        400,
+        512
+      ],
+      "id": "0c3eb40c-a3ce-4c55-9467-8ff1327a0e92",
+      "name": "Google Maps2",
+      "credentials": {
+        "googleMapsApi": {
+          "id": "Kx1P9TsroG67j7D3",
+          "name": "Google Maps account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Get row(s) in sheet2": [
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 19
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 20
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 21
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 22
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 23
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 24
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 25
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 26
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 27
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 28
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 29
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 30
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 31
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 32
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 33
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 34
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 35
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 36
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 37
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 38
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 39
+        }
+      },
+      {
+        "json": {
+          "row_number": 2,
+          "Параметр": "Встреча на трассе (15 мин)",
+          "Значение (грн)": 350
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Параметр": "Город на маршруте (база)",
+          "Значение (грн)": 500
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Параметр": "Город на маршруте (макс)",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Параметр": "Отклонение до 15 км",
+          "Значение (грн)": 900
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Параметр": "Отклонение 15-20 км",
+          "Значение (грн)": 1100
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Параметр": "Тариф за км (свыше 20 км)",
+          "Значение (грн)": 35
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Параметр": "Лимит км заводской машины",
+          "Значение (грн)": 40
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Параметр": "Фикс Новая Почта",
+          "Значение (грн)": 4000
+        },
+        "pairedItem": {
+          "item": 40
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Google Maps",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Маршрут Киев",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Маршрут Киев": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Google Maps1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Maps1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Google Maps2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3eca2e3a-76ca-44fd-a0d3-22a4543871e8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2a4f2acdb78b524c8ff125e2f8fdbee8b991db684a57cc2a69a6dab9eaf30501"
+  },
+  "id": "ZcaYh3FMxxjYrHZT",
+  "tags": []
+}
