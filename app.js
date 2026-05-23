@@ -547,7 +547,6 @@ calculateBtn.addEventListener("click", async () => {
   html += `<div class="result-row result-subtotal"><span>Ворота з комплектуючими</span><span>${totalComplex.toLocaleString("uk-UA")} грн</span></div>`;
 
   // ── Доставка ──
-  html += `<div class="result-section-title">Доставка</div>`;
 
   if (deliveryStatus === "on_route") {
     const complexTotal = gatePrice + (showPosts ? postPrice : 0);
@@ -563,7 +562,7 @@ calculateBtn.addEventListener("click", async () => {
     }
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString("uk-UA")} грн</span></div>`;
   } else if (deliveryStatus === "deviation") {
-    html += `<div class="result-row"><span>Доставка (${window._lastDeliveryData.zone})</span><span>${deliveryPrice.toLocaleString("uk-UA")} грн</span></div>`;
+    html += `<div class="result-row"><span>Доставка до вашого двору (${window._lastDeliveryData.zone})</span><span>${deliveryPrice.toLocaleString("uk-UA")} грн</span></div>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString("uk-UA")} грн</span></div>`;
   } else if (deliveryStatus === "clarify") {
     html += `<div class="result-row"><span>Доставка</span><span class="clarify-badge">Уточнення у менеджера</span></div>`;
