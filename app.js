@@ -536,7 +536,7 @@ calculateBtn.addEventListener("click", async () => {
   if (showPosts) {
     html += `
       <div class="result-row">
-        <span>Стовпи: ${postInfo.label} × ${postQty} шт</span>
+        <span>Стовпи: ${postInfo.label}, ${postQty} шт × ${postInfo.price.toLocaleString("uk-UA")} грн</span>
         <span>${postPrice.toLocaleString("uk-UA")} грн</span>
       </div>
     `;
@@ -574,7 +574,7 @@ calculateBtn.addEventListener("click", async () => {
 
   // Зустріч на трасі
   if (meetOnRoad && deliveryStatus !== "nova_poshta" && deliveryStatus !== "on_route") {
-    html += `<div class="result-row info-row"><span>💡 Альтернатива: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
+    html += `<div class="result-row alt-delivery-row"><span>💡 Альтернативна доставка: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
   }
 
   html += `

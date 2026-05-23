@@ -246,6 +246,12 @@ button#calculateBtn:disabled {
   font-size: 13px;
 }
 
+.alt-delivery-row {
+  color: #1a7a3a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .contacts {
   margin-top: 18px;
   font-size: 14px;
