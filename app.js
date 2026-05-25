@@ -262,6 +262,49 @@ const calculateBtn    = document.getElementById("calculateBtn");
 const resetBtn        = document.getElementById("resetBtn");
 const resultDiv       = document.getElementById("result");
 
+// ── ПРАВКА: Підказка про вигідний розмір ──
+function updateWidthHint() {
+  const type   = gateTypeSelect.value;
+  const config = configSelect.value;
+  const rawW   = widthInput.value.replace(",", ".");
+  const width  = parseFloat(rawW);
+  const hint   = document.getElementById("widthHint");
+  if (!hint) return;
+
+  hint.style.display = "none";
+  hint.textContent = "";
+
+  if (!type || !config || isNaN(width)) return;
+  if (config === "with_builtin_wicket") return;
+
+  let msg = "";
+
+  if (config === "with_separate_wicket") {
+    if (type === "forged" && width !== 4.5) {
+      msg = "💡 Якщо розмір ще не визначено — ширина 4,5 м (ворота 3,6 м + хвіртка 0,9 м) зазвичай найвигідніша";
+    } else if (type === "modern" && width !== 4.9) {
+      msg = "💡 Якщо розмір ще не визначено — ширина 4,9 м (ворота 4,0 м + хвіртка 0,9 м) зазвичай найвигідніша";
+    }
+  }
+
+  if (config === "without_wicket") {
+    if (type === "forged" && width !== 3.6) {
+      msg = "💡 Якщо розмір ще не визначено — ширина 3,6 м зазвичай найвигідніша";
+    } else if (type === "modern" && width !== 4.0) {
+      msg = "💡 Якщо розмір ще не визначено — ширина 4,0 м зазвичай найвигідніша";
+    }
+  }
+
+  if (msg) {
+    hint.textContent = msg;
+    hint.style.display = "block";
+  }
+}
+
+widthInput.addEventListener("input", updateWidthHint);
+configSelect.addEventListener("change", updateWidthHint);
+gateTypeSelect.addEventListener("change", updateWidthHint);
+
 
 gateTypeSelect.addEventListener("change", () => {
   const type = gateTypeSelect.value;
@@ -428,6 +471,8 @@ resetBtn.addEventListener("click", () => {
   resultDiv.innerHTML = "";
   clearErrors();
   updateCoatingOptions();
+  const hint = document.getElementById("widthHint");
+  if (hint) hint.style.display = "none";
   document.getElementById("resetBtn").style.display = "none";
 });
 
@@ -469,7 +514,6 @@ calculateBtn.addEventListener("click", async () => {
     postPrice = postInfo.price * postQty;
   }
 
-  // ПРАВКА 1: кнопка показує "Розраховуємо..." під час запиту
   calculateBtn.textContent = "⏳ Розраховуємо...";
   calculateBtn.disabled = true;
   showResult(`<p class="loading">⏳ Розраховуємо доставку...</p>`, false);
@@ -517,7 +561,6 @@ calculateBtn.addEventListener("click", async () => {
     deliveryStatus = "error";
   }
 
-  // ПРАВКА 1: повертаємо кнопку в початковий стан
   calculateBtn.disabled = false;
   calculateBtn.textContent = "Розрахувати вартість";
 
@@ -533,11 +576,9 @@ calculateBtn.addEventListener("click", async () => {
   };
 
   const coatingLabel = coatingSelect.options[coatingSelect.selectedIndex].text;
-  // ПРАВКА 4: прибираємо маркетинговий текст з назви покриття для результату
   const coatingLabelClean = coatingLabel.replace(" ⭐ обирають найчастіше", "").trim();
   const isPopularCoating = coatingLabel.includes("⭐");
 
-  // ── Деталі комплекту ──
   let html = `
     <h2>Результат розрахунку</h2>
     <p class="preliminary-note">⚠️ Попередній розрахунок. Точна ціна підтверджується менеджером.</p>
@@ -548,7 +589,6 @@ calculateBtn.addEventListener("click", async () => {
     <div class="result-row"><span>Покриття</span><span>${coatingLabelClean}</span></div>
   `;
 
-  // ПРАВКА 4: бейдж "Найпопулярніший вибір" окремим рядком
   if (isPopularCoating) {
     html += `<div class="result-row popular-badge-row"><span></span><span>⭐ Найпопулярніший вибір</span></div>`;
   }
@@ -579,8 +619,9 @@ calculateBtn.addEventListener("click", async () => {
     const minTotal = complexTotal + 500;
     const maxTotal = complexTotal + 900;
     html += `<div class="result-row"><span>Доставка</span><span>500–900 грн</span></div>`;
+    // ПРАВКА: підпис прямо під доставкою
+    html += `<p class="delivery-note-inline">Точна сума залежить від адреси доставки</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString("uk-UA")} до ${maxTotal.toLocaleString("uk-UA")} грн</span></div>`;
-    html += `<p class="delivery-note">Точну вартість доставки уточніть у менеджера</p>`;
   } else if (deliveryStatus === "nova_poshta") {
     html += `<div class="result-row"><span>Доставка (Нова Пошта на вантажне відділення)</span><span>4 000 грн</span></div>`;
     if (postVal !== "none") {
@@ -649,7 +690,6 @@ function showResult(html, showShareBtns) {
 
     const pdfBtn = document.createElement("button");
     pdfBtn.className = "share-btn pdf-btn";
-    // ПРАВКА 2: "Завантажити" замість "Надіслати"
     pdfBtn.innerHTML = "📄 Завантажити розрахунок PDF";
     pdfBtn.addEventListener("click", () => generatePDF());
     btnBlock.appendChild(pdfBtn);
