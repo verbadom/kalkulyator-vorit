@@ -4,11 +4,10 @@ const BASE_IMG = "https://images.prom.ua/";
 // СИСТЕМА ВІДСТЕЖЕННЯ ЛІДІВ → TELEGRAM
 // ============================================================
 const _leadTracker = {
-  sessionCalcs: 0,         // кількість розрахунків за сесію
-  warmNotified: false,     // чи відправили "теплий лід"
+  sessionCalcs: 0,
+  warmNotified: false,
   WEBHOOK: "https://n8n.verbadom.com.ua/webhook/cardinal-lead",
 
-  // Викликається після кожного успішного розрахунку
   onCalculation(data) {
     this.sessionCalcs++;
     if (this.sessionCalcs >= 3 && !this.warmNotified) {
@@ -17,7 +16,6 @@ const _leadTracker = {
     }
   },
 
-  // Викликається при кліку на месенджер
   onMessengerClick(messenger, data) {
     this._send("hot", data, `🔴 Гарячий лід — клік на ${messenger}`);
   },
@@ -43,7 +41,6 @@ const _leadTracker = {
   }
 };
 
-// Зберігаємо останні дані розрахунку для передачі в трекер
 let _lastCalcData = {};
 
 
@@ -266,9 +263,6 @@ const resetBtn        = document.getElementById("resetBtn");
 const resultDiv       = document.getElementById("result");
 
 
-// Пульсуюча точка прибрана
-
-
 gateTypeSelect.addEventListener("change", () => {
   const type = gateTypeSelect.value;
   gateModelSelect.innerHTML = "";
@@ -475,8 +469,10 @@ calculateBtn.addEventListener("click", async () => {
     postPrice = postInfo.price * postQty;
   }
 
-  showResult(`<p class="loading">⏳ Розраховуємо доставку...</p>`, false);
+  // ПРАВКА 1: кнопка показує "Розраховуємо..." під час запиту
+  calculateBtn.textContent = "⏳ Розраховуємо...";
   calculateBtn.disabled = true;
+  showResult(`<p class="loading">⏳ Розраховуємо доставку...</p>`, false);
 
   let deliveryPrice  = null;
   let deliveryStatus = "";
@@ -494,13 +490,11 @@ calculateBtn.addEventListener("click", async () => {
     const data = await response.json();
 
     meetOnRoad = data.meetOnRoad || null;
-    // Зберігаємо для використання в HTML блоці
     window._lastDeliveryData = data;
 
     if (data.status === "on_route") {
       deliveryLabel  = `Доставка заводом (${window._lastDeliveryData.zone})`;
       deliveryStatus = "on_route";
-      // priceRange — діапазон 500–900
     } else if (data.status === "deviation") {
       deliveryPrice  = data.price;
       deliveryLabel  = `Доставка заводом (${window._lastDeliveryData.zone})`;
@@ -514,7 +508,6 @@ calculateBtn.addEventListener("click", async () => {
       deliveryStatus = "clarify";
     }
 
-    // Зберігаємо priceRange для on_route
     if (data.priceRange) {
       deliveryLabel += ` — ${data.priceRange} грн`;
     }
@@ -524,7 +517,9 @@ calculateBtn.addEventListener("click", async () => {
     deliveryStatus = "error";
   }
 
+  // ПРАВКА 1: повертаємо кнопку в початковий стан
   calculateBtn.disabled = false;
+  calculateBtn.textContent = "Розрахувати вартість";
 
   const showPosts = postVal !== "none" && deliveryStatus !== "nova_poshta";
   const totalPrice = gatePrice
@@ -538,6 +533,9 @@ calculateBtn.addEventListener("click", async () => {
   };
 
   const coatingLabel = coatingSelect.options[coatingSelect.selectedIndex].text;
+  // ПРАВКА 4: прибираємо маркетинговий текст з назви покриття для результату
+  const coatingLabelClean = coatingLabel.replace(" ⭐ обирають найчастіше", "").trim();
+  const isPopularCoating = coatingLabel.includes("⭐");
 
   // ── Деталі комплекту ──
   let html = `
@@ -547,8 +545,13 @@ calculateBtn.addEventListener("click", async () => {
     <div class="result-row"><span>Модель</span><span>${model.name}</span></div>
     <div class="result-row"><span>Комплектація</span><span>${configLabels[config]}</span></div>
     <div class="result-row"><span>Ширина</span><span>${width} м</span></div>
-    <div class="result-row"><span>Покриття</span><span>${coatingLabel}</span></div>
+    <div class="result-row"><span>Покриття</span><span>${coatingLabelClean}</span></div>
   `;
+
+  // ПРАВКА 4: бейдж "Найпопулярніший вибір" окремим рядком
+  if (isPopularCoating) {
+    html += `<div class="result-row popular-badge-row"><span></span><span>⭐ Найпопулярніший вибір</span></div>`;
+  }
 
   if (type === "modern" && config === "with_separate_wicket") {
     html += `<div class="result-row info-row"><span>Замок у хвіртку та тримач навісного замка</span><span>входять у вартість</span></div>`;
@@ -567,12 +570,10 @@ calculateBtn.addEventListener("click", async () => {
     `;
   }
 
-  // ── Підсумок комплекту ──
   const totalComplex = gatePrice + (showPosts ? postPrice : 0);
   html += `<div class="result-row result-subtotal"><span>Ворота з комплектуючими</span><span>${totalComplex.toLocaleString("uk-UA")} грн</span></div>`;
 
   // ── Доставка ──
-
   if (deliveryStatus === "on_route") {
     const complexTotal = gatePrice + (showPosts ? postPrice : 0);
     const minTotal = complexTotal + 500;
@@ -596,7 +597,6 @@ calculateBtn.addEventListener("click", async () => {
     html += `<div class="result-row"><span>Доставка</span><span>—</span></div>`;
   }
 
-  // Зустріч на трасі
   if (meetOnRoad && deliveryStatus !== "nova_poshta" && deliveryStatus !== "on_route") {
     html += `<div class="result-row alt-delivery-row"><span>💡 Альтернативна доставка: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
   }
@@ -620,7 +620,6 @@ calculateBtn.addEventListener("click", async () => {
 
   showResult(html, true);
 
-  // ── Відстеження лідів ──
   _lastCalcData = {
     city: selectedCityName,
     model: model.name,
@@ -635,7 +634,6 @@ function showResult(html, showShareBtns) {
   resultDiv.innerHTML = html;
   resultDiv.classList.remove("hidden");
 
-  // ── Відстеження кліків на месенджери ──
   resultDiv.querySelectorAll(".msg-btn").forEach(btn => {
     btn.addEventListener("click", function() {
       const messenger = this.classList.contains("viber") ? "Viber"
@@ -651,7 +649,8 @@ function showResult(html, showShareBtns) {
 
     const pdfBtn = document.createElement("button");
     pdfBtn.className = "share-btn pdf-btn";
-    pdfBtn.innerHTML = "📤 Надіслати розрахунок PDF";
+    // ПРАВКА 2: "Завантажити" замість "Надіслати"
+    pdfBtn.innerHTML = "📄 Завантажити розрахунок PDF";
     pdfBtn.addEventListener("click", () => generatePDF());
     btnBlock.appendChild(pdfBtn);
     resultDiv.appendChild(btnBlock);
@@ -678,17 +677,14 @@ function getResultText() {
   return text;
 }
 
-// Тёмная тема убрана
-
 // ============================================================
-// ГЕНЕРАЦІЯ PDF (html2canvas → jsPDF, кирилиця коректна)
+// ГЕНЕРАЦІЯ PDF
 // ============================================================
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
 
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-  // Створюємо прихований div з HTML для PDF
   const pdfDiv = document.createElement("div");
   pdfDiv.style.cssText = `
     position: fixed; left: -9999px; top: 0;
@@ -700,7 +696,6 @@ async function generatePDF() {
   const now = new Date();
   const dateStr = now.toLocaleDateString("uk-UA", { day: "2-digit", month: "2-digit", year: "numeric" });
 
-  // Збираємо рядки результату
   const rows = document.querySelectorAll("#result .result-row");
   let rowsHTML = "";
   rows.forEach(row => {
@@ -711,11 +706,16 @@ async function generatePDF() {
     const isTotal = row.classList.contains("total");
     const isInfo = row.classList.contains("info-row");
     const isSubtotal = row.classList.contains("result-subtotal");
+    const isPopularBadge = row.classList.contains("popular-badge-row");
 
     const pad = isMobile ? "7px 10px" : "10px 12px";
     const padSm = isMobile ? "5px 10px" : "8px 12px";
 
-    if (isTotal) {
+    if (isPopularBadge) {
+      rowsHTML += `<tr>
+        <td colspan="2" style="padding:${isMobile ? '2px 10px 6px' : '2px 12px 8px'};color:#b07800;font-size:${isMobile ? 10 : 11}px;">⭐ Найпопулярніший вибір</td>
+      </tr>`;
+    } else if (isTotal) {
       rowsHTML += `<tr style="background:#1a2a5e;">
         <td style="padding:${pad};color:#fff;font-weight:700;font-size:${isMobile ? 13 : 15}px;">${label}</td>
         <td style="padding:${pad};color:#fff;font-weight:700;font-size:${isMobile ? 13 : 15}px;text-align:right;">${value}</td>
@@ -737,13 +737,11 @@ async function generatePDF() {
     }
   });
 
-  // Заметки
   const delivNote = document.querySelector("#result .delivery-note");
   const delivNoteHTML = delivNote ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#888;font-style:italic;margin:6px ${isMobile ? 10 : 12}px 0;">${delivNote.innerText}</p>` : "";
   const errMsg = document.querySelector("#result .error-msg");
   const errHTML = errMsg ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#c0392b;margin:6px ${isMobile ? 10 : 12}px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>` : "";
 
-  // Альтернатива — зустріч на трасі з ціною
   const meetRow = document.querySelector("#result .info-row");
   let meetHTML = "";
   if (meetRow) {
@@ -765,7 +763,6 @@ async function generatePDF() {
   const p5 = isMobile ? "0 16px 16px" : "0 24px 24px";
 
   pdfDiv.innerHTML = `
-    <!-- Шапка -->
     <div style="border-top:4px solid #1a2a5e;padding:${p};border-bottom:1px solid #e8ecf4;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
@@ -780,13 +777,9 @@ async function generatePDF() {
         </div>
       </div>
     </div>
-
-    <!-- Заголовок -->
     <div style="padding:${p2};">
       <div style="font-size:${isMobile ? 13 : 16}px;font-weight:700;color:#1a2a5e;">Попередній розрахунок вартості воріт</div>
     </div>
-
-    <!-- Таблиця -->
     <div style="padding:${p3};">
       <table style="width:100%;border-collapse:collapse;font-size:${isMobile ? 11 : 13}px;">
         ${rowsHTML}
@@ -795,13 +788,9 @@ async function generatePDF() {
       ${delivNoteHTML}
       ${errHTML}
     </div>
-
-    <!-- Попередження -->
     <div style="margin:${p4};padding:7px 10px;background:#fff8e1;border-radius:6px;border-left:3px solid #f0a030;">
       <span style="font-size:${isMobile ? 10 : 11}px;color:#b07a00;">⚠️ Попередній розрахунок. Точна ціна підтверджується менеджером.</span>
     </div>
-
-    <!-- Контакти -->
     <div style="margin:${p5};padding:${isMobile ? '10px 12px' : '14px 16px'};background:#f4f6fb;border-radius:8px;border:1px solid #e0e6f0;">
       <div style="font-size:${isMobile ? 11 : 12}px;font-weight:700;color:#1a2a5e;margin-bottom:8px;">Зв'яжіться з нами:</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -810,8 +799,6 @@ async function generatePDF() {
         <a href="https://t.me/+380673990560" style="display:inline-block;padding:5px 12px;background:#2aabee;color:#fff;border-radius:20px;text-decoration:none;font-size:${isMobile ? 10 : 11}px;font-weight:600;">Telegram</a>
       </div>
     </div>
-
-    <!-- Підвал -->
     <div style="border-top:1px solid #eee;padding:8px ${isMobile ? 16 : 24}px;text-align:right;">
       <span style="font-size:${isMobile ? 9 : 10}px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
     </div>
@@ -827,17 +814,15 @@ async function generatePDF() {
     });
 
     const imgData = canvas.toDataURL("image/png");
-
-    // Вузький формат для зручного читання на телефоні і десктопі
     const pageW = 100;
     const pageH = (canvas.height * pageW) / canvas.width;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: [pageW, pageH] });
     doc.addImage(imgData, "PNG", 0, 0, pageW, pageH);
 
     const filename = `Ворота_Verbadom_${dateStr.replace(/\./g, "-")}.pdf`;
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    const isMobileDevice = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
-    if (navigator.share && isMobile) {
+    if (navigator.share && isMobileDevice) {
       const blob = doc.output("blob");
       const file = new File([blob], filename, { type: "application/pdf" });
       try {

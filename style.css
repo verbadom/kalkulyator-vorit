@@ -94,10 +94,11 @@ select option {
   word-wrap: break-word;
 }
 
+/* ПРАВКА 3: при фокусі — синя рамка, не червона */
 select:focus,
 input:focus {
   outline: none;
-  border-color: #c0392b;
+  border-color: #3498db;
   background: #fff;
 }
 
@@ -111,6 +112,7 @@ select:disabled {
   cursor: not-allowed;
 }
 
+/* Червона рамка — тільки при помилці валідації після кнопки "Розрахувати" */
 .field-error {
   border-color: #c0392b !important;
   background: #fff5f5 !important;
@@ -223,9 +225,15 @@ button#calculateBtn:disabled {
   gap: 12px;
 }
 
+/* ПРАВКА 5: пропорції колонок на мобілі — ліва 45%, права 55% */
+.result-row span:first-child {
+  flex: 0 0 45%;
+  max-width: 45%;
+}
+
 .result-row span:last-child {
   text-align: right;
-  flex-shrink: 0;
+  flex: 0 0 55%;
   max-width: 55%;
 }
 
@@ -249,6 +257,19 @@ button#calculateBtn:disabled {
 .alt-delivery-row {
   color: #1a7a3a;
   font-size: 14px;
+  font-weight: 600;
+}
+
+/* ПРАВКА 4: бейдж "Найпопулярніший вибір" */
+.popular-badge-row {
+  border-bottom: none !important;
+  padding-top: 2px !important;
+  padding-bottom: 6px !important;
+}
+
+.popular-badge-row span:last-child {
+  color: #b07800;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -405,7 +426,7 @@ button#calculateBtn:disabled {
 }
 
 /* ============================================================
-   ПРОМО-БЛОК "ПОТРІБЕН КАЛЬКУЛЯТОР"
+   ПРОМО-БЛОК
    ============================================================ */
 .promo-block {
   margin-top: 16px;
@@ -507,10 +528,8 @@ input[type="checkbox"]:checked::after {
 }
 
 /* ============================================================
-   НОВІ СТИЛІ
+   PDF КНОПКА
    ============================================================ */
-
-/* PDF кнопка */
 .pdf-btn {
   width: 100%;
   background: #1a2a5e;
@@ -526,4 +545,5 @@ input[type="checkbox"]:checked::after {
 }
 
 .pdf-btn:hover { background: #2a3a7e; }
+
 #modelPhoto { height: 180px; object-fit: cover; object-position: center 60%; }
