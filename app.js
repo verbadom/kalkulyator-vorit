@@ -47,6 +47,31 @@ const _leadTracker = {
 let _lastCalcData = {};
 
 
+// ── Динамічне завантаження цін з Google Таблиці через n8n ──
+async function loadPricesFromSheet() {
+  try {
+    const response = await fetch("https://n8n.verbadom.com.ua/webhook/cardinal-prices");
+    const data = await response.json();
+    const prices = data[0];
+
+    prices.forged.forEach(item => {
+      const model = GATE_MODELS.forged.find(m => m.name === item.name);
+      if (model) model.price = item.price;
+    });
+
+    prices.modern.forEach(item => {
+      const model = GATE_MODELS.modern.find(m => m.name === item.name);
+      if (model) model.price = item.price;
+    });
+
+    console.log("✅ Ціни завантажено з таблиці");
+  } catch (e) {
+    console.warn("⚠️ Не вдалось завантажити ціни, використовуємо резервні");
+  }
+}
+
+loadPricesFromSheet();
+
 const GATE_MODELS = {
   forged: [
     { name: "Стандарт",               price: 16500, img: "6556444322_kovani-rozpashni-vorota.jpg" },
