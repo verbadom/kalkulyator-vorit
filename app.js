@@ -1,5 +1,8 @@
 const BASE_IMG = "https://images.prom.ua/";
 
+// ============================================================
+// СИСТЕМА ВІДСТЕЖЕННЯ ЛІДІВ → TELEGRAM
+// ============================================================
 const _leadTracker = {
   sessionCalcs: 0,
   warmNotified: false,
@@ -34,25 +37,30 @@ const _leadTracker = {
           timestamp: new Date().toISOString(),
         })
       });
-    } catch (e) {}
+    } catch (e) { /* мовчки — не блокуємо UX */ }
   }
 };
 
 let _lastCalcData = {};
 
+
+// ── Динамічне завантаження цін з Google Таблиці через n8n ──
 async function loadPricesFromSheet() {
   try {
     const response = await fetch("https://n8n.verbadom.com.ua/webhook/cardinal-prices");
     const data = await response.json();
     const prices = data[0];
+
     prices.forged.forEach(item => {
       const model = GATE_MODELS.forged.find(m => m.name === item.name);
       if (model) model.price = item.price;
     });
+
     prices.modern.forEach(item => {
       const model = GATE_MODELS.modern.find(m => m.name === item.name);
       if (model) model.price = item.price;
     });
+
     console.log("✅ Ціни завантажено з таблиці");
   } catch (e) {
     console.warn("⚠️ Не вдалось завантажити ціни, використовуємо резервні");
@@ -106,9 +114,11 @@ const POST_DATA = {
 const INCLUDED_FORGED = `<strong>У вартість входить:</strong> петлі на ворота та хвіртку, тримач навісного замка`;
 const INCLUDED_MODERN = `<strong>У вартість входить:</strong> електромеханічний замок на хвіртку, петлі, ручка на хвіртку, тримач навісного замка`;
 
+// ── Google Places Autocomplete ──
 let selectedCityName = "";
 let selectedLat = null;
 let selectedLng = null;
+
 let _acDebounce = null;
 let _acActiveIndex = -1;
 
@@ -252,7 +262,7 @@ const calculateBtn    = document.getElementById("calculateBtn");
 const resetBtn        = document.getElementById("resetBtn");
 const resultDiv       = document.getElementById("result");
 
-// ── Підказка про вигідний розмір ──
+// ── ПРАВКА: Підказка про вигідний розмір ──
 function updateWidthHint() {
   const type   = gateTypeSelect.value;
   const config = configSelect.value;
@@ -294,6 +304,7 @@ function updateWidthHint() {
 widthInput.addEventListener("input", updateWidthHint);
 configSelect.addEventListener("change", updateWidthHint);
 gateTypeSelect.addEventListener("change", updateWidthHint);
+
 
 gateTypeSelect.addEventListener("change", () => {
   const type = gateTypeSelect.value;
@@ -509,6 +520,7 @@ calculateBtn.addEventListener("click", async () => {
 
   let deliveryPrice  = null;
   let deliveryStatus = "";
+  let deliveryLabel  = "";
   let meetOnRoad     = null;
 
   try {
@@ -525,18 +537,27 @@ calculateBtn.addEventListener("click", async () => {
     window._lastDeliveryData = data;
 
     if (data.status === "on_route") {
+      deliveryLabel  = `Доставка заводом (${window._lastDeliveryData.zone})`;
       deliveryStatus = "on_route";
     } else if (data.status === "deviation") {
       deliveryPrice  = data.price;
+      deliveryLabel  = `Доставка заводом (${window._lastDeliveryData.zone})`;
       deliveryStatus = "deviation";
     } else if (data.status === "nova_poshta") {
       deliveryPrice  = 4000;
+      deliveryLabel  = "Нова Пошта на вантажне відділення, яке ви вкажете";
       deliveryStatus = "nova_poshta";
     } else if (data.status === "clarify") {
+      deliveryLabel  = `${data.zone}. Можлива доставка машиною заводу — зазвичай дешевше Нової Пошти і прямо до воріт`;
       deliveryStatus = "clarify";
     }
 
+    if (data.priceRange) {
+      deliveryLabel += ` — ${data.priceRange} грн`;
+    }
+
   } catch (e) {
+    deliveryLabel  = "Доставку уточнить менеджер";
     deliveryStatus = "error";
   }
 
@@ -558,9 +579,6 @@ calculateBtn.addEventListener("click", async () => {
   const coatingLabelClean = coatingLabel.replace(" ⭐ обирають найчастіше", "").trim();
   const isPopularCoating = coatingLabel.includes("⭐");
 
-  // Чи показувати замок у хвіртку як включений у вартість
-  const showLockIncluded = type === "modern" && config === "with_separate_wicket";
-
   let html = `
     <h2>Результат розрахунку</h2>
     <p class="preliminary-note">⚠️ Попередній розрахунок. Точна ціна підтверджується менеджером.</p>
@@ -575,16 +593,13 @@ calculateBtn.addEventListener("click", async () => {
     html += `<div class="result-row popular-badge-row"><span></span><span>⭐ Найпопулярніший вибір</span></div>`;
   }
 
-  // ВИПРАВЛЕННЯ: замок показується ОДИН РАЗ — або як включений, або як опція
-  if (showLockIncluded) {
-    html += `<div class="result-row"><span>Замок у хвіртку та тримач навісного замка</span><span style="color:#27ae60;">входять у вартість</span></div>`;
+  if (type === "modern" && config === "with_separate_wicket") {
+    html += `<div class="result-row info-row"><span>Замок у хвіртку та тримач навісного замка</span><span>входять у вартість</span></div>`;
   }
-  if (lock && type === "forged") {
+  if (lock && type === "forged")
     html += `<div class="result-row"><span>Замок у хвіртку з встановленням</span><span>+1 500 грн</span></div>`;
-  }
-  if (bolts) {
+  if (bolts)
     html += `<div class="result-row"><span>Засуви на створки (2 шт)</span><span>+600 грн</span></div>`;
-  }
 
   if (showPosts) {
     html += `
@@ -600,9 +615,11 @@ calculateBtn.addEventListener("click", async () => {
 
   // ── Доставка ──
   if (deliveryStatus === "on_route") {
-    const minTotal = totalComplex + 500;
-    const maxTotal = totalComplex + 900;
+    const complexTotal = gatePrice + (showPosts ? postPrice : 0);
+    const minTotal = complexTotal + 500;
+    const maxTotal = complexTotal + 900;
     html += `<div class="result-row"><span>Доставка</span><span>500–900 грн</span></div>`;
+    // ПРАВКА: підпис прямо під доставкою
     html += `<p class="delivery-note-inline">Точна сума залежить від адреси доставки</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString("uk-UA")} до ${maxTotal.toLocaleString("uk-UA")} грн</span></div>`;
   } else if (deliveryStatus === "nova_poshta") {
@@ -618,7 +635,7 @@ calculateBtn.addEventListener("click", async () => {
     html += `<div class="result-row"><span>Доставка</span><span class="clarify-badge">Уточнення у менеджера</span></div>`;
     html += `<p class="delivery-note">Відстань ${window._lastDeliveryData.distanceKm} км — можлива доставка машиною заводу, зазвичай вигідніше Нової Пошти і прямо до воріт</p>`;
   } else {
-    html += `<div class="result-row"><span>Доставка</span><span>Уточніть у менеджера</span></div>`;
+    html += `<div class="result-row"><span>Доставка</span><span>—</span></div>`;
   }
 
   if (meetOnRoad && deliveryStatus !== "nova_poshta" && deliveryStatus !== "on_route") {
@@ -670,6 +687,7 @@ function showResult(html, showShareBtns) {
   if (showShareBtns) {
     const btnBlock = document.createElement("div");
     btnBlock.className = "share-btns";
+
     const pdfBtn = document.createElement("button");
     pdfBtn.className = "share-btn pdf-btn";
     pdfBtn.innerHTML = "📄 Завантажити розрахунок PDF";
@@ -682,11 +700,29 @@ function showResult(html, showShareBtns) {
   document.getElementById("resetBtn").style.display = "block";
 }
 
+function getResultText() {
+  const rows = resultDiv.querySelectorAll(".result-row");
+  let text = "Розрахунок воріт — Verbadom\n";
+  text += "================================\n";
+  rows.forEach(row => {
+    const spans = row.querySelectorAll("span");
+    if (spans.length >= 2) {
+      text += `${spans[0].textContent.trim()}: ${spans[spans.length-1].textContent.trim()}\n`;
+    }
+  });
+  text += "================================\n";
+  text += "📞 +38 (067) 399-05-60\n";
+  text += "Viber · Telegram · WhatsApp\n";
+  text += "verbadom.com.ua";
+  return text;
+}
+
 // ============================================================
 // ГЕНЕРАЦІЯ PDF
 // ============================================================
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
+
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
   const pdfDiv = document.createElement("div");
@@ -707,15 +743,18 @@ async function generatePDF() {
     if (spans.length < 2) return;
     const label = spans[0].innerText.trim();
     const value = spans[spans.length - 1].innerText.trim();
-    const isTotal    = row.classList.contains("total");
+    const isTotal = row.classList.contains("total");
+    const isInfo = row.classList.contains("info-row");
     const isSubtotal = row.classList.contains("result-subtotal");
-    const isPopular  = row.classList.contains("popular-badge-row");
+    const isPopularBadge = row.classList.contains("popular-badge-row");
 
-    const pad   = isMobile ? "7px 10px" : "10px 12px";
+    const pad = isMobile ? "7px 10px" : "10px 12px";
     const padSm = isMobile ? "5px 10px" : "8px 12px";
 
-    if (isPopular) {
-      rowsHTML += `<tr><td colspan="2" style="padding:${isMobile ? '2px 10px 6px' : '2px 12px 8px'};color:#b07800;font-size:${isMobile ? 10 : 11}px;">⭐ Найпопулярніший вибір</td></tr>`;
+    if (isPopularBadge) {
+      rowsHTML += `<tr>
+        <td colspan="2" style="padding:${isMobile ? '2px 10px 6px' : '2px 12px 8px'};color:#b07800;font-size:${isMobile ? 10 : 11}px;">⭐ Найпопулярніший вибір</td>
+      </tr>`;
     } else if (isTotal) {
       rowsHTML += `<tr style="background:#1a2a5e;">
         <td style="padding:${pad};color:#fff;font-weight:700;font-size:${isMobile ? 13 : 15}px;">${label}</td>
@@ -726,6 +765,10 @@ async function generatePDF() {
         <td style="padding:${padSm};font-weight:600;color:#1a2a5e;">${label}</td>
         <td style="padding:${padSm};font-weight:600;color:#1a2a5e;text-align:right;">${value}</td>
       </tr>`;
+    } else if (isInfo) {
+      rowsHTML += `<tr style="background:#f0fff4;">
+        <td colspan="2" style="padding:${isMobile ? '4px 10px' : '6px 12px'};color:#2d8a4e;font-size:${isMobile ? 10 : 12}px;font-style:italic;">${label}</td>
+      </tr>`;
     } else {
       rowsHTML += `<tr style="border-bottom:1px solid #eee;">
         <td style="padding:${isMobile ? '5px 10px' : '7px 12px'};color:#444;">${label}</td>
@@ -734,22 +777,30 @@ async function generatePDF() {
     }
   });
 
-  // Підпис під доставкою для PDF
-  const delivNoteInline = document.querySelector("#result .delivery-note-inline");
-  const delivNoteHTML = delivNoteInline
-    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#555;margin:4px ${isMobile ? 10 : 12}px 8px;">${delivNoteInline.innerText}</p>`
-    : "";
-
+  const delivNote = document.querySelector("#result .delivery-note");
+  const delivNoteHTML = delivNote ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#888;font-style:italic;margin:6px ${isMobile ? 10 : 12}px 0;">${delivNote.innerText}</p>` : "";
   const errMsg = document.querySelector("#result .error-msg");
-  const errHTML = errMsg
-    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#c0392b;margin:6px ${isMobile ? 10 : 12}px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>`
-    : "";
+  const errHTML = errMsg ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#c0392b;margin:6px ${isMobile ? 10 : 12}px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>` : "";
 
-  const p  = isMobile ? "14px 16px 12px" : "20px 24px 16px";
-  const p2 = isMobile ? "10px 16px 6px"  : "14px 24px 8px";
-  const p3 = isMobile ? "0 16px"         : "0 24px";
-  const p4 = isMobile ? "8px 16px"       : "12px 24px";
-  const p5 = isMobile ? "0 16px 16px"    : "0 24px 24px";
+  const meetRow = document.querySelector("#result .info-row");
+  let meetHTML = "";
+  if (meetRow) {
+    const spans = meetRow.querySelectorAll("span");
+    if (spans.length >= 2) {
+      const meetLabel = spans[0].innerText.trim();
+      const meetPrice = spans[spans.length - 1].innerText.trim();
+      meetHTML = `<tr style="background:#f0fff4;">
+        <td style="padding:${isMobile ? '5px 10px' : '7px 12px'};color:#2d8a4e;font-size:${isMobile ? 10 : 12}px;font-style:italic;">${meetLabel}</td>
+        <td style="padding:${isMobile ? '5px 10px' : '7px 12px'};color:#2d8a4e;font-size:${isMobile ? 10 : 12}px;font-weight:600;text-align:right;">${meetPrice}</td>
+      </tr>`;
+    }
+  }
+
+  const p = isMobile ? "14px 16px 12px" : "20px 24px 16px";
+  const p2 = isMobile ? "10px 16px 6px" : "14px 24px 8px";
+  const p3 = isMobile ? "0 16px" : "0 24px";
+  const p4 = isMobile ? "8px 16px" : "12px 24px";
+  const p5 = isMobile ? "0 16px 16px" : "0 24px 24px";
 
   pdfDiv.innerHTML = `
     <div style="border-top:4px solid #1a2a5e;padding:${p};border-bottom:1px solid #e8ecf4;">
@@ -772,6 +823,7 @@ async function generatePDF() {
     <div style="padding:${p3};">
       <table style="width:100%;border-collapse:collapse;font-size:${isMobile ? 11 : 13}px;">
         ${rowsHTML}
+        ${meetHTML}
       </table>
       ${delivNoteHTML}
       ${errHTML}
@@ -795,7 +847,12 @@ async function generatePDF() {
   document.body.appendChild(pdfDiv);
 
   try {
-    const canvas = await html2canvas(pdfDiv, { scale: 4, useCORS: true, backgroundColor: "#ffffff" });
+    const canvas = await html2canvas(pdfDiv, {
+      scale: 4,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
+
     const imgData = canvas.toDataURL("image/png");
     const pageW = 100;
     const pageH = (canvas.height * pageW) / canvas.width;
