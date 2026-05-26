@@ -75,8 +75,8 @@ async function loadPricesFromSheet() {
     // Столби
     if (prices.posts && prices.posts.length > 0) {
       POST_DATA = {};
-      prices.posts.forEach(post => {
-        const key = String(post.price);
+      prices.posts.forEach((post, index) => {
+        const key = String(index + 1);
         const label = `${post.name}, ${post.chars} / висота ${post.height}`;
         POST_DATA[key] = { label, price: post.price };
       });
