@@ -396,12 +396,17 @@ function updateCoatingOptions() {
       }
     }
     coatingSelect.disabled = false;
+    // Беремо доплати з таблиці якщо є, інакше резервні
+    const c = window._COATINGS || [];
+    const matoviy    = c.find(x => x.name && x.name.toLowerCase().includes('матов') && !x.name.toLowerCase().includes('двусторон')) || { surcharge: 300 };
+    const dvustoron  = c.find(x => x.name && x.name.toLowerCase().includes('двусторон')) || { surcharge: 500 };
+    const derevo     = c.find(x => x.name && x.name.toLowerCase().includes('дерево')) || { surcharge: 500 };
     coatingSelect.innerHTML = `
       <option value="" disabled selected>— Оберіть тип покриття —</option>
       <option value="0">Глянець 0,3 мм (базовий варіант)</option>
-      <option value="300">Матовий односторонній 0,45 мм (+300 грн)</option>
-      <option value="500">Матовий двосторонній 0,45 мм (+500 грн) ⭐ обирають найчастіше</option>
-      <option value="500wood">Під дерево / 3D Дерево 0,4 мм (+500 грн)</option>
+      <option value="${matoviy.surcharge}">Матовий односторонній 0,45 мм (+${matoviy.surcharge} грн)</option>
+      <option value="${dvustoron.surcharge}_двусторон">Матовий двосторонній 0,45 мм (+${dvustoron.surcharge} грн) ⭐ обирають найчастіше</option>
+      <option value="${derevo.surcharge}_wood">Під дерево / 3D Дерево 0,4 мм (+${derevo.surcharge} грн)</option>
     `;
     coatingNote.innerHTML = "Оберіть з 4 варіантів. <strong>Двосторонній</strong> — однаковий колір з обох боків, гарантія 10 років.";
     return;
@@ -418,10 +423,12 @@ function updateCoatingOptions() {
     }
 
     if (model.doubleSided) {
+      const cm = window._COATINGS || [];
+      const dvustoronM = cm.find(x => x.name && x.name.toLowerCase().includes('двусторон')) || { surcharge: 500 };
       coatingSelect.innerHTML = `
         <option value="" disabled selected>— Оберіть тип покриття —</option>
         <option value="0">Матовий односторонній 0,45 мм (базовий варіант)</option>
-        <option value="500">Матовий двосторонній 0,45 мм (+500 грн) ⭐ обирають найчастіше</option>
+        <option value="${dvustoronM.surcharge}_двусторон">Матовий двосторонній 0,45 мм (+${dvustoronM.surcharge} грн) ⭐ обирають найчастіше</option>
       `;
     } else {
       coatingSelect.innerHTML = `<option value="0">Матовий кольоровий 0,45 мм — входить у вартість</option>`;
@@ -527,7 +534,15 @@ calculateBtn.addEventListener("click", async () => {
   const postQty   = parseInt(document.getElementById("postQty").value) || 0;
 
   const model   = GATE_MODELS[type][modelIdx];
-  const coating = coatingRaw === "500wood" ? 500 : parseInt(coatingRaw);
+  // Парсимо доплату за покриття з нового формату значень
+  let coating = 0;
+  if (coatingRaw === "500wood" || coatingRaw.endsWith("_wood")) {
+    coating = parseInt(coatingRaw);
+  } else if (coatingRaw.endsWith("_двусторон")) {
+    coating = parseInt(coatingRaw);
+  } else {
+    coating = parseInt(coatingRaw) || 0;
+  }
 
   let gatePrice = calcGatePrice(type, model.price, config, width);
   gatePrice += coating;
