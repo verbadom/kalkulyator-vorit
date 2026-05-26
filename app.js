@@ -40,11 +40,25 @@ const _leadTracker = {
 
 let _lastCalcData = {};
 
+// Динамічні ціни з таблиці
+let LOCK_PRICE = 1500;
+let BOLTS_PRICE = 600;
+let POST_DATA = {
+  "775":  { label: "Нефарбований 80×60, стінка 2мм / висота 3м", price: 775 },
+  "1120": { label: "Нефарбований 80×80, стінка 3мм / висота 3м", price: 1120 },
+  "750":  { label: "Фарбований 60×60, стінка 2мм / висота 2м",   price: 750 },
+  "1240": { label: "Фарбований 80×80, стінка 3мм / висота 2м",   price: 1240 },
+  "950":  { label: "Фарбований 60×60, стінка 2мм / висота 2,4м", price: 950 },
+  "1560": { label: "Фарбований 80×80, стінка 3мм / висота 2,4м", price: 1560 },
+};
+
 async function loadPricesFromSheet() {
   try {
     const response = await fetch("https://n8n.verbadom.com.ua/webhook/cardinal-prices");
     const data = await response.json();
     const prices = data[0];
+
+    // Ворота
     prices.forged.forEach(item => {
       const model = GATE_MODELS.forged.find(m => m.name === item.name);
       if (model) model.price = item.price;
@@ -53,13 +67,47 @@ async function loadPricesFromSheet() {
       const model = GATE_MODELS.modern.find(m => m.name === item.name);
       if (model) model.price = item.price;
     });
-    console.log("✅ Ціни завантажено з таблиці");
+
+    // Замок і засуви
+    if (prices.lockPrice) LOCK_PRICE = prices.lockPrice;
+    if (prices.boltsPrice) BOLTS_PRICE = prices.boltsPrice;
+
+    // Столби
+    if (prices.posts && prices.posts.length > 0) {
+      POST_DATA = {};
+      prices.posts.forEach(post => {
+        const key = String(post.price);
+        const label = `${post.name}, ${post.chars} / висота ${post.height}`;
+        POST_DATA[key] = { label, price: post.price };
+      });
+      // Оновлюємо dropdown стовпів
+      updatePostSelect();
+    }
+
+    // Покриття для кованих воріт
+    if (prices.coatings && prices.coatings.length > 0) {
+      window._COATINGS = prices.coatings;
+    }
+
+    console.log("✅ Ціни завантажено з таблиці", { LOCK_PRICE, BOLTS_PRICE, posts: Object.keys(POST_DATA).length });
   } catch (e) {
     console.warn("⚠️ Не вдалось завантажити ціни, використовуємо резервні");
   }
 }
 
-loadPricesFromSheet();
+function updatePostSelect() {
+  const postSelect = document.getElementById("post");
+  if (!postSelect) return;
+  const currentVal = postSelect.value;
+  postSelect.innerHTML = '<option value="none">Без стовпів</option>';
+  Object.entries(POST_DATA).forEach(([key, post]) => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = post.label;
+    postSelect.appendChild(opt);
+  });
+  if (currentVal && POST_DATA[currentVal]) postSelect.value = currentVal;
+}
 
 const GATE_MODELS = {
   forged: [
@@ -94,14 +142,7 @@ const GATE_MODELS = {
   ]
 };
 
-const POST_DATA = {
-  "775":  { label: "Нефарбований 80×60, стінка 2мм / висота 3м", price: 775 },
-  "1120": { label: "Нефарбований 80×80, стінка 3мм / висота 3м", price: 1120 },
-  "750":  { label: "Фарбований 60×60, стінка 2мм / висота 2м",   price: 750 },
-  "1240": { label: "Фарбований 80×80, стінка 3мм / висота 2м",   price: 1240 },
-  "950":  { label: "Фарбований 60×60, стінка 2мм / висота 2,4м", price: 950 },
-  "1560": { label: "Фарбований 80×80, стінка 3мм / висота 2,4м", price: 1560 },
-};
+loadPricesFromSheet();
 
 const INCLUDED_FORGED = `<strong>У вартість входить:</strong> петлі на ворота та хвіртку, тримач навісного замка`;
 const INCLUDED_MODERN = `<strong>У вартість входить:</strong> електромеханічний замок на хвіртку, петлі, ручка на хвіртку, тримач навісного замка`;
@@ -252,7 +293,6 @@ const calculateBtn    = document.getElementById("calculateBtn");
 const resetBtn        = document.getElementById("resetBtn");
 const resultDiv       = document.getElementById("result");
 
-// ── Підказка про вигідний розмір ──
 function updateWidthHint() {
   const type   = gateTypeSelect.value;
   const config = configSelect.value;
@@ -268,7 +308,6 @@ function updateWidthHint() {
   if (config === "with_builtin_wicket") return;
 
   let msg = "";
-
   if (config === "with_separate_wicket") {
     if (type === "forged" && width !== 4.5) {
       msg = "💡 Якщо розмір ще не визначено — ширина 4,5 м (ворота 3,6 м + хвіртка 0,9 м) зазвичай найвигідніша";
@@ -276,7 +315,6 @@ function updateWidthHint() {
       msg = "💡 Якщо розмір ще не визначено — ширина 4,9 м (ворота 4,0 м + хвіртка 0,9 м) зазвичай найвигідніша";
     }
   }
-
   if (config === "without_wicket") {
     if (type === "forged" && width !== 3.6) {
       msg = "💡 Якщо розмір ще не визначено — ширина 3,6 м зазвичай найвигідніша";
@@ -493,8 +531,8 @@ calculateBtn.addEventListener("click", async () => {
 
   let gatePrice = calcGatePrice(type, model.price, config, width);
   gatePrice += coating;
-  if (lock && type === "forged") gatePrice += 1500;
-  if (bolts) gatePrice += 600;
+  if (lock && type === "forged") gatePrice += LOCK_PRICE;
+  if (bolts) gatePrice += BOLTS_PRICE;
 
   let postPrice = 0;
   let postInfo  = null;
@@ -557,8 +595,6 @@ calculateBtn.addEventListener("click", async () => {
   const coatingLabel = coatingSelect.options[coatingSelect.selectedIndex].text;
   const coatingLabelClean = coatingLabel.replace(" ⭐ обирають найчастіше", "").trim();
   const isPopularCoating = coatingLabel.includes("⭐");
-
-  // Чи показувати замок у хвіртку як включений у вартість
   const showLockIncluded = type === "modern" && config === "with_separate_wicket";
 
   let html = `
@@ -575,15 +611,14 @@ calculateBtn.addEventListener("click", async () => {
     html += `<div class="result-row popular-badge-row"><span></span><span>⭐ Найпопулярніший вибір</span></div>`;
   }
 
-  // ВИПРАВЛЕННЯ: замок показується ОДИН РАЗ — або як включений, або як опція
   if (showLockIncluded) {
     html += `<div class="result-row"><span>Замок у хвіртку та тримач навісного замка</span><span style="color:#27ae60;">входять у вартість</span></div>`;
   }
   if (lock && type === "forged") {
-    html += `<div class="result-row"><span>Замок у хвіртку з встановленням</span><span>+1 500 грн</span></div>`;
+    html += `<div class="result-row"><span>Замок у хвіртку з встановленням</span><span>+${LOCK_PRICE.toLocaleString("uk-UA")} грн</span></div>`;
   }
   if (bolts) {
-    html += `<div class="result-row"><span>Засуви на створки (2 шт)</span><span>+600 грн</span></div>`;
+    html += `<div class="result-row"><span>Засуви на створки (2 шт)</span><span>+${BOLTS_PRICE.toLocaleString("uk-UA")} грн</span></div>`;
   }
 
   if (showPosts) {
@@ -598,7 +633,6 @@ calculateBtn.addEventListener("click", async () => {
   const totalComplex = gatePrice + (showPosts ? postPrice : 0);
   html += `<div class="result-row result-subtotal"><span>Ворота з комплектуючими</span><span>${totalComplex.toLocaleString("uk-UA")} грн</span></div>`;
 
-  // ── Доставка ──
   if (deliveryStatus === "on_route") {
     const minTotal = totalComplex + 500;
     const maxTotal = totalComplex + 900;
@@ -682,9 +716,6 @@ function showResult(html, showShareBtns) {
   document.getElementById("resetBtn").style.display = "block";
 }
 
-// ============================================================
-// ГЕНЕРАЦІЯ PDF
-// ============================================================
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
@@ -734,7 +765,6 @@ async function generatePDF() {
     }
   });
 
-  // Підпис під доставкою для PDF
   const delivNoteInline = document.querySelector("#result .delivery-note-inline");
   const delivNoteHTML = delivNoteInline
     ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#555;margin:4px ${isMobile ? 10 : 12}px 8px;">${delivNoteInline.innerText}</p>`
