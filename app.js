@@ -31,7 +31,7 @@ const _leadTracker = {
           config: calcData.config || "",
           width: calcData.width || "",
           totalPrice: calcData.totalPrice || "",
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' }),
         })
       });
     } catch (e) {}
@@ -882,7 +882,7 @@ function track(eventName, city) {
     body: JSON.stringify({
       user_id:   USER_ID,
       event:     eventName,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' }),
       city:      city || ''
     })
   }).catch(() => {});
