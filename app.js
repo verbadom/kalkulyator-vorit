@@ -58,7 +58,6 @@ async function loadPricesFromSheet() {
     const data = await response.json();
     const prices = data[0];
 
-    // Ворота
     prices.forged.forEach(item => {
       const model = GATE_MODELS.forged.find(m => m.name === item.name);
       if (model) model.price = item.price;
@@ -68,11 +67,9 @@ async function loadPricesFromSheet() {
       if (model) model.price = item.price;
     });
 
-    // Замок і засуви
     if (prices.lockPrice) LOCK_PRICE = prices.lockPrice;
     if (prices.boltsPrice) BOLTS_PRICE = prices.boltsPrice;
 
-    // Столби
     if (prices.posts && prices.posts.length > 0) {
       POST_DATA = {};
       prices.posts.forEach((post, index) => {
@@ -80,11 +77,9 @@ async function loadPricesFromSheet() {
         const label = `${post.name}, ${post.chars} / висота ${post.height}`;
         POST_DATA[key] = { label, price: post.price };
       });
-      // Оновлюємо dropdown стовпів
       updatePostSelect();
     }
 
-    // Покриття для кованих воріт
     if (prices.coatings && prices.coatings.length > 0) {
       window._COATINGS = prices.coatings;
     }
@@ -396,7 +391,6 @@ function updateCoatingOptions() {
       }
     }
     coatingSelect.disabled = false;
-    // Беремо доплати з таблиці якщо є, інакше резервні
     const c = window._COATINGS || [];
     const matoviy    = c.find(x => x.name && x.name.toLowerCase().includes('матов') && !x.name.toLowerCase().includes('двусторон')) || { surcharge: 300 };
     const dvustoron  = c.find(x => x.name && x.name.toLowerCase().includes('двусторон')) || { surcharge: 500 };
@@ -534,7 +528,6 @@ calculateBtn.addEventListener("click", async () => {
   const postQty   = parseInt(document.getElementById("postQty").value) || 0;
 
   const model   = GATE_MODELS[type][modelIdx];
-  // Парсимо доплату за покриття з нового формату значень
   let coating = 0;
   if (coatingRaw === "500wood" || coatingRaw.endsWith("_wood")) {
     coating = parseInt(coatingRaw);
@@ -701,6 +694,7 @@ calculateBtn.addEventListener("click", async () => {
     totalPrice: totalPrice > 0 ? totalPrice.toLocaleString("uk-UA") + " грн" : "уточнення",
   };
   _leadTracker.onCalculation(_lastCalcData);
+  track('calculate', selectedCityName);
 });
 
 function showResult(html, showShareBtns) {
@@ -713,6 +707,7 @@ function showResult(html, showShareBtns) {
         : this.classList.contains("telegram") ? "Telegram"
         : "WhatsApp";
       _leadTracker.onMessengerClick(messenger, _lastCalcData);
+      track('contact', selectedCityName);
     });
   });
 
@@ -732,6 +727,7 @@ function showResult(html, showShareBtns) {
 }
 
 async function generatePDF() {
+  track('pdf_download', selectedCityName);
   const { jsPDF } = window.jspdf;
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
@@ -865,3 +861,31 @@ async function generatePDF() {
     document.body.removeChild(pdfDiv);
   }
 }
+
+// Аналітика
+function getUserId() {
+  let id = localStorage.getItem('vb_uid');
+  if (!id) {
+    id = 'u' + Date.now() + Math.random().toString(36).slice(2,6);
+    localStorage.setItem('vb_uid', id);
+  }
+  return id;
+}
+
+const USER_ID = getUserId();
+const ANALYTICS_URL = 'https://n8n.verbadom.com.ua/webhook/analytics';
+
+function track(eventName, city) {
+  fetch(ANALYTICS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id:   USER_ID,
+      event:     eventName,
+      timestamp: new Date().toISOString(),
+      city:      city || ''
+    })
+  }).catch(() => {});
+}
+
+track('page_view');
