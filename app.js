@@ -1,3 +1,4 @@
+const IS_TEST = new URLSearchParams(window.location.search).get('mode') === 'test';
 const BASE_IMG = "https://images.prom.ua/";
 
 const _leadTracker = {
@@ -876,6 +877,7 @@ const USER_ID = getUserId();
 const ANALYTICS_URL = 'https://n8n.verbadom.com.ua/webhook/analytics';
 
 function track(eventName, city) {
+  if (IS_TEST) return;
   fetch(ANALYTICS_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
