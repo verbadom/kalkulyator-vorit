@@ -561,7 +561,7 @@ calculateBtn.addEventListener("click", async () => {
   try {
     if (!selectedLat || !selectedLng) throw new Error("Місто не обрано зі списку підказок");
 
-    const response = await fetch("https://n8n.verbadom.com.ua/webhook/cardinal-delivery", {
+    const response = await fetch("https://n8n.verbadom.com.ua/webhook/cardinal-delivery-v2", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lat: selectedLat, lng: selectedLng, city: selectedCityName })
@@ -577,8 +577,10 @@ calculateBtn.addEventListener("click", async () => {
       deliveryPrice  = data.price;
       deliveryStatus = "deviation";
     } else if (data.status === "nova_poshta") {
-      deliveryPrice  = 4000;
+      deliveryPrice  = data.price || 4000;
       deliveryStatus = "nova_poshta";
+    } else if (data.status === "clarify_extended") {
+      deliveryStatus = "clarify_extended";
     } else if (data.status === "clarify") {
       deliveryStatus = "clarify";
     }
@@ -646,17 +648,28 @@ calculateBtn.addEventListener("click", async () => {
     const minTotal = totalComplex + 500;
     const maxTotal = totalComplex + 900;
     html += `<div class="result-row"><span>Доставка</span><span>500–900 грн</span></div>`;
-    html += `<p class="delivery-note-inline">Точна сума залежить від адреси доставки</p>`;
+    html += `<p class="delivery-note-inline">Ваше місто знаходиться на маршруті заводу. Вартість доставки: 500–900 грн — залежить від відстані між вашою адресою та маршрутом заводської машини. Точну суму уточніть у логіста.</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString("uk-UA")} до ${maxTotal.toLocaleString("uk-UA")} грн</span></div>`;
   } else if (deliveryStatus === "nova_poshta") {
-    html += `<div class="result-row"><span>Доставка (Нова Пошта на вантажне відділення)</span><span>4 000 грн</span></div>`;
+    html += `<div class="result-row"><span>Доставка (Нова Пошта на вантажне відділення)</span><span>${window._lastDeliveryData.price ? window._lastDeliveryData.price.toLocaleString("uk-UA") : "4 000"} грн</span></div>`;
     if (postVal !== "none") {
       html += `<p class="error-msg">⚠️ Стовпи доставляються лише машиною заводу. При доставці Новою Поштою стовпи недоступні.</p>`;
     }
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString("uk-UA")} грн</span></div>`;
   } else if (deliveryStatus === "deviation") {
-    html += `<div class="result-row"><span>Доставка до вашого двору (${window._lastDeliveryData.zone})</span><span>${deliveryPrice.toLocaleString("uk-UA")} грн</span></div>`;
+    html += `<div class="result-row"><span>Доставка до вашого двору</span><span>${deliveryPrice.toLocaleString("uk-UA")} грн</span></div>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString("uk-UA")} грн</span></div>`;
+  } else if (deliveryStatus === "clarify_extended") {
+    const d = window._lastDeliveryData;
+    const minDelivery = d.minDeliveryPrice || 0;
+    const novaPrice = d.novaPoshtaPrice || 4000;
+    const meetPrice = d.meetOnRoadPrice || 350;
+    const minTotal = totalComplex + minDelivery;
+    const maxTotal = totalComplex + novaPrice;
+    html += `<div class="result-row"><span>Доставка</span><span class="clarify-badge">Потребує уточнення у логіста</span></div>`;
+    html += `<p class="delivery-note">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.</p>`;
+    html += `<p class="delivery-note"><strong>Альтернативи:</strong><br>— Зустріч на трасі (забираєте самостійно) — ${meetPrice.toLocaleString("uk-UA")} грн<br>— Нова Пошта на вантажне відділення — ${novaPrice.toLocaleString("uk-UA")} грн</p>`;
+    html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString("uk-UA")} до ${maxTotal.toLocaleString("uk-UA")} грн</span></div>`;
   } else if (deliveryStatus === "clarify") {
     html += `<div class="result-row"><span>Доставка</span><span class="clarify-badge">Уточнення у менеджера</span></div>`;
     html += `<p class="delivery-note">Відстань ${window._lastDeliveryData.distanceKm} км — можлива доставка машиною заводу, зазвичай вигідніше Нової Пошти і прямо до воріт</p>`;
@@ -664,7 +677,7 @@ calculateBtn.addEventListener("click", async () => {
     html += `<div class="result-row"><span>Доставка</span><span>Уточніть у менеджера</span></div>`;
   }
 
-  if (meetOnRoad && deliveryStatus !== "nova_poshta" && deliveryStatus !== "on_route") {
+  if (meetOnRoad && deliveryStatus !== "nova_poshta" && deliveryStatus !== "on_route" && deliveryStatus !== "clarify_extended") {
     html += `<div class="result-row alt-delivery-row"><span>💡 Альтернативна доставка: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
   }
 
