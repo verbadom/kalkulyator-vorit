@@ -1,0 +1,686 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+  padding: 30px 16px;
+}
+
+.calculator {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 0;
+}
+
+.field {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 7px;
+}
+
+.field-note-top {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 7px;
+}
+
+.field-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.note {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+select,
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #1a1a2e;
+  background: #fafafa;
+  transition: border-color 0.2s;
+  appearance: none;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  white-space: normal;
+}
+
+select option {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* ПРАВКА 3: при фокусі — синя рамка, не червона */
+select:focus,
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  background: #fff;
+}
+
+::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Червона рамка — тільки при помилці валідації після кнопки "Розрахувати" */
+.field-error {
+  border-color: #c0392b !important;
+  background: #fff5f5 !important;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+#modelPhoto {
+  border: 1.5px solid #eee;
+}
+
+.included-block {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #f0f7ff;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #444;
+  line-height: 1.6;
+  border-left: 3px solid #3498db;
+}
+
+button#calculateBtn {
+  width: 100%;
+  padding: 14px;
+  background: #c0392b;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+button#calculateBtn:hover {
+  background: #a93226;
+}
+
+button#calculateBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-reset {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: #4a6cf7;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1.5px solid #4a6cf7;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  background: #f0f4ff;
+  border-color: #1a2a5e;
+  color: #1a2a5e;
+}
+
+.result {
+  margin-top: 28px;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #c0392b;
+}
+
+.result.hidden {
+  display: none;
+}
+
+.result h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #1a1a2e;
+}
+
+.preliminary-note {
+  font-size: 13px;
+  color: #e67e22;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+  gap: 12px;
+}
+
+/* ПРАВКА 5: пропорції колонок на мобілі — ліва 45%, права 55% */
+.result-row span:first-child {
+  flex: 0 0 45%;
+  max-width: 45%;
+}
+
+.result-row span:last-child {
+  text-align: right;
+  flex: 0 0 55%;
+  max-width: 55%;
+}
+
+.result-row:last-child {
+  border-bottom: none;
+}
+
+.result-row.total {
+  font-weight: 700;
+  font-size: 18px;
+  color: #c0392b;
+  margin-top: 8px;
+  border-bottom: none;
+}
+
+.info-row {
+  color: #27ae60;
+  font-size: 13px;
+}
+
+.alt-delivery-row {
+  color: #1a7a3a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ПРАВКА 4: бейдж "Найпопулярніший вибір" */
+.popular-badge-row {
+  border-bottom: none !important;
+  padding-top: 2px !important;
+  padding-bottom: 6px !important;
+}
+
+.popular-badge-row span:last-child {
+  color: #b07800;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.contacts {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.8;
+}
+
+.contacts a {
+  color: #c0392b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.messenger-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.msg-btn {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.msg-btn.viber    { background: #7360f2; }
+.msg-btn.telegram { background: #2aabee; }
+.msg-btn.whatsapp { background: #25d366; }
+
+.share-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.share-btn {
+  flex: 1;
+  padding: 11px 0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.watermark {
+  font-size: 12px;
+  color: #bbb;
+  margin-top: 12px;
+  text-align: right;
+}
+
+.watermark a {
+  color: #bbb;
+  text-decoration: none;
+  border-bottom: 1px dotted #bbb;
+  transition: color 0.2s;
+}
+
+.watermark a:hover {
+  color: #c0392b;
+  border-bottom-color: #c0392b;
+}
+
+.promo-block {
+  background: transparent !important;
+  border: none !important;
+  padding: 8px 0 !important;
+  text-align: center;
+}
+
+.promo-text {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 3px;
+}
+
+.promo-link {
+  background: transparent !important;
+  color: #aaa !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  text-decoration: underline;
+}
+
+.promo-link:hover {
+  color: #1a2a5e !important;
+}
+
+.error-msg {
+  color: #c0392b;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.loading {
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+  margin-top: 16px;
+}
+
+@media (max-width: 480px) {
+  .calculator {
+    padding: 24px 16px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+  .messenger-btns {
+    flex-direction: column;
+  }
+  .share-btns {
+    flex-direction: column;
+  }
+}
+
+/* ============================================================
+   ЗАГОЛОВОК
+   ============================================================ */
+.calc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  gap: 12px;
+}
+
+/* ============================================================
+   ПЛАШКА "ВИСОТА ДО 2.1М"
+   ============================================================ */
+.height-notice {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 7px 12px;
+  background: #fff8e1;
+  border-left: 3px solid #f0a030;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a5800;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   ПРОМО-БЛОК
+   ============================================================ */
+.promo-block {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: #f4f6fb;
+  border: 1px solid #dce3f0;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.promo-text {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.promo-link {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1a2a5e !important;
+  text-decoration: none;
+  border-bottom: 1px dashed #1a2a5e;
+  transition: color 0.2s;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+.promo-link:hover {
+  color: #c0392b !important;
+  border-bottom-color: #c0392b;
+}
+
+.result-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #888;
+  margin: 14px 0 4px;
+}
+
+.result-subtotal {
+  font-weight: 600;
+  background: #f0f4ff;
+  border-radius: 6px;
+  padding: 8px 6px !important;
+  margin: 4px 0;
+  border-bottom: none !important;
+}
+
+.delivery-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.clarify-badge {
+  background: #fff3cd;
+  color: #856404;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Галочка */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #c0392b;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: background 0.15s, border-color 0.15s;
+}
+input[type="checkbox"]:checked {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 9px;
+  border: 2.5px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
+/* ============================================================
+   PDF КНОПКА
+   ============================================================ */
+.pdf-btn {
+  width: 100%;
+  background: #1a2a5e;
+  color: #fff;
+  border: none;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 16px;
+}
+
+.pdf-btn:hover { background: #2a3a7e; }
+
+#modelPhoto { height: 180px; object-fit: cover; object-position: center 60%; }
+
+/* ============================================================
+   ЛОГОТИП
+   ============================================================ */
+.logo-text {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #1a2a5e;
+  margin-bottom: 8px;
+}
+
+/* ============================================================
+   ТЕКСТ ПІД КОМПЛЕКТАЦІЄЮ
+   ============================================================ */
+.field-note-color {
+  font-size: 12px;
+  color: #333;
+  margin-top: 6px;
+}
+
+/* ============================================================
+   БЛОК ДІЙ ПІСЛЯ РОЗРАХУНКУ
+   ============================================================ */
+.result-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Кнопка "Подзвонити" — головна */
+.btn-call {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: #c0392b;
+  color: #fff !important;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-call:hover { background: #a93226; }
+
+/* Номер телефона під кнопкою */
+.phone-number-text {
+  font-size: 13px;
+  color: #333;
+  text-align: center;
+  margin-top: -4px;
+}
+
+/* Кнопка "Написати в месенджер" */
+.btn-messenger {
+  width: 100%;
+  padding: 13px;
+  background: #1a2a5e;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-messenger:hover { background: #2a3a7e; }
+
+/* Вибір месенджера */
+.messenger-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Кнопка "Поділитися" */
+.btn-share {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: #1a2a5e;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1.5px solid #1a2a5e;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-share:hover { background: #f0f4ff; }
+
+/* Текст под поділитися */
+.share-hint {
+  font-size: 13px;
+  color: #333;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: -4px;
+}
+
+/* Кнопка "Новий розрахунок" */
+.btn-new-calc {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: #4a6cf7;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1.5px solid #4a6cf7;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: all 0.2s;
+}
+.btn-new-calc:hover { background: #f0f4ff; }
+
+/* Ссылка каталога */
+.catalog-link {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: #333;
+  text-decoration: none;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+.catalog-link:hover { color: #1a2a5e; }
+
+/* Watermark — убираем серость */
+.watermark {
+  color: #555;
+}
+.watermark a {
+  color: #555;
+  border-bottom-color: #555;
+}
