@@ -683,7 +683,6 @@ calculateBtn.addEventListener("click", async () => {
       <button class="btn-share" id="shareBtn">🔗 Поділитися</button>
       <p class="share-hint">Можливо, батькам чи родичам це теж актуально<br>Скиньте їм калькулятор</p>
     </div>
-    <p class="watermark">Розрахунок: <a href="https://verbadom.com.ua" target="_blank">verbadom.com.ua</a></p>
     <div class="promo-block">
       <div class="promo-text">Потрібен калькулятор для вашого бізнесу?</div>
       <a href="mailto:buildertools.pro@gmail.com" class="promo-link">buildertools.pro@gmail.com</a>

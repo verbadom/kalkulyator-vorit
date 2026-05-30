@@ -343,12 +343,7 @@ button#calculateBtn:disabled {
   border-bottom-color: #c0392b;
 }
 
-.promo-block {
-  background: transparent !important;
-  border: none !important;
-  padding: 8px 0 !important;
-  text-align: center;
-}
+
 
 .promo-text {
   font-size: 12px;
@@ -429,12 +424,12 @@ button#calculateBtn:disabled {
    ПРОМО-БЛОК
    ============================================================ */
 .promo-block {
-  margin-top: 16px;
-  padding: 12px 14px;
-  background: #f4f6fb;
-  border: 1px solid #dce3f0;
-  border-radius: 8px;
+  margin-top: 8px;
+  padding: 16px 0 0;
+  border-top: 1px solid #e0e0e0;
   text-align: center;
+  background: transparent;
+  border-radius: 0;
 }
 
 .promo-text {
@@ -664,23 +659,25 @@ input[type="checkbox"]:checked::after {
 }
 .btn-new-calc:hover { background: #f0f4ff; }
 
-/* Ссылка каталога */
+/* Ссылка каталога — разделитель сверху */
 .catalog-link {
   display: block;
   text-align: center;
   font-size: 13px;
   color: #333;
   text-decoration: none;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 16px;
   margin-top: 8px;
   margin-bottom: 4px;
 }
 .catalog-link:hover { color: #1a2a5e; }
 
-/* Watermark — убираем серость */
-.watermark {
-  color: #555;
+/* Промо-блок — разделитель сверху */
+.promo-block-divider {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 8px;
 }
-.watermark a {
-  color: #555;
-  border-bottom-color: #555;
-}
+
+/* Watermark — скрыть */
+.watermark { display: none; }
