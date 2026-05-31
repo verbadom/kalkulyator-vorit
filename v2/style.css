@@ -1,459 +1,768 @@
-* {
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+/* ============================================================
+   ЗМІННІ
+   ============================================================ */
+:root {
+  --green:        #2E9B3F;
+  --green-light:  #E8F5EB;
+  --green-mid:    #A8D9B0;
+  --green-dark:   #1A6B28;
+  --red:          #CC0000;
+  --yellow-bg:    #FFF8E6;
+  --yellow-border:#EF9F27;
+  --gray-bg:      #F5F6F8;
+  --gray-border:  #DDE1E8;
+  --gray-text:    #888;
+  --dark:         #1A1A2E;
+  --white:        #FFFFFF;
+  --radius:       10px;
+  --shadow:       0 4px 24px rgba(0,0,0,0.09);
+}
+
+/* ============================================================
+   БАЗОВІ СТИЛІ
+   ============================================================ */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f0f2f5;
-  color: #1a1a2e;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  background: #EEF1F5;
+  color: var(--dark);
   min-height: 100vh;
-  padding: 30px 16px;
+  padding: 20px 12px 40px;
 }
 
+/* ============================================================
+   КАЛЬКУЛЯТОР — ОБГОРТКА
+   ============================================================ */
 .calculator {
   max-width: 600px;
   margin: 0 auto;
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 36px 32px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  background: var(--white);
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
 }
 
-h1 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 6px;
+/* ============================================================
+   ШАПКА
+   ============================================================ */
+.calc-header {
+  margin-bottom: 28px;
+  text-align: left;
 }
 
-.subtitle {
-  font-size: 15px;
-  color: #666;
-  margin-bottom: 0;
+.calc-logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
 }
 
-.field {
-  margin-bottom: 20px;
+.calc-logo-sub {
+  font-size: 13px;
+  color: var(--gray-text);
+  margin-bottom: 14px;
 }
 
-label {
-  display: block;
+.calc-header h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+
+.calc-welcome {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green-light);
+  border: 1px solid var(--green-mid);
+  border-radius: 8px;
+  padding: 8px 14px;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 7px;
+  color: var(--green-dark);
 }
 
-.field-note-top {
-  font-size: 13px;
-  color: #888;
-  margin-bottom: 7px;
+/* ============================================================
+   ПОЛЯ ФОРМИ
+   ============================================================ */
+.field {
+  margin-bottom: 22px;
+}
+
+.field-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
 }
 
 .field-note {
-  font-size: 12px;
-  color: #888;
+  font-size: 13px;
+  color: var(--gray-text);
   margin-top: 6px;
   line-height: 1.5;
 }
 
-.note {
-  display: block;
-  font-size: 12px;
-  color: #999;
-  font-weight: 400;
-  margin-top: 2px;
+.field-note-top {
+  font-size: 13px;
+  color: var(--gray-text);
+  margin-bottom: 8px;
+  line-height: 1.5;
 }
 
-select,
-input[type="text"],
-input[type="number"] {
+/* ============================================================
+   КНОПКИ ВИБОРУ ТИПУ ВОРІТ
+   ============================================================ */
+.type-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.type-btn {
+  padding: 16px 12px;
+  border: 2px solid var(--green-mid);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--green);
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: center;
+}
+
+.type-btn:hover {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+.type-btn.active {
+  border-color: var(--green);
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+/* ============================================================
+   КАСТОМНИЙ DROPDOWN
+   ============================================================ */
+.custom-select-wrap {
+  position: relative;
+}
+
+.custom-select-btn {
   width: 100%;
-  padding: 11px 14px;
-  border: 1.5px solid #ddd;
-  border-radius: 8px;
+  padding: 13px 40px 13px 14px;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  background: #FAFAFA;
+  font-family: 'Nunito', sans-serif;
   font-size: 15px;
-  color: #1a1a2e;
-  background: #fafafa;
-  transition: border-color 0.2s;
-  appearance: none;
+  font-weight: 500;
+  color: var(--dark);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.18s;
+  user-select: none;
 }
 
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  white-space: normal;
-}
-
-select option {
-  white-space: normal;
-  word-wrap: break-word;
-}
-
-/* ПРАВКА 3: при фокусі — синя рамка, не червона */
-select:focus,
-input:focus {
-  outline: none;
-  border-color: #3498db;
-  background: #fff;
-}
-
-::placeholder {
-  color: #bbb;
+.custom-select-btn.placeholder {
+  color: #BBB;
   font-style: italic;
 }
 
-select:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.custom-select-btn:focus,
+.custom-select-btn.open {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(46,155,63,0.15);
+  background: var(--white);
 }
 
-/* Червона рамка — тільки при помилці валідації після кнопки "Розрахувати" */
-.field-error {
-  border-color: #c0392b !important;
-  background: #fff5f5 !important;
+.custom-select-btn.field-error {
+  border-color: var(--red) !important;
+  background: #FFF5F5 !important;
 }
 
-.checkbox-label {
+.custom-select-arrow {
+  width: 12px;
+  height: 8px;
+  flex-shrink: 0;
+  transition: transform 0.18s;
+}
+
+.custom-select-btn.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1.5px solid var(--green-mid);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.custom-select-dropdown.open {
+  display: block;
+}
+
+.custom-select-option {
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dark);
+  cursor: pointer;
+  border-bottom: 1px solid #F0F0F0;
+  transition: background 0.12s;
+}
+
+.custom-select-option:last-child {
+  border-bottom: none;
+}
+
+.custom-select-option:hover,
+.custom-select-option.active {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+/* ============================================================
+   RADIO-КНОПКИ (КОМПЛЕКТАЦІЯ, ПОКРИТТЯ)
+   ============================================================ */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-option {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  font-weight: 500;
+  gap: 12px;
+  padding: 13px 16px;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
   cursor: pointer;
-  font-size: 14px;
+  transition: all 0.15s;
+  background: #FAFAFA;
 }
 
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+.radio-option:hover {
+  border-color: var(--green-mid);
+  background: var(--green-light);
+}
+
+.radio-option.selected {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+.radio-option.field-error {
+  border-color: var(--red) !important;
+  background: #FFF5F5 !important;
+}
+
+.radio-dot {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gray-border);
+  border-radius: 50%;
   flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
 }
 
-#modelPhoto {
-  border: 1.5px solid #eee;
+.radio-option.selected .radio-dot {
+  border-color: var(--green);
+  background: var(--green);
 }
 
+.radio-option.selected .radio-dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.radio-text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark);
+  line-height: 1.4;
+}
+
+.radio-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--gray-text);
+  margin-top: 2px;
+}
+
+.radio-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #856404;
+  background: #FFF3CD;
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+/* ============================================================
+   ТЕКСТОВЕ ПОЛЕ / INPUT
+   ============================================================ */
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dark);
+  background: #FAFAFA;
+  transition: border-color 0.18s;
+  appearance: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(46,155,63,0.15);
+  background: var(--white);
+}
+
+input[type="text"].field-error,
+input[type="number"].field-error {
+  border-color: var(--red) !important;
+  background: #FFF5F5 !important;
+}
+
+::placeholder {
+  color: #C0C0C0;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ============================================================
+   ПІДКАЗКА ШИРИНА
+   ============================================================ */
+.width-hint {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--yellow-bg);
+  border-left: 3px solid var(--yellow-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7A5800;
+  line-height: 1.5;
+}
+
+.height-notice {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: var(--yellow-bg);
+  border-left: 3px solid var(--yellow-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7A5800;
+}
+
+/* ============================================================
+   БЛОК "У ВАРТІСТЬ ВХОДИТЬ"
+   ============================================================ */
 .included-block {
   margin-top: 10px;
-  padding: 10px 14px;
-  background: #f0f7ff;
-  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--green-light);
+  border-radius: var(--radius);
   font-size: 13px;
-  color: #444;
-  line-height: 1.6;
-  border-left: 3px solid #3498db;
+  color: var(--green-dark);
+  line-height: 1.7;
+  border-left: 3px solid var(--green);
 }
 
-button#calculateBtn {
-  width: 100%;
-  padding: 14px;
-  background: #c0392b;
-  color: #fff;
+/* ============================================================
+   КАСТОМНІ ЧЕКБОКСИ
+   ============================================================ */
+.checkbox-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 16px;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: #FAFAFA;
+  transition: all 0.15s;
+  margin-bottom: 8px;
+}
+
+.checkbox-option:hover {
+  border-color: var(--green-mid);
+  background: var(--green-light);
+}
+
+.checkbox-option:last-child {
+  margin-bottom: 0;
+}
+
+.checkbox-box {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid var(--gray-border);
+  border-radius: 5px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: all 0.15s;
+}
+
+.checkbox-option.checked .checkbox-box {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.checkbox-option.checked .checkbox-box::after {
+  content: '';
+  width: 6px;
+  height: 11px;
+  border: 2.5px solid var(--white);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.checkbox-text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark);
+  line-height: 1.4;
+}
+
+.checkbox-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--gray-text);
+  margin-top: 3px;
+}
+
+/* Замок вже включено (сучасні) */
+.lock-included-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  background: var(--green-light);
+  border: 1.5px solid var(--green-mid);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+
+/* ============================================================
+   СТОВПИ — ПОКРОКОВИЙ ВИБІР
+   ============================================================ */
+.posts-step {
+  margin-bottom: 10px;
+}
+
+.posts-step-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.step-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.step-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 10px;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  background: #FAFAFA;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.step-btn:hover {
+  border-color: var(--green-mid);
+  background: var(--green-light);
+}
+
+.step-btn.active {
+  border-color: var(--green);
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.step-btn-sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--gray-text);
+  margin-top: 3px;
+}
+
+.step-btn.active .step-btn-sub {
+  color: var(--green);
+}
+
+/* Лічильник кількості стовпів */
+.post-qty-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.post-qty-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.qty-counter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: #F0F0F0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  font-family: 'Nunito', sans-serif;
+}
+
+.qty-btn:hover {
+  background: var(--green-mid);
+  color: var(--white);
+}
+
+.qty-value {
+  width: 52px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 17px;
   font-weight: 700;
-  border: none;
-  border-radius: 10px;
+  color: var(--dark);
+  background: var(--white);
+  border-left: 1.5px solid var(--gray-border);
+  border-right: 1.5px solid var(--gray-border);
+}
+
+/* Попередження стовпи + Нова Пошта */
+.posts-nova-warning {
+  padding: 10px 14px;
+  background: #FFF3CD;
+  border-left: 3px solid var(--yellow-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7A5800;
+  margin-top: 10px;
+}
+
+/* ============================================================
+   АВТОДОПОВНЕННЯ МІСТА
+   ============================================================ */
+.city-wrap {
+  position: relative;
+}
+
+#city-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1.5px solid var(--green-mid);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 300;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.city-option {
+  padding: 14px 16px;
+  min-height: 52px;
   cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+  border-bottom: 1px solid #F0F0F0;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: background 0.12s;
 }
 
-button#calculateBtn:hover {
-  background: #a93226;
+.city-option:last-child { border-bottom: none; }
+.city-option:hover,
+.city-option.active { background: var(--green-light); }
+
+.city-option-main { font-weight: 600; }
+.city-option-sub  { font-size: 12px; color: var(--gray-text); margin-top: 2px; }
+
+input#city.has-selection {
+  border-color: var(--green);
 }
 
-button#calculateBtn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+/* ============================================================
+   ФРАЗА "ГОТОВО!" НАД КНОПКОЮ
+   ============================================================ */
+.calc-ready-msg {
+  display: none;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 10px;
+  padding: 10px;
+  background: var(--green-light);
+  border-radius: var(--radius);
 }
 
+/* ============================================================
+   КНОПКА РОЗРАХУНКУ
+   ============================================================ */
+#calculateBtn {
+  width: 100%;
+  padding: 16px;
+  background: var(--green);
+  color: var(--white);
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.3px;
+}
+
+#calculateBtn:hover  { background: var(--green-dark); }
+#calculateBtn:active { transform: scale(0.99); }
+#calculateBtn:disabled { background: #C0C0C0; cursor: not-allowed; }
+
+/* ============================================================
+   КНОПКА "НОВИЙ РОЗРАХУНОК"
+   ============================================================ */
 .btn-reset {
   width: 100%;
   padding: 13px;
   background: transparent;
-  color: #4a6cf7;
+  color: var(--gray-text);
+  font-family: 'Nunito', sans-serif;
   font-size: 15px;
-  font-weight: 500;
-  border: 1.5px solid #4a6cf7;
-  border-radius: 10px;
+  font-weight: 600;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
   cursor: pointer;
   margin-top: 10px;
   transition: all 0.2s;
 }
 
 .btn-reset:hover {
-  background: #f0f4ff;
-  border-color: #1a2a5e;
-  color: #1a2a5e;
+  background: var(--gray-bg);
+  color: var(--dark);
 }
 
+/* ============================================================
+   БЛОК РЕЗУЛЬТАТУ
+   ============================================================ */
 .result {
   margin-top: 28px;
   padding: 24px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 4px solid #c0392b;
+  background: var(--green-light);
+  border-radius: 14px;
+  border: 1.5px solid var(--green-mid);
 }
 
-.result.hidden {
-  display: none;
-}
+.result.hidden { display: none; }
 
-.result h2 {
+.result-title {
   font-size: 18px;
-  margin-bottom: 10px;
-  color: #1a1a2e;
-}
-
-.preliminary-note {
-  font-size: 13px;
-  color: #e67e22;
-  margin-bottom: 14px;
-  font-weight: 500;
-}
-
-.result-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 7px 0;
-  font-size: 15px;
-  border-bottom: 1px solid #eee;
-  gap: 12px;
-}
-
-/* ПРАВКА 5: пропорції колонок на мобілі — ліва 45%, права 55% */
-.result-row span:first-child {
-  flex: 0 0 45%;
-  max-width: 45%;
-}
-
-.result-row span:last-child {
-  text-align: right;
-  flex: 0 0 55%;
-  max-width: 55%;
-}
-
-.result-row:last-child {
-  border-bottom: none;
-}
-
-.result-row.total {
-  font-weight: 700;
-  font-size: 18px;
-  color: #c0392b;
-  margin-top: 8px;
-  border-bottom: none;
-}
-
-.info-row {
-  color: #27ae60;
-  font-size: 13px;
-}
-
-.alt-delivery-row {
-  color: #1a7a3a;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-/* ПРАВКА 4: бейдж "Найпопулярніший вибір" */
-.popular-badge-row {
-  border-bottom: none !important;
-  padding-top: 2px !important;
-  padding-bottom: 6px !important;
-}
-
-.popular-badge-row span:last-child {
-  color: #b07800;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.contacts {
-  margin-top: 18px;
-  font-size: 14px;
-  color: #555;
-  line-height: 1.8;
-}
-
-.contacts a {
-  color: #c0392b;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.messenger-btns {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.msg-btn {
-  flex: 1;
-  padding: 9px 0;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff !important;
-  text-decoration: none;
-}
-
-.msg-btn.viber    { background: #7360f2; }
-.msg-btn.telegram { background: #2aabee; }
-.msg-btn.whatsapp { background: #25d366; }
-
-.share-btns {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.share-btn {
-  flex: 1;
-  padding: 11px 0;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
-
-.watermark {
-  font-size: 12px;
-  color: #bbb;
-  margin-top: 12px;
-  text-align: right;
-}
-
-.watermark a {
-  color: #bbb;
-  text-decoration: none;
-  border-bottom: 1px dotted #bbb;
-  transition: color 0.2s;
-}
-
-.watermark a:hover {
-  color: #c0392b;
-  border-bottom-color: #c0392b;
-}
-
-
-
-.promo-text {
-  font-size: 12px;
-  color: #aaa;
-  margin-bottom: 3px;
-}
-
-.promo-link {
-  background: transparent !important;
-  color: #aaa !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  font-size: 12px !important;
-  font-weight: 400 !important;
-  text-decoration: underline;
-}
-
-.promo-link:hover {
-  color: #1a2a5e !important;
-}
-
-.error-msg {
-  color: #c0392b;
-  font-size: 14px;
-  margin-top: 12px;
-}
-
-.loading {
-  text-align: center;
-  color: #888;
-  font-size: 15px;
-  margin-top: 16px;
-}
-
-@media (max-width: 480px) {
-  .calculator {
-    padding: 24px 16px;
-  }
-  h1 {
-    font-size: 22px;
-  }
-  .messenger-btns {
-    flex-direction: column;
-  }
-  .share-btns {
-    flex-direction: column;
-  }
-}
-
-/* ============================================================
-   ЗАГОЛОВОК
-   ============================================================ */
-.calc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 28px;
-  gap: 12px;
-}
-
-/* ============================================================
-   ПЛАШКА "ВИСОТА ДО 2.1М"
-   ============================================================ */
-.height-notice {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 7px 12px;
-  background: #fff8e1;
-  border-left: 3px solid #f0a030;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #7a5800;
-  line-height: 1.4;
-}
-
-/* ============================================================
-   ПРОМО-БЛОК
-   ============================================================ */
-.promo-block {
-  margin-top: 8px;
-  padding: 16px 0 0;
-  border-top: 1px solid #e0e0e0;
-  text-align: center;
-  background: transparent;
-  border-radius: 0;
-}
-
-.promo-text {
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-
-.promo-link {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: #1a2a5e !important;
-  text-decoration: none;
-  border-bottom: 1px dashed #1a2a5e;
-  transition: color 0.2s;
-  padding: 0 !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-}
-
-.promo-link:hover {
-  color: #c0392b !important;
-  border-bottom-color: #c0392b;
+  font-weight: 800;
+  color: var(--green-dark);
+  margin-bottom: 16px;
 }
 
 .result-section-title {
@@ -461,223 +770,330 @@ button#calculateBtn:disabled {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #888;
-  margin: 14px 0 4px;
+  color: var(--gray-text);
+  margin: 14px 0 6px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(168,217,176,0.5);
+  gap: 12px;
+}
+
+.result-row:last-child { border-bottom: none; }
+
+.result-row span:first-child {
+  flex: 0 0 55%;
+  max-width: 55%;
+  color: #444;
+}
+
+.result-row span:last-child {
+  text-align: right;
+  flex: 0 0 45%;
+  max-width: 45%;
+  font-weight: 600;
+  color: var(--dark);
 }
 
 .result-subtotal {
-  font-weight: 600;
-  background: #f0f4ff;
-  border-radius: 6px;
-  padding: 8px 6px !important;
-  margin: 4px 0;
+  font-weight: 700 !important;
+  background: rgba(255,255,255,0.6);
+  border-radius: 8px;
+  padding: 10px 10px !important;
+  margin: 6px 0;
   border-bottom: none !important;
+}
+
+.result-subtotal span { color: var(--green-dark) !important; }
+
+.result-row.total {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--green);
+  margin-top: 10px;
+  border-bottom: none;
+  border-top: 2px solid var(--green-mid);
+  padding-top: 12px;
+}
+
+.result-row.total span { color: var(--green) !important; }
+
+.popular-badge-row {
+  border-bottom: none !important;
+  padding-top: 2px !important;
+  padding-bottom: 6px !important;
+}
+
+.popular-badge-row span:last-child {
+  color: #856404 !important;
+  font-size: 12px !important;
+}
+
+.delivery-note-inline {
+  font-size: 13px;
+  color: #555;
+  margin: 4px 0 8px;
 }
 
 .delivery-note {
   font-size: 12px;
-  color: #888;
+  color: var(--gray-text);
   margin-top: 6px;
   font-style: italic;
 }
 
 .clarify-badge {
-  background: #fff3cd;
+  background: #FFF3CD;
   color: #856404;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
   font-size: 12px;
+  font-weight: 700;
+}
+
+.alt-delivery-row {
+  color: var(--green-dark);
+  font-size: 14px;
   font-weight: 600;
 }
 
-/* Галочка */
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #c0392b;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  position: relative;
-  flex-shrink: 0;
-  margin-top: 2px;
-  transition: background 0.15s, border-color 0.15s;
-}
-input[type="checkbox"]:checked {
-  background: #c0392b;
-  border-color: #c0392b;
-}
-input[type="checkbox"]:checked::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 5px;
-  height: 9px;
-  border: 2.5px solid #fff;
-  border-top: none;
-  border-left: none;
-  transform: translate(-50%, -60%) rotate(45deg);
-}
-
-/* ============================================================
-   PDF КНОПКА
-   ============================================================ */
-.pdf-btn {
-  width: 100%;
-  background: #1a2a5e;
-  color: #fff;
-  border: none;
-  padding: 13px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 16px;
-}
-
-.pdf-btn:hover { background: #2a3a7e; }
-
-#modelPhoto { height: 180px; object-fit: cover; object-position: center 60%; }
-
-/* ============================================================
-   ЛОГОТИП
-   ============================================================ */
-.logo-text {
+/* Попередження (орієнтовна ціна) */
+.preliminary-note {
   font-size: 13px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: #1a2a5e;
-  margin-bottom: 8px;
+  color: #777;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 8px;
+  line-height: 1.5;
 }
 
 /* ============================================================
-   ТЕКСТ ПІД КОМПЛЕКТАЦІЄЮ
+   БЛОК КОНТАКТІВ
    ============================================================ */
-.field-note-color {
-  font-size: 12px;
-  color: #333;
-  margin-top: 6px;
-}
-
-/* ============================================================
-   БЛОК ДІЙ ПІСЛЯ РОЗРАХУНКУ
-   ============================================================ */
-.result-actions {
+.contacts-block {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Кнопка "Подзвонити" — головна */
 .btn-call {
-  display: block;
   width: 100%;
   padding: 15px;
-  background: #c0392b;
-  color: #fff !important;
-  font-size: 18px;
-  font-weight: 700;
-  border-radius: 10px;
-  text-align: center;
+  background: var(--green);
+  color: var(--white);
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
   text-decoration: none;
+  display: block;
+  text-align: center;
   transition: background 0.2s;
 }
-.btn-call:hover { background: #a93226; }
 
-/* Номер телефона під кнопкою */
-.phone-number-text {
-  font-size: 13px;
-  color: #333;
+.btn-call:hover { background: var(--green-dark); }
+
+.phone-under {
   text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
   margin-top: -4px;
 }
 
-/* Кнопка "Написати в месенджер" */
 .btn-messenger {
   width: 100%;
-  padding: 13px;
-  background: #1a2a5e;
-  color: #fff;
+  padding: 14px;
+  background: var(--white);
+  color: var(--green);
+  font-family: 'Nunito', sans-serif;
   font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
+  font-weight: 700;
+  border: 2px solid var(--green);
+  border-radius: var(--radius);
   cursor: pointer;
-  transition: background 0.2s;
+  text-align: center;
+  transition: all 0.2s;
 }
-.btn-messenger:hover { background: #2a3a7e; }
 
-/* Вибір месенджера */
-.messenger-choice {
-  display: flex;
-  flex-direction: column;
+.btn-messenger:hover {
+  background: var(--green-light);
+}
+
+.messenger-list {
+  display: none;
   gap: 8px;
 }
 
-/* Кнопка "Поділитися" */
-.btn-share {
-  width: 100%;
-  padding: 13px;
-  background: transparent;
-  color: #1a2a5e;
-  font-size: 15px;
-  font-weight: 600;
-  border: 1.5px solid #1a2a5e;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
+.messenger-list.open {
+  display: flex;
 }
-.btn-share:hover { background: #f0f4ff; }
 
-/* Текст под поділитися */
-.share-hint {
-  font-size: 13px;
-  color: #333;
+.msg-btn {
+  flex: 1;
+  padding: 11px 0;
+  border-radius: var(--radius);
   text-align: center;
-  line-height: 1.5;
-  margin-top: -4px;
-}
-
-/* Кнопка "Новий розрахунок" */
-.btn-new-calc {
-  width: 100%;
-  padding: 13px;
-  background: transparent;
-  color: #4a6cf7;
-  font-size: 15px;
-  font-weight: 500;
-  border: 1.5px solid #4a6cf7;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 6px;
-  transition: all 0.2s;
-}
-.btn-new-calc:hover { background: #f0f4ff; }
-
-/* Ссылка каталога — разделитель сверху */
-.catalog-link {
-  display: block;
-  text-align: center;
-  font-size: 13px;
-  color: #333;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white) !important;
   text-decoration: none;
-  border-top: 1px solid #e0e0e0;
-  padding-top: 16px;
-  margin-top: 8px;
-  margin-bottom: 4px;
-}
-.catalog-link:hover { color: #1a2a5e; }
-
-/* Промо-блок — разделитель сверху */
-.promo-block-divider {
-  border-top: 1px solid #e0e0e0;
-  margin-top: 8px;
+  transition: opacity 0.15s;
 }
 
-/* Watermark — скрыть */
-.watermark { display: none; }
+.msg-btn:hover { opacity: 0.88; }
+.msg-btn.viber    { background: #7360F2; }
+.msg-btn.telegram { background: #2AABEE; }
+.msg-btn.whatsapp { background: #25D366; }
+
+.btn-pdf {
+  width: 100%;
+  padding: 13px;
+  background: var(--white);
+  color: #555;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.btn-pdf:hover {
+  background: var(--gray-bg);
+  border-color: #999;
+}
+
+.share-banner-wrap {
+  cursor: pointer;
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: block;
+}
+
+.share-banner-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius);
+}
+
+.bottom-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-secondary {
+  padding: 12px 8px;
+  background: var(--white);
+  color: var(--dark);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.btn-secondary:hover {
+  background: var(--gray-bg);
+  border-color: #999;
+}
+
+.promo-line {
+  text-align: center;
+  font-size: 12px;
+  color: #BBB;
+  margin-top: 6px;
+}
+
+.promo-line a {
+  color: #AAA;
+  text-decoration: underline;
+}
+
+/* ============================================================
+   ПОМИЛКИ
+   ============================================================ */
+.error-msg {
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #FFF5F5;
+  border-radius: 8px;
+  border-left: 3px solid var(--red);
+}
+
+.loading {
+  text-align: center;
+  color: var(--gray-text);
+  font-size: 15px;
+  margin-top: 16px;
+}
+
+/* ============================================================
+   ФОТО МОДЕЛІ
+   ============================================================ */
+#modelPhoto {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center 60%;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--gray-border);
+  margin-top: 12px;
+  display: none;
+}
+
+/* ============================================================
+   ПРИХОВАНИЙ БЛОК (прогресивне розкриття)
+   ============================================================ */
+.field.hidden-field {
+  display: none;
+}
+
+/* ============================================================
+   АДАПТИВ
+   ============================================================ */
+@media (max-width: 480px) {
+  .calculator {
+    padding: 22px 16px;
+  }
+
+  .calc-header h1 {
+    font-size: 19px;
+  }
+
+  .type-btns {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bottom-btns {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .result-row.total {
+    font-size: 18px;
+  }
+}

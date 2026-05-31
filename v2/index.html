@@ -1,178 +1,175 @@
 <!DOCTYPE html>
-<html lang="uk" data-theme="light" spellcheck="false">
+<html lang="uk" spellcheck="false">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Розпашні ворота — розрахунок вартості онлайн | Verbadom</title>
   <meta name="description" content="Розрахуйте вартість розпашних воріт з доставкою по Україні. Ковані та сучасні ворота з хвірткою. Безкоштовний онлайн-калькулятор." />
-  <meta name="keywords" content="розпашні ворота ціна, ковані ворота купити, сучасні ворота, ворота з хвірткою, калькулятор воріт онлайн, ворота доставка Україна" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://verbadom.github.io/kalkulyator-vorit/" />
+  <link rel="canonical" href="https://verbadom.github.io/kalkulyator-vorit/v2/" />
   <meta property="og:title" content="Розпашні ворота — розрахунок вартості онлайн | Verbadom" />
-  <meta property="og:description" content="Розрахуйте вартість розпашних воріт з доставкою по Україні. Ковані та сучасні ворота з хвірткою." />
+  <meta property="og:description" content="Розрахуйте вартість розпашних воріт з доставкою по Україні." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://verbadom.github.io/kalkulyator-vorit/" />
   <meta property="og:locale" content="uk_UA" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Калькулятор розпашних воріт",
-    "description": "Безкоштовний онлайн-калькулятор вартості розпашних воріт з доставкою по Україні. Ковані та сучасні ворота з хвірткою або без.",
-    "url": "https://verbadom.github.io/kalkulyator-vorit/",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "inLanguage": "uk-UA",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "UAH", "description": "Безкоштовний розрахунок" },
-    "provider": { "@type": "Organization", "name": "Verbadom", "url": "https://verbadom.com.ua", "telephone": "+380673990560", "address": { "@type": "PostalAddress", "addressLocality": "Одеса", "addressCountry": "UA" } }
-  }
-  </script>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    #city-dropdown { display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #c8d0e0; border-top:none; border-radius:0 0 8px 8px; box-shadow:0 6px 20px rgba(0,0,0,0.12); z-index:1000; max-height:220px; overflow-y:auto; }
-    .city-option { padding:11px 14px; cursor:pointer; font-size:14px; color:#222; border-bottom:1px solid #f0f0f0; line-height:1.3; }
-    .city-option:hover, .city-option.active { background:#eef3ff; }
-    .city-option:last-child { border-bottom:none; }
-    .city-option-main { font-weight:500; }
-    .city-option-sub { font-size:12px; color:#888; margin-top:1px; }
-    #city.has-selection { border-color:#4caf50; }
-    .width-hint { display:none; margin-top:8px; padding:8px 12px; background:#fff8e1; border-left:3px solid #f0a030; border-radius:6px; font-size:13px; color:#7a5800; line-height:1.5; }
-    .width-schema { margin-top:10px; }
-    .width-schema svg { width:100%; height:auto; }
-    .delivery-note-inline { font-size:13px; color:#444; margin:4px 0 8px; padding-left:2px; }
-  </style>
 </head>
 <body>
 <div class="calculator">
+
+  <!-- ШАПКА -->
   <div class="calc-header">
-    <div>
-      <div class="logo-text">VERBADOM</div>
-      <h1>Калькулятор воріт</h1>
-      <p class="subtitle">Розрахуйте вартість воріт з доставкою по Україні</p>
+    <div class="calc-logo">🌿 VERBADOM</div>
+    <div class="calc-logo-sub">Ворота з доставкою по всій Україні</div>
+    <h1>Порахуйте ціну воріт і доставку</h1>
+    <div class="calc-welcome">
+      Вітаємо! 👋 Порахуємо ціну воріт разом &nbsp;·&nbsp; Це займе 1 хвилину ☀️
     </div>
   </div>
 
-  <div class="field">
-    <label for="gateType">Тип воріт</label>
-    <select id="gateType" style="color-scheme:light" spellcheck="false">
-      <option value="">— Оберіть тип —</option>
-      <option value="forged">Ковані</option>
-      <option value="modern">Сучасні</option>
-    </select>
+  <!-- 1. ТИП ВОРІТ -->
+  <div class="field" id="fieldGateType">
+    <label class="field-label">Які ворота вас цікавлять?</label>
+    <div class="type-btns">
+      <button class="type-btn" id="btnForged" onclick="selectGateType('forged')">КОВАНІ</button>
+      <button class="type-btn" id="btnModern" onclick="selectGateType('modern')">СУЧАСНІ</button>
+    </div>
   </div>
 
-  <div class="field">
-    <label for="gateModel">Модель</label>
-    <select id="gateModel" style="color-scheme:light" disabled spellcheck="false">
-      <option value="">— Спочатку оберіть тип —</option>
-    </select>
-    <img id="modelPhoto" src="" alt="" style="display:none; margin-top:12px; width:100%; height:auto; border-radius:10px;" />
+  <!-- 2. МОДЕЛЬ -->
+  <div class="field hidden-field" id="fieldGateModel">
+    <label class="field-label">Модель</label>
+    <div class="custom-select-wrap" id="modelSelectWrap">
+      <button class="custom-select-btn placeholder" id="modelSelectBtn" onclick="toggleDropdown('modelDropdown', 'modelSelectBtn')">
+        <span id="modelSelectText">— Оберіть модель —</span>
+        <svg class="custom-select-arrow" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1l5 5 5-5" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="custom-select-dropdown" id="modelDropdown"></div>
+    </div>
+    <img id="modelPhoto" src="" alt="" />
     <div id="includedBlock" class="included-block" style="display:none"></div>
   </div>
 
-  <div class="field">
-    <label for="configuration">Варіант комплектації</label>
-    <select id="configuration" style="color-scheme:light" spellcheck="false">
-      <option value="">— Оберіть комплектацію —</option>
-      <option value="with_separate_wicket">Брама + хвіртка окремо</option>
-      <option value="without_wicket">Брама без хвіртки</option>
-      <option value="with_builtin_wicket">Брама з хвірткою всередині (врізна)</option>
-    </select>
-    <p class="field-note-color">Колір металу не впливає на вартість</p>
-  </div>
-
-  <div class="field">
-    <label for="width">Ширина комплекту (м)</label>
-    <p class="field-note-top">Вкажіть відстань між крайніми стовпами комплекту</p>
-    <input type="text" id="width" placeholder="наприклад: 4,52" inputmode="decimal" />
-    <p class="field-note">Від 2,5 м до 6 м.</p>
-    <div class="width-hint" id="widthHint"></div>
-    <div class="width-schema">
-      <svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrowR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </marker>
-          <marker id="arrowL" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M8 1L2 5L8 9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </marker>
-        </defs>
-        <line x1="40" y1="105" x2="360" y2="105" stroke="#bbb" stroke-width="1.5"/>
-        <rect x="55" y="35" width="22" height="70" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
-        <rect x="189" y="35" width="22" height="70" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
-        <rect x="323" y="35" width="22" height="70" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
-        <line x1="80" y1="62" x2="320" y2="62" stroke="#c0392b" stroke-width="1.8" marker-start="url(#arrowL)" marker-end="url(#arrowR)"/>
-        <!-- Жёлтый прямоугольник центрируем строго по линии x1=80..x2=320, центр=200 -->
-        <rect x="142" y="50" width="116" height="22" rx="3" fill="#fff8e1"/>
-        <text x="200" y="61" text-anchor="middle" dominant-baseline="central" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="600" fill="#c0392b">Ширина комплекту</text>
-        <text x="66" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#555">стовп</text>
-        <text x="200" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#555">стовп</text>
-        <text x="334" y="24" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#555">стовп</text>
-        <text x="200" y="122" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#555">між внутрішніми сторонами крайніх стовпів</text>
-      </svg>
+  <!-- 3. КОМПЛЕКТАЦІЯ -->
+  <div class="field hidden-field" id="fieldConfig">
+    <label class="field-label">Що вам потрібно?</label>
+    <div class="radio-group" id="configGroup">
+      <div class="radio-option" data-value="with_separate_wicket" onclick="selectRadio('configGroup', this, 'selectedConfig')">
+        <div class="radio-dot"></div>
+        <div class="radio-text">Ворота + хвіртка окремо</div>
+      </div>
+      <div class="radio-option" data-value="without_wicket" onclick="selectRadio('configGroup', this, 'selectedConfig')">
+        <div class="radio-dot"></div>
+        <div class="radio-text">Тільки ворота</div>
+      </div>
+      <div class="radio-option" data-value="with_builtin_wicket" onclick="selectRadio('configGroup', this, 'selectedConfig')">
+        <div class="radio-dot"></div>
+        <div class="radio-text">Ворота з хвірткою всередині</div>
+      </div>
     </div>
-    <div class="height-notice">ℹ️ Висота воріт до 2,1 м — не впливає на ціну</div>
+    <div class="width-hint" id="configHint" style="display:none"></div>
   </div>
 
-  <div class="field">
-    <label for="coating">Тип покриття</label>
-    <select id="coating" style="color-scheme:light" spellcheck="false">
-      <option value="" disabled selected>— Оберіть тип покриття —</option>
-      <option value="0">Глянець 0,3 мм (базовий варіант)</option>
-    </select>
-    <p id="coatingNote" class="field-note"></p>
+  <!-- 4. ШИРИНА -->
+  <div class="field hidden-field" id="fieldWidth">
+    <label class="field-label" for="width">Загальна ширина між стовпами (в метрах)</label>
+    <input type="text" id="width" placeholder="наприклад: 4.53" inputmode="decimal" autocomplete="off" />
+    <p class="field-note">Від 2,5 до 6 м — будь-який розмір</p>
+    <div class="width-hint" id="widthHint"></div>
+    <div class="height-notice">💡 Висота до 2,1 м — ціна не змінюється</div>
   </div>
 
-  <div class="field" id="lockField" style="display:none">
-    <label class="checkbox-label">
-      <input type="checkbox" id="lock" />
-      <span>Замок у хвіртку з встановленням (+1 500 грн)<span class="note">тільки для кованих воріт</span></span>
-    </label>
+  <!-- 5. ПОКРИТТЯ -->
+  <div class="field hidden-field" id="fieldCoating">
+    <label class="field-label">Оберіть якість покриття:</label>
+    <p class="field-note-top">Колір не впливає на ціну — тільки якість покриття</p>
+    <div class="radio-group" id="coatingGroup">
+      <!-- Заповнюється динамічно -->
+    </div>
   </div>
 
-  <div class="field">
-    <label class="checkbox-label">
-      <input type="checkbox" id="bolts" />
-      <span>Засуви на створки воріт, 2 шт (+600 грн)<span class="note">Утримують створки від руху вітру</span></span>
-    </label>
+  <!-- 6. ЗАМОК (ковані) / ЗАМОК ВКЛЮЧЕНО (сучасні) -->
+  <div class="field hidden-field" id="fieldLock">
+    <!-- Заповнюється динамічно -->
   </div>
 
-  <div class="field">
-    <label for="post">Стовпи (необов'язково)</label>
-    <select id="post" style="color-scheme:light" spellcheck="false">
-      <option value="none">Без стовпів</option>
-      <option value="775">Нефарбований 80×60, стінка 2мм / висота 3м</option>
-      <option value="1120">Нефарбований 80×80, стінка 3мм / висота 3м</option>
-      <option value="750">Фарбований 60×60, стінка 2мм / висота 2м</option>
-      <option value="1240">Фарбований 80×80, стінка 3мм / висота 2м</option>
-      <option value="950">Фарбований 60×60, стінка 2мм / висота 2,4м</option>
-      <option value="1560">Фарбований 80×80, стінка 3мм / висота 2,4м</option>
-    </select>
-    <p class="field-note">⚠️ Стовпи доставляються лише машиною заводу</p>
+  <!-- 7. ФІКСАТОРИ СТВОРОК -->
+  <div class="field hidden-field" id="fieldBolts">
+    <label class="field-label">Додаткові опції</label>
+    <div class="checkbox-option" id="boltsOption" onclick="toggleCheckbox('boltsOption', 'boltsChecked')">
+      <div class="checkbox-box"></div>
+      <div class="checkbox-text">
+        Фіксатори створок — штирі в землю
+        <span class="checkbox-sub">Утримують ворота від вітру · +<span id="boltsPriceLabel">600</span> грн</span>
+      </div>
+    </div>
   </div>
 
-  <div class="field" id="postQtyField" style="display:none">
-    <label for="postQty">Кількість стовпів</label>
-    <input type="number" id="postQty" value="2" min="1" max="10" />
+  <!-- 8. СТОВПИ -->
+  <div class="field hidden-field" id="fieldPosts">
+    <label class="field-label">Стовпи (не обов'язково)</label>
+    <p class="field-note-top">Стовпи доставляємо лише разом з воротами машиною заводу. Нова Пошта такі вироби не приймає.</p>
+    <div id="postsStepWrap">
+      <!-- Крок 1: Тип -->
+      <div class="posts-step" id="postStep1">
+        <div class="posts-step-label">Крок 1 — Тип</div>
+        <div class="step-btns">
+          <button class="step-btn" onclick="selectPostType('painted')">Фарбовані</button>
+          <button class="step-btn" onclick="selectPostType('unpainted')">Нефарбовані</button>
+          <button class="step-btn" onclick="selectPostType('none')">Без стовпів</button>
+        </div>
+      </div>
+      <!-- Крок 2/3: динамічно -->
+      <div id="postStep2" style="display:none"></div>
+      <div id="postStep3" style="display:none"></div>
+    </div>
+    <!-- Лічильник -->
+    <div id="postQtyWrap" style="display:none" class="post-qty-wrap">
+      <span class="post-qty-label">Кількість:</span>
+      <div class="qty-counter">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-value" id="postQtyVal">2</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <!-- Петлі -->
+    <div id="fieldHinges" style="display:none; margin-top:12px;">
+      <div class="checkbox-option" id="hingesOption" onclick="toggleCheckbox('hingesOption', 'hingesChecked')">
+        <div class="checkbox-box"></div>
+        <div class="checkbox-text">
+          Приварити петлі на заводі
+          <span class="checkbox-sub">Заводська зварка + порошкове фарбування разом зі стовпами · +150 грн/шт</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="field">
-    <label for="city">Населений пункт</label>
-    <div style="position:relative;">
-      <input type="text" id="city" autocomplete="off" placeholder="Введіть назву міста або села..." />
+  <!-- 9. НАСЕЛЕНИЙ ПУНКТ -->
+  <div class="field hidden-field" id="fieldCity">
+    <label class="field-label" for="city">Куди доставити ворота?</label>
+    <div class="city-wrap">
+      <input type="text" id="city" autocomplete="off" placeholder="Місто або село..." />
       <div id="city-dropdown"></div>
     </div>
-    <p class="field-note">Вводьте тільки назву населеного пункту — оберіть зі списку підказок</p>
+    <p class="field-note">Введіть назву і оберіть зі списку</p>
   </div>
 
-  <button id="calculateBtn">Розрахувати вартість</button>
+  <!-- ФРАЗА "ГОТОВО" + КНОПКА -->
+  <div class="calc-ready-msg" id="calcReadyMsg">Готово! Залишилось натиснути одну кнопку 👇</div>
+  <button id="calculateBtn">Показати мою ціну →</button>
+
+  <!-- РЕЗУЛЬТАТ -->
   <div id="result" class="result hidden"></div>
-  <button id="resetBtn" class="btn-reset" style="display:none">🔄 Почати новий розрахунок</button>
+
+  <!-- КНОПКА СКИДАННЯ -->
+  <button id="resetBtn" class="btn-reset" style="display:none">↺ Новий розрахунок</button>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="app.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2N2N_0D0GVhjQ5t0zwc9TXxJwsfl8OGM&libraries=places&language=uk&v=weekly&callback=initGoogleAutocomplete"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2N2N_0D0GVhjQ5t0zwc9TXxJwsfl8OGM&libraries=places&language=uk&v=weekly&callback=initGoogleAutocomplete" async defer></script>
 </body>
 </html>
