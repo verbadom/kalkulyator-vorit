@@ -217,7 +217,7 @@ function selectGateType(type) {
   hideField('fieldConfig');
   hideField('fieldWidth');
   hideField('fieldCoating');
-  hideField('fieldLock');
+  document.getElementById('fieldLock').innerHTML = '';
   hideField('fieldBolts');
   hideField('fieldPosts');
   hideField('fieldCity');
@@ -445,7 +445,7 @@ function buildCoatingOptions() {
       options = [
         { value: 0,                  label: 'Базовий — глянець',                  surcharge: 0,                sub: '' },
         { value: matoviy.surcharge,  label: `Кращий — матовий +${matoviy.surcharge} грн`,  surcharge: matoviy.surcharge,  sub: '' },
-        { value: dvustoron.surcharge, label: `Найкращий — матовий з обох боків ⭐ +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
+        { value: dvustoron.surcharge, label: `Матовий з обох боків ⭐ +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
         { value: derevo.surcharge,   label: `Під дерево / 3D +${derevo.surcharge} грн`,    surcharge: derevo.surcharge,   sub: '' },
       ];
     }
@@ -457,7 +457,7 @@ function buildCoatingOptions() {
     } else if (model.doubleSided) {
       options = [
         { value: 0,                   label: 'Базовий — матовий односторонній',               surcharge: 0 },
-        { value: dvustoron.surcharge, label: `Найкращий — матовий з обох боків ⭐ +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
+        { value: dvustoron.surcharge, label: `Матовий з обох боків ⭐ +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
       ];
     } else {
       options = [{ value: 0, label: 'Матовий кольоровий — входить у вартість', surcharge: 0, fixed: true }];
@@ -509,7 +509,7 @@ function buildCoatingOptions() {
 function buildLockField() {
   const field = document.getElementById('fieldLock');
   field.innerHTML = '';
-  showField('fieldLock');
+  
 
   if (selectedType === 'forged') {
     // Чекбокс замка для кованих
@@ -524,7 +524,7 @@ function buildLockField() {
     `;
     // Показувати тільки якщо комплектація НЕ "тільки ворота"
     if (selectedConfig === 'without_wicket') {
-      hideField('fieldLock');
+      document.getElementById('fieldLock').innerHTML = '';
     }
   } else if (selectedType === 'modern') {
     // Замок вже включено
@@ -534,7 +534,7 @@ function buildLockField() {
       </div>
     `;
     if (selectedConfig === 'without_wicket') {
-      hideField('fieldLock');
+      document.getElementById('fieldLock').innerHTML = '';
     }
   }
 }
@@ -1054,7 +1054,6 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
         <img src="banner-share.png" alt="Поділитися калькулятором" />
       </a>
       <div class="bottom-btns">
-        <button class="btn-secondary" onclick="document.getElementById('resetBtn').click()">↺ Новий розрахунок</button>
         <a class="btn-secondary" href="https://verbadom.com.ua/ua/g140836156-vorota-kalitkoj-raspashnye" target="_blank">Всі ворота на сайті →</a>
       </div>
       <p class="promo-line">Потрібен калькулятор для вашого бізнесу? <a href="mailto:buildertools.pro@gmail.com">buildertools.pro@gmail.com</a></p>
@@ -1140,7 +1139,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   hideField('fieldConfig');
   hideField('fieldWidth');
   hideField('fieldCoating');
-  hideField('fieldLock');
+  document.getElementById('fieldLock').innerHTML = '';
   hideField('fieldBolts');
   hideField('fieldPosts');
   hideField('fieldCity');
