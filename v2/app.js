@@ -938,7 +938,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   try {
     if (!selectedLat || !selectedLng) throw new Error('no coords');
-    const response = await fetch('https://n8n.verbadom.com.ua/webhook/cardinal-delivery', {
+    const response = await fetch('https://n8n.verbadom.com.ua/webhook/cardinal-delivery-v2', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lat: selectedLat, lng: selectedLng, city: selectedCityName })
