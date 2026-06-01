@@ -938,7 +938,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   try {
     if (!selectedLat || !selectedLng) throw new Error('no coords');
-    const response = await fetch('https://n8n.verbadom.com.ua/webhook/cardinal-delivery-v2', {
+    const response = await fetch('https://n8n.verbadom.com.ua/webhook/cardinal-delivery', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lat: selectedLat, lng: selectedLng, city: selectedCityName })
@@ -1007,11 +1007,18 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   // Доставка
   if (deliveryStatus === 'on_route') {
-    const minT = totalComplex + 500;
-    const maxT = totalComplex + 900;
-    html += `<div class="result-row"><span>Доставка</span><span>500–900 грн</span></div>`;
-    html += `<p class="delivery-note-inline">Точна сума залежить від адреси доставки</p>`;
-    html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minT.toLocaleString('uk-UA')} до ${maxT.toLocaleString('uk-UA')} грн</span></div>`;
+    const isKyiv = selectedCityName.toLowerCase().includes('київ') || selectedCityName.toLowerCase().includes('киев');
+    if (isKyiv) {
+      const kyivTotal = totalComplex + 900;
+      html += `<div class="result-row"><span>Доставка</span><span>900 грн</span></div>`;
+      html += `<div class="result-row total"><span>Разом до сплати</span><span>${kyivTotal.toLocaleString('uk-UA')} грн</span></div>`;
+    } else {
+      const minT = totalComplex + 500;
+      const maxT = totalComplex + 900;
+      html += `<div class="result-row"><span>Доставка</span><span>500–900 грн</span></div>`;
+      html += `<p class="delivery-note-inline">Точна сума залежить від адреси доставки</p>`;
+      html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minT.toLocaleString('uk-UA')} до ${maxT.toLocaleString('uk-UA')} грн</span></div>`;
+    }
   } else if (deliveryStatus === 'nova_poshta') {
     html += `<div class="result-row"><span>Доставка (Нова Пошта на вантажне відділення)</span><span>4 000 грн</span></div>`;
     if (postInfo) {
