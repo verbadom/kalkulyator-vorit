@@ -938,7 +938,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   try {
     if (!selectedLat || !selectedLng) throw new Error('no coords');
-    const response = await fetch('https://n8n.verbadom.com.ua/webhook/cardinal-delivery-v2', {
+    const response = await fetch('https://n8n.verbadom.com.ua/webhook/cardinal-delivery', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lat: selectedLat, lng: selectedLng, city: selectedCityName })
@@ -951,6 +951,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     else if (data.status === 'deviation') { deliveryPrice = data.price; deliveryStatus = 'deviation'; }
     else if (data.status === 'nova_poshta') { deliveryPrice = 4000; deliveryStatus = 'nova_poshta'; }
     else if (data.status === 'clarify')  deliveryStatus = 'clarify';
+    else if (data.status === 'clarify_extended') deliveryStatus = 'clarify_extended';
   } catch (e) {
     deliveryStatus = 'error';
   }
@@ -1026,6 +1027,15 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     html += `<div class="result-row"><span>Доставка</span><span><span class="clarify-badge">Уточнюємо з менеджером</span></span></div>`;
     html += `<p class="delivery-note">Відстань від маршруту — ${distKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Можливі варіанти:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — 4 000 грн</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
+  } else if (deliveryStatus === 'clarify_extended') {
+    const d = window._lastDeliveryData;
+    const minDelivery = d.minDeliveryPrice || 0;
+    const novaPrice = d.novaPoshtaPrice || 4000;
+    const minTotal = totalComplex + minDelivery;
+    const maxTotal = totalComplex + novaPrice;
+    html += `<div class="result-row"><span>Доставка</span><span><span class="clarify-badge">Потребує уточнення у логіста</span></span></div>`;
+    html += `<p class="delivery-note">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Альтернативи:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн</p>`;
+    html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString('uk-UA')} до ${maxTotal.toLocaleString('uk-UA')} грн</span></div>`;
   } else {
     html += `<div class="result-row"><span>Доставка</span><span>Уточніть у менеджера</span></div>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
