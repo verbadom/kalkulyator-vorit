@@ -561,7 +561,11 @@ function selectPostType(type) {
   const ho = document.getElementById('hingesOption');
   if (ho) ho.classList.remove('checked');
 
-  if (type === 'none') return;
+  if (type === 'none') {
+    document.getElementById('postQtyWrap').style.display = 'none';
+    document.getElementById('fieldHinges').style.display = 'none';
+    return;
+  }
 
   if (type === 'unpainted') {
     // ЗМІНА 7: показуємо тільки нефарбовані
@@ -622,7 +626,7 @@ function renderPostCards(stepId, posts) {
       <div class="step-btns">
         ${posts.map(p => `
           <button class="step-btn" onclick="selectPostFinal('${p.key}')">
-            ${p.name.replace('Нефарбований ', '').replace('Фарбований ', '')}
+            ${p.name.replace('Нефарбований ', '').replace('Фарбований ', '').replace('Некрашеный ', '').replace('Крашеный ', '')}
             <span class="step-btn-sub">${p.chars} · висота ${p.height} · ${p.price.toLocaleString('uk-UA')} грн</span>
           </button>
         `).join('')}
@@ -634,16 +638,29 @@ function renderPostCards(stepId, posts) {
 function selectPostFinal(key) {
   selectedPostKey = key;
 
-  const allBtns = document.querySelectorAll('#postStep2 .step-btn, #postStep3 .step-btn');
-  allBtns.forEach(b => {
-    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${key}'`)) {
-      b.classList.add('active');
+  // Скидаємо всі активні кнопки в обох кроках, потім активуємо потрібну
+  document.querySelectorAll('#postStep2 .step-btn, #postStep3 .step-btn').forEach(b => {
+    const onc = b.getAttribute('onclick') || '';
+    if (onc.startsWith('selectPostFinal')) {
+      b.classList.remove('active');
+      if (onc.includes(`'${key}'`)) b.classList.add('active');
     }
   });
 
-  // ЗМІНА 8: показуємо кількість після вибору будь-якої картки
+  // Показуємо кількість
   document.getElementById('postQtyWrap').style.display = 'flex';
-  document.getElementById('fieldHinges').style.display = 'block';
+
+  // Петлі — текст залежить від типу столба
+  const post = POST_DATA.find(p => p.key === key);
+  const fieldHinges = document.getElementById('fieldHinges');
+  const hingesOption = document.getElementById('hingesOption');
+  if (post && fieldHinges && hingesOption) {
+    const subText = post.painted
+      ? 'Заводська зварка + порошкове фарбування разом зі стовпами · +150 грн/шт'
+      : 'Заводська зварка · +150 грн/шт';
+    hingesOption.querySelector('.checkbox-sub').textContent = subText;
+    fieldHinges.style.display = 'block';
+  }
 }
 
 function changeQty(delta) {
@@ -1137,9 +1154,9 @@ async function generatePDF() {
   const pdfDiv = document.createElement('div');
   pdfDiv.style.cssText = `
     position:fixed; left:-9999px; top:0;
-    width:${isMobile ? 480 : 595}px; background:#fff; padding:0;
+    width:595px; background:#fff; padding:0;
     font-family:'Segoe UI',Arial,sans-serif;
-    color:#1a1a2e; font-size:${isMobile ? 14 : 15}px; line-height:1.6;
+    color:#1a1a2e; font-size:16px; line-height:1.7;
   `;
 
   const now     = new Date();
@@ -1160,24 +1177,24 @@ async function generatePDF() {
     const pad        = isMobile ? '6px 12px' : '8px 14px';
 
     if (isPopular) {
-      verticalRowsHTML += `<div style="padding:2px 16px 8px;color:#856404;font-size:${isMobile ? 13 : 13}px;">⭐ Найпопулярніший вибір</div>`;
+      verticalRowsHTML += `<div style="padding:2px 20px 8px;color:#856404;font-size:14px;">⭐ Найпопулярніший вибір</div>`;
     } else if (isTotal) {
       verticalRowsHTML += `
-        <div style="background:#2E9B3F;padding:14px 16px;border-radius:8px;margin:12px 0 0;">
-          <div style="color:#fff;font-size:${isMobile ? 13 : 14}px;font-weight:600;opacity:0.85;">${label}</div>
-          <div style="color:#fff;font-weight:800;font-size:${isMobile ? 20 : 22}px;margin-top:3px;">${value}</div>
+        <div style="background:#2E9B3F;padding:16px 20px;border-radius:8px;margin:14px 0 0;">
+          <div style="color:#fff;font-size:14px;font-weight:600;opacity:0.85;">${label}</div>
+          <div style="color:#fff;font-weight:800;font-size:26px;margin-top:4px;">${value}</div>
         </div>`;
     } else if (isSubtotal) {
       verticalRowsHTML += `
-        <div style="background:#E8F5EB;padding:12px 16px;border-radius:6px;margin:10px 0;">
-          <div style="color:#888;font-size:${isMobile ? 12 : 13}px;">${label}</div>
-          <div style="color:#1A6B28;font-weight:700;font-size:${isMobile ? 17 : 19}px;margin-top:2px;">${value}</div>
+        <div style="background:#E8F5EB;padding:14px 20px;border-radius:6px;margin:10px 0;">
+          <div style="color:#888;font-size:13px;">${label}</div>
+          <div style="color:#1A6B28;font-weight:700;font-size:20px;margin-top:3px;">${value}</div>
         </div>`;
     } else {
       verticalRowsHTML += `
-        <div style="padding:10px 16px;border-bottom:1px solid #eee;">
-          <div style="color:#888;font-size:${isMobile ? 12 : 13}px;">${label}</div>
-          <div style="color:#1a1a2e;font-weight:600;font-size:${isMobile ? 15 : 17}px;margin-top:2px;">${value}</div>
+        <div style="padding:12px 20px;border-bottom:1px solid #eee;">
+          <div style="color:#888;font-size:13px;">${label}</div>
+          <div style="color:#1a1a2e;font-weight:600;font-size:17px;margin-top:3px;">${value}</div>
         </div>`;
     }
   });
@@ -1295,3 +1312,29 @@ function track(eventName, city) {
 }
 
 track('page_view');
+
+/* ============================================================
+   ТЕСТ PDF — для перевірки вигляду без заповнення форми
+   ============================================================ */
+function testPDF() {
+  // Підставляємо тестові дані в результат
+  const resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = `
+    <div class="result-title">✅ Ваш розрахунок готовий!</div>
+    <div class="result-section-title">Склад комплекту</div>
+    <div class="result-row"><span>Модель</span><span>Профнастил Т-10, вертикаль</span></div>
+    <div class="result-row"><span>Комплектація</span><span>Ворота + хвіртка окремо</span></div>
+    <div class="result-row"><span>Ширина</span><span>4.9 м</span></div>
+    <div class="result-row"><span>Покриття</span><span>Матовий з обох боків +500 грн</span></div>
+    <div class="result-row popular-badge-row"><span></span><span>⭐ Найпопулярніший вибір</span></div>
+    <div class="result-row"><span>Замок у хвіртку</span><span style="color:var(--green);">входить у вартість</span></div>
+    <div class="result-row"><span>Фіксатори створок (2 шт)</span><span>+600 грн</span></div>
+    <div class="result-row result-subtotal"><span>Ворота з комплектуючими</span><span>28 000 грн</span></div>
+    <div class="result-row"><span>Доставка до вашого двору</span><span>900 грн</span></div>
+    <div class="result-row total"><span>Разом до сплати</span><span>28 900 грн</span></div>
+    <p class="preliminary-note">Орієнтовна ціна. Менеджер уточнить деталі при замовленні 👍</p>
+  `;
+  resultDiv.classList.remove('hidden');
+  generatePDF();
+}
+

@@ -163,6 +163,19 @@
   <!-- КНОПКА СКИДАННЯ (прихована, використовується з JS) -->
   <button id="resetBtn" class="btn-reset" style="display:none">↺ Новий розрахунок</button>
 
+  <!-- ТЕСТ PDF (тільки в режимі ?mode=test) -->
+  <script>
+    if (new URLSearchParams(window.location.search).get('mode') === 'test') {
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.createElement('button');
+        btn.textContent = '🧪 Тест PDF';
+        btn.style.cssText = 'width:100%;padding:12px;margin-top:10px;background:#FF6B35;color:#fff;font-family:Nunito,sans-serif;font-size:15px;font-weight:700;border:none;border-radius:10px;cursor:pointer;';
+        btn.onclick = testPDF;
+        document.querySelector('.calculator').appendChild(btn);
+      });
+    }
+  </script>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
