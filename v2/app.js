@@ -1177,24 +1177,24 @@ async function generatePDF() {
     const pad        = isMobile ? '6px 12px' : '8px 14px';
 
     if (isPopular) {
-      verticalRowsHTML += `<div style="padding:2px 20px 8px;color:#856404;font-size:14px;">⭐ Найпопулярніший вибір</div>`;
+      verticalRowsHTML += `<div style="padding:2px 32px 10px;color:#856404;font-size:22px;">⭐ Найпопулярніший вибір</div>`;
     } else if (isTotal) {
       verticalRowsHTML += `
-        <div style="background:#2E9B3F;padding:16px 20px;border-radius:8px;margin:14px 0 0;">
-          <div style="color:#fff;font-size:14px;font-weight:600;opacity:0.85;">${label}</div>
-          <div style="color:#fff;font-weight:800;font-size:26px;margin-top:4px;">${value}</div>
+        <div style="background:#2E9B3F;padding:22px 32px;margin:14px 0 0;">
+          <div style="color:#fff;font-size:24px;font-weight:600;opacity:0.85;">${label}</div>
+          <div style="color:#fff;font-weight:800;font-size:44px;margin-top:4px;">${value}</div>
         </div>`;
     } else if (isSubtotal) {
       verticalRowsHTML += `
-        <div style="background:#E8F5EB;padding:14px 20px;border-radius:6px;margin:10px 0;">
-          <div style="color:#888;font-size:13px;">${label}</div>
-          <div style="color:#1A6B28;font-weight:700;font-size:20px;margin-top:3px;">${value}</div>
+        <div style="background:#E8F5EB;padding:18px 32px;margin:10px 0;">
+          <div style="color:#888;font-size:20px;">${label}</div>
+          <div style="color:#1A6B28;font-weight:700;font-size:36px;margin-top:4px;">${value}</div>
         </div>`;
     } else {
       verticalRowsHTML += `
-        <div style="padding:12px 20px;border-bottom:1px solid #eee;">
-          <div style="color:#888;font-size:13px;">${label}</div>
-          <div style="color:#1a1a2e;font-weight:600;font-size:17px;margin-top:3px;">${value}</div>
+        <div style="padding:18px 32px;border-bottom:1px solid #eee;">
+          <div style="color:#888;font-size:20px;">${label}</div>
+          <div style="color:#1a1a2e;font-weight:600;font-size:30px;margin-top:4px;">${value}</div>
         </div>`;
     }
   });
@@ -1214,44 +1214,42 @@ async function generatePDF() {
   const p5 = isMobile ? '0 12px 16px' : '0 14px 20px';
 
   pdfDiv.innerHTML = `
-    <div style="border-top:4px solid #2E9B3F;padding:${p};border-bottom:1px solid #e8ecf4;">
+    <div style="border-top:4px solid #2E9B3F;padding:20px 32px 16px;border-bottom:1px solid #e8ecf4;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <!-- ЗМІНА 14: логотип зеленого кольору -->
-          <div style="font-size:${isMobile ? 17 : 22}px;font-weight:900;color:#2E9B3F;letter-spacing:2px;">🌿 VERBADOM</div>
-          <div style="font-size:${isMobile ? 10 : 11}px;color:#888;margin-top:2px;">Ворота з доставкою по всій Україні</div>
-          <div style="font-size:${isMobile ? 10 : 11}px;color:#888;">verbadom.com.ua</div>
+          <div style="font-size:36px;font-weight:900;color:#2E9B3F;letter-spacing:2px;">🌿 VERBADOM</div>
+          <div style="font-size:18px;color:#888;margin-top:2px;">Ворота з доставкою по всій Україні</div>
+          <div style="font-size:18px;color:#888;">verbadom.com.ua</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:${isMobile ? 10 : 11}px;color:#888;">Розрахунок від</div>
-          <div style="font-size:${isMobile ? 12 : 13}px;font-weight:600;color:#1A6B28;">${dateStr}</div>
-          <div style="font-size:${isMobile ? 10 : 11}px;color:#888;margin-top:3px;">+38 (067) 399-05-60</div>
+          <div style="font-size:18px;color:#888;">Розрахунок від</div>
+          <div style="font-size:22px;font-weight:600;color:#1A6B28;">${dateStr}</div>
+          <div style="font-size:18px;color:#888;margin-top:3px;">+38 (067) 399-05-60</div>
         </div>
       </div>
     </div>
-    <div style="padding:${isMobile ? '10px 12px 6px' : '14px 14px 8px'};">
-      <div style="font-size:${isMobile ? 13 : 16}px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div>
+    <div style="padding:20px 32px 12px;">
+      <div style="font-size:26px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div>
     </div>
-    <!-- ЗМІНА 13: вертикальний список -->
     <div style="padding:0 0 8px;">
       ${verticalRowsHTML}
       ${delivNoteHTML}
       ${errHTML}
     </div>
-    <div style="margin:${p4};padding:7px 10px;background:#fff8e1;border-radius:6px;border-left:3px solid #EF9F27;">
-      <span style="font-size:${isMobile ? 10 : 11}px;color:#7A5800;">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</span>
+    <div style="margin:14px 32px;padding:12px 16px;background:#fff8e1;border-radius:6px;border-left:3px solid #EF9F27;">
+      <span style="font-size:20px;color:#7A5800;">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</span>
     </div>
-    <div style="margin:${p5};padding:${isMobile ? '10px 12px' : '14px 16px'};background:#E8F5EB;border-radius:8px;border:1px solid #A8D9B0;">
-      <div style="font-size:${isMobile ? 11 : 12}px;font-weight:700;color:#1A6B28;margin-bottom:8px;">Зв'яжіться з нами:</div>
+    <div style="margin:0 32px 24px;padding:18px 20px;background:#E8F5EB;border-radius:8px;border:1px solid #A8D9B0;">
+      <div style="font-size:22px;font-weight:700;color:#1A6B28;margin-bottom:10px;">Зв'яжіться з нами:</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <div style="font-size:${isMobile ? 12 : 13}px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
-        <a href="viber://chat?number=%2B380673990560" style="display:inline-block;padding:5px 12px;background:#7360f2;color:#fff;border-radius:20px;text-decoration:none;font-size:${isMobile ? 10 : 11}px;font-weight:600;">Viber</a>
-        <a href="https://t.me/+380673990560" style="display:inline-block;padding:5px 12px;background:#2aabee;color:#fff;border-radius:20px;text-decoration:none;font-size:${isMobile ? 10 : 11}px;font-weight:600;">Telegram</a>
-        <a href="https://wa.me/380673990560" style="display:inline-block;padding:5px 12px;background:#25d366;color:#fff;border-radius:20px;text-decoration:none;font-size:${isMobile ? 10 : 11}px;font-weight:600;">WhatsApp</a>
+        <div style="font-size:26px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
+        <a href="viber://chat?number=%2B380673990560" style="display:inline-block;padding:8px 18px;background:#7360f2;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Viber</a>
+        <a href="https://t.me/+380673990560" style="display:inline-block;padding:8px 18px;background:#2aabee;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Telegram</a>
+        <a href="https://wa.me/380673990560" style="display:inline-block;padding:8px 18px;background:#25d366;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">WhatsApp</a>
       </div>
     </div>
-    <div style="border-top:1px solid #eee;padding:8px 16px;text-align:center;">
-      <span style="font-size:${isMobile ? 9 : 10}px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
+    <div style="border-top:1px solid #eee;padding:10px 32px;text-align:center;">
+      <span style="font-size:18px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
     </div>
   `;
 
