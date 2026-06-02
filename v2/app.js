@@ -90,7 +90,7 @@ async function loadPricesFromSheet() {
         chars: p.chars,
         height: p.height,
         price: p.price,
-        painted: p.name.toLowerCase().includes('фарб'),
+        painted: !p.name.toLowerCase().includes('нефарб') && !p.name.toLowerCase().includes('некраш'),
       }));
     }
 
@@ -1137,9 +1137,9 @@ async function generatePDF() {
   const pdfDiv = document.createElement('div');
   pdfDiv.style.cssText = `
     position:fixed; left:-9999px; top:0;
-    width:${isMobile ? 420 : 595}px; background:#fff; padding:0;
+    width:${isMobile ? 480 : 595}px; background:#fff; padding:0;
     font-family:'Segoe UI',Arial,sans-serif;
-    color:#1a1a2e; font-size:${isMobile ? 11 : 13}px; line-height:1.5;
+    color:#1a1a2e; font-size:${isMobile ? 14 : 15}px; line-height:1.6;
   `;
 
   const now     = new Date();
@@ -1160,24 +1160,24 @@ async function generatePDF() {
     const pad        = isMobile ? '6px 12px' : '8px 14px';
 
     if (isPopular) {
-      verticalRowsHTML += `<div style="padding:2px 12px 6px;color:#856404;font-size:${isMobile ? 10 : 11}px;">⭐ Найпопулярніший вибір</div>`;
+      verticalRowsHTML += `<div style="padding:2px 16px 8px;color:#856404;font-size:${isMobile ? 13 : 13}px;">⭐ Найпопулярніший вибір</div>`;
     } else if (isTotal) {
       verticalRowsHTML += `
-        <div style="background:#2E9B3F;padding:${pad};border-radius:8px;margin:10px 0 0;">
-          <div style="color:#fff;font-size:${isMobile ? 11 : 12}px;font-weight:600;opacity:0.85;">${label}</div>
-          <div style="color:#fff;font-weight:800;font-size:${isMobile ? 16 : 19}px;margin-top:2px;">${value}</div>
+        <div style="background:#2E9B3F;padding:14px 16px;border-radius:8px;margin:12px 0 0;">
+          <div style="color:#fff;font-size:${isMobile ? 13 : 14}px;font-weight:600;opacity:0.85;">${label}</div>
+          <div style="color:#fff;font-weight:800;font-size:${isMobile ? 20 : 22}px;margin-top:3px;">${value}</div>
         </div>`;
     } else if (isSubtotal) {
       verticalRowsHTML += `
-        <div style="background:#E8F5EB;padding:${pad};border-radius:6px;margin:8px 0;">
-          <div style="color:#888;font-size:${isMobile ? 10 : 11}px;">${label}</div>
-          <div style="color:#1A6B28;font-weight:700;font-size:${isMobile ? 14 : 16}px;margin-top:1px;">${value}</div>
+        <div style="background:#E8F5EB;padding:12px 16px;border-radius:6px;margin:10px 0;">
+          <div style="color:#888;font-size:${isMobile ? 12 : 13}px;">${label}</div>
+          <div style="color:#1A6B28;font-weight:700;font-size:${isMobile ? 17 : 19}px;margin-top:2px;">${value}</div>
         </div>`;
     } else {
       verticalRowsHTML += `
-        <div style="padding:${isMobile ? '6px 12px' : '8px 14px'};border-bottom:1px solid #eee;">
-          <div style="color:#888;font-size:${isMobile ? 10 : 11}px;">${label}</div>
-          <div style="color:#1a1a2e;font-weight:600;font-size:${isMobile ? 13 : 14}px;margin-top:1px;">${value}</div>
+        <div style="padding:10px 16px;border-bottom:1px solid #eee;">
+          <div style="color:#888;font-size:${isMobile ? 12 : 13}px;">${label}</div>
+          <div style="color:#1a1a2e;font-weight:600;font-size:${isMobile ? 15 : 17}px;margin-top:2px;">${value}</div>
         </div>`;
     }
   });
