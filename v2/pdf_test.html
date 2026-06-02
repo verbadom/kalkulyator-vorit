@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест PDF — Verbadom</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+  button { padding: 14px 28px; background: #2E9B3F; color: #fff; font-size: 16px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
+  #preview { width: 595px; background: #fff; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  /* --- PDF STYLES --- */
+  .pdf-wrap { width: 595px; background: #fff; font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; }
+  .pdf-header { border-top: 4px solid #2E9B3F; padding: 20px 24px 16px; border-bottom: 1px solid #e8ecf4; display: flex; justify-content: space-between; align-items: flex-start; }
+  .pdf-logo { font-size: 22px; font-weight: 900; color: #2E9B3F; letter-spacing: 2px; }
+  .pdf-logo-sub { font-size: 11px; color: #888; margin-top: 2px; }
+  .pdf-date-block { text-align: right; }
+  .pdf-date-label { font-size: 11px; color: #888; }
+  .pdf-date { font-size: 13px; font-weight: 600; color: #1A6B28; }
+  .pdf-phone { font-size: 11px; color: #888; margin-top: 3px; }
+  .pdf-title { padding: 14px 24px 8px; font-size: 16px; font-weight: 700; color: #1A6B28; }
+  .pdf-row { padding: 12px 24px; border-bottom: 1px solid #eee; }
+  .pdf-row-label { color: #888; font-size: 13px; }
+  .pdf-row-value { color: #1a1a2e; font-weight: 600; font-size: 17px; margin-top: 3px; }
+  .pdf-popular { padding: 2px 24px 8px; color: #856404; font-size: 14px; }
+  .pdf-subtotal { background: #E8F5EB; padding: 14px 24px; margin: 10px 0; }
+  .pdf-subtotal .pdf-row-label { color: #888; font-size: 13px; }
+  .pdf-subtotal .pdf-row-value { color: #1A6B28; font-weight: 700; font-size: 20px; margin-top: 3px; }
+  .pdf-total { background: #2E9B3F; padding: 16px 24px; border-radius: 0; margin-top: 14px; }
+  .pdf-total .pdf-row-label { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600; }
+  .pdf-total .pdf-row-value { color: #fff; font-weight: 800; font-size: 26px; margin-top: 4px; }
+  .pdf-warning { margin: 10px 24px; padding: 8px 12px; background: #fff8e1; border-radius: 6px; border-left: 3px solid #EF9F27; font-size: 12px; color: #7A5800; }
+  .pdf-contacts { margin: 0 24px 20px; padding: 14px 16px; background: #E8F5EB; border-radius: 8px; border: 1px solid #A8D9B0; }
+  .pdf-contacts-title { font-size: 12px; font-weight: 700; color: #1A6B28; margin-bottom: 8px; }
+  .pdf-contacts-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .pdf-phone-big { font-size: 14px; font-weight: 700; color: #1A6B28; }
+  .pdf-msg-btn { display: inline-block; padding: 5px 12px; border-radius: 20px; color: #fff; font-size: 11px; font-weight: 600; text-decoration: none; }
+  .viber { background: #7360f2; }
+  .telegram { background: #2aabee; }
+  .whatsapp { background: #25d366; }
+  .pdf-footer { border-top: 1px solid #eee; padding: 8px 24px; text-align: center; font-size: 10px; color: #bbb; }
+</style>
+</head>
+<body>
+
+<div style="text-align:center; margin-bottom: 16px;">
+  <button onclick="generatePDF()">📄 Згенерувати PDF</button>
+  <p style="color:#666; font-size:13px;">Нижче — попередній вигляд. Натисни кнопку — завантажиться PDF.</p>
+</div>
+
+<!-- PREVIEW + SOURCE FOR PDF -->
+<div id="preview">
+<div class="pdf-wrap" id="pdfContent">
+
+  <div class="pdf-header">
+    <div>
+      <div class="pdf-logo">🌿 VERBADOM</div>
+      <div class="pdf-logo-sub">Ворота з доставкою по всій Україні</div>
+      <div class="pdf-logo-sub">verbadom.com.ua</div>
+    </div>
+    <div class="pdf-date-block">
+      <div class="pdf-date-label">Розрахунок від</div>
+      <div class="pdf-date">02.06.2026</div>
+      <div class="pdf-phone">+38 (067) 399-05-60</div>
+    </div>
+  </div>
+
+  <div class="pdf-title">Попередній розрахунок вартості воріт</div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Модель</div>
+    <div class="pdf-row-value">Профнастил Т-10, вертикаль</div>
+  </div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Комплектація</div>
+    <div class="pdf-row-value">Ворота + хвіртка окремо</div>
+  </div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Ширина</div>
+    <div class="pdf-row-value">4.9 м</div>
+  </div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Покриття</div>
+    <div class="pdf-row-value">Матовий з обох боків +500 грн</div>
+  </div>
+
+  <div class="pdf-popular">⭐ Найпопулярніший вибір</div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Замок у хвіртку</div>
+    <div class="pdf-row-value" style="color:#2E9B3F;">входить у вартість</div>
+  </div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Фіксатори створок (2 шт)</div>
+    <div class="pdf-row-value">+600 грн</div>
+  </div>
+
+  <div class="pdf-subtotal">
+    <div class="pdf-row-label">Ворота з комплектуючими</div>
+    <div class="pdf-row-value">28 000 грн</div>
+  </div>
+
+  <div class="pdf-row">
+    <div class="pdf-row-label">Доставка до вашого двору</div>
+    <div class="pdf-row-value">900 грн</div>
+  </div>
+
+  <div class="pdf-total">
+    <div class="pdf-row-label">Разом до сплати</div>
+    <div class="pdf-row-value">28 900 грн</div>
+  </div>
+
+  <div class="pdf-warning">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</div>
+
+  <div class="pdf-contacts">
+    <div class="pdf-contacts-title">Зв'яжіться з нами:</div>
+    <div class="pdf-contacts-row">
+      <div class="pdf-phone-big">📞 +38 (067) 399-05-60</div>
+      <span class="pdf-msg-btn viber">Viber</span>
+      <span class="pdf-msg-btn telegram">Telegram</span>
+      <span class="pdf-msg-btn whatsapp">WhatsApp</span>
+    </div>
+  </div>
+
+  <div class="pdf-footer">Розрахунок: verbadom.com.ua</div>
+
+</div>
+</div>
+
+<script>
+async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const el = document.getElementById('pdfContent');
+  const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
+  const imgData = canvas.toDataURL('image/png');
+  const pageW = 100;
+  const pageH = (canvas.height * pageW) / canvas.width;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
+  doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
+  doc.save('Ворота_Verbadom_тест.pdf');
+}
+</script>
+</body>
+</html>
