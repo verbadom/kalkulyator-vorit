@@ -95,7 +95,11 @@ async function loadPricesFromSheet() {
     }
 
     if (prices.coatings && prices.coatings.length > 0) {
-      window._COATINGS = prices.coatings;
+      // Очищаємо зірочки з назв які можуть прийти з таблиці
+      window._COATINGS = prices.coatings.map(c => ({
+        ...c,
+        name: c.name ? c.name.replace(/⭐/g, '').trim() : c.name
+      }));
     }
 
     const boltLabel = document.getElementById('boltsPriceLabel');
@@ -357,7 +361,8 @@ function updateWidthHint() {
   // Не показуємо для "врізна калітка"
   if (!selectedType || !selectedConfig || selectedConfig === 'with_builtin_wicket') return;
 
-  const rawW = document.getElementById('width').value.replace(',', '.');
+  const rawW = document.getElementById('width').value.replace(',', '.').trim();
+  if (!rawW) return;
   const width = parseFloat(rawW);
   if (isNaN(width)) return;
 
@@ -390,8 +395,8 @@ function buildCoatingOptions() {
   const model = GATE_MODELS[selectedType][selectedModelIdx];
   const c = window._COATINGS || [];
 
-  const matoviy   = c.find(x => x.name && x.name.toLowerCase().includes('матов') && !x.name.toLowerCase().includes('двусторон')) || { surcharge: 300 };
-  const dvustoron = c.find(x => x.name && x.name.toLowerCase().includes('двусторон')) || { surcharge: 500 };
+  const matoviy   = c.find(x => x.name && x.name.toLowerCase().includes('матов') && !x.name.toLowerCase().includes('двусторон') && !x.name.toLowerCase().includes('двосторон')) || { surcharge: 300 };
+  const dvustoron = c.find(x => x.name && (x.name.toLowerCase().includes('двусторон') || x.name.toLowerCase().includes('двосторон'))) || { surcharge: 500 };
   const derevo    = c.find(x => x.name && x.name.toLowerCase().includes('дерево')) || { surcharge: 500 };
 
   let options = [];
@@ -574,12 +579,11 @@ function selectPostType(type) {
 
 function renderPostHeightStep(stepId) {
   const step = document.getElementById(stepId);
-  // ЗМІНА 6: без підпису "Крок 2 — Висота стовпа"
   step.innerHTML = `
     <div class="posts-step" style="margin-top:10px;">
       <div class="step-btns">
-        <button class="step-btn" onclick="selectPostHeight('2.0 м')">2,0 м</button>
-        <button class="step-btn" onclick="selectPostHeight('2.4 м')">2,4 м</button>
+        <button class="step-btn" onclick="selectPostHeight('2.0м')">2,0 м</button>
+        <button class="step-btn" onclick="selectPostHeight('2.4м')">2,4 м</button>
       </div>
     </div>
   `;
@@ -588,13 +592,23 @@ function renderPostHeightStep(stepId) {
 function selectPostHeight(height) {
   _postHeight = height;
 
+  // Скидаємо step3 і кількість при зміні висоти
+  document.getElementById('postStep3').style.display = 'none';
+  document.getElementById('postStep3').innerHTML = '';
+  document.getElementById('postQtyWrap').style.display = 'none';
+  document.getElementById('fieldHinges').style.display = 'none';
+  selectedPostKey = null;
+
   document.querySelectorAll('#postStep2 .step-btn').forEach(b => {
-    const h = b.textContent.trim();
-    b.classList.toggle('active', height.includes(h.replace(',', '.')));
+    b.classList.remove('active');
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(height)) {
+      b.classList.add('active');
+    }
   });
 
-  // ЗМІНА 7: показуємо тільки фарбовані з обраною висотою
-  const filtered = POST_DATA.filter(p => p.painted && p.height === height);
+  // Висота в POST_DATA зберігається як "2.0 м" (з пробілом)
+  const heightWithSpace = height.replace('м', ' м');
+  const filtered = POST_DATA.filter(p => p.painted && p.height === heightWithSpace);
   renderPostCards('postStep3', filtered);
   document.getElementById('postStep3').style.display = 'block';
 }
