@@ -252,7 +252,7 @@ body {
 }
 
 /* ============================================================
-   RADIO-КНОПКИ
+   RADIO-КНОПКИ (КОМПЛЕКТАЦІЯ, ПОКРИТТЯ)
    ============================================================ */
 .radio-group {
   display: flex;
@@ -329,22 +329,15 @@ body {
   margin-top: 2px;
 }
 
-/* ЗМІНА 3: зірочка в бейджі — збільшена */
 .radio-badge {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #856404;
   background: #FFF3CD;
   border-radius: 20px;
-  padding: 3px 10px;
-  margin-top: 5px;
+  padding: 2px 8px;
+  margin-top: 4px;
   display: inline-block;
-}
-
-.badge-star {
-  font-size: 16px;
-  vertical-align: middle;
-  margin-right: 2px;
 }
 
 /* ============================================================
@@ -448,11 +441,6 @@ input[type="number"].field-error {
   background: var(--green-light);
 }
 
-.checkbox-option.checked {
-  border-color: var(--green);
-  background: var(--green-light);
-}
-
 .checkbox-option:last-child {
   margin-bottom: 0;
 }
@@ -502,10 +490,11 @@ input[type="number"].field-error {
   margin-top: 3px;
 }
 
-/* ЗМІНА 4: Замок вже включено — без іконки, просто текст на зеленому фоні */
+/* Замок вже включено (сучасні) */
 .lock-included-note {
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 11px 16px;
   background: var(--green-light);
   border: 1.5px solid var(--green-mid);
@@ -513,21 +502,22 @@ input[type="number"].field-error {
   font-size: 14px;
   font-weight: 600;
   color: var(--green-dark);
-  margin-bottom: 8px;
 }
 
 /* ============================================================
    СТОВПИ — ПОКРОКОВИЙ ВИБІР
-   ЗМІНА 6: прибрані підписи кроків
-   ЗМІНА 9: "Без стовпів" — окремий стиль
    ============================================================ */
 .posts-step {
   margin-bottom: 10px;
 }
 
-/* ЗМІНА 6: .posts-step-label більше не використовується, але залишаємо на випадок */
 .posts-step-label {
-  display: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
 .step-btns {
@@ -562,12 +552,6 @@ input[type="number"].field-error {
   border-color: var(--green);
   background: var(--green-light);
   color: var(--green-dark);
-}
-
-/* ЗМІНА 9: "Без стовпів" — на всю ширину */
-.step-btn.btn-no-posts {
-  flex: 0 0 100%;
-  min-width: 100%;
 }
 
 .step-btn-sub {
@@ -638,6 +622,18 @@ input[type="number"].field-error {
   background: var(--white);
   border-left: 1.5px solid var(--gray-border);
   border-right: 1.5px solid var(--gray-border);
+}
+
+/* Попередження стовпи + Нова Пошта */
+.posts-nova-warning {
+  padding: 10px 14px;
+  background: #FFF3CD;
+  border-left: 3px solid var(--yellow-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7A5800;
+  margin-top: 10px;
 }
 
 /* ============================================================
@@ -727,7 +723,7 @@ input#city.has-selection {
 #calculateBtn:disabled { background: #C0C0C0; cursor: not-allowed; }
 
 /* ============================================================
-   КНОПКА "НОВИЙ РОЗРАХУНОК" (прихована зверху)
+   КНОПКА "НОВИЙ РОЗРАХУНОК"
    ============================================================ */
 .btn-reset {
   width: 100%;
@@ -866,6 +862,7 @@ input#city.has-selection {
   font-weight: 600;
 }
 
+/* Попередження (орієнтовна ціна) */
 .preliminary-note {
   font-size: 13px;
   color: #777;
@@ -993,7 +990,6 @@ input#city.has-selection {
   border-radius: var(--radius);
 }
 
-/* ЗМІНА 10: дві кнопки в один рядок, сірий фон */
 .bottom-btns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1002,7 +998,7 @@ input#city.has-selection {
 
 .btn-secondary {
   padding: 12px 8px;
-  background: var(--gray-bg);
+  background: var(--white);
   color: var(--dark);
   font-family: 'Nunito', sans-serif;
   font-size: 14px;
@@ -1019,22 +1015,20 @@ input#city.has-selection {
 }
 
 .btn-secondary:hover {
-  background: #E8E9EC;
+  background: var(--gray-bg);
   border-color: #999;
 }
 
-/* ЗМІНА 15: рекламний блок — текст чорний, email зелений */
 .promo-line {
   text-align: center;
-  font-size: 13px;
-  color: var(--dark);
-  margin-top: 4px;
+  font-size: 12px;
+  color: #BBB;
+  margin-top: 6px;
 }
 
-.promo-email {
-  color: var(--green);
+.promo-line a {
+  color: #AAA;
   text-decoration: underline;
-  font-weight: 600;
 }
 
 /* ============================================================
@@ -1074,7 +1068,7 @@ input#city.has-selection {
 }
 
 /* ============================================================
-   ПРИХОВАНИЙ БЛОК
+   ПРИХОВАНИЙ БЛОК (прогресивне розкриття)
    ============================================================ */
 .field.hidden-field {
   display: none;

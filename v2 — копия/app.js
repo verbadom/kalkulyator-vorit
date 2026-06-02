@@ -98,6 +98,7 @@ async function loadPricesFromSheet() {
       window._COATINGS = prices.coatings;
     }
 
+    // Оновити лейбл ціни фіксаторів
     const boltLabel = document.getElementById('boltsPriceLabel');
     if (boltLabel) boltLabel.textContent = BOLTS_PRICE.toLocaleString('uk-UA');
 
@@ -151,10 +152,10 @@ loadPricesFromSheet();
 let selectedType     = "";
 let selectedModelIdx = null;
 let selectedConfig   = "";
-let selectedCoating  = null;
+let selectedCoating  = null;   // { value: 0, label: "...", surcharge: 0 }
 let boltsChecked     = false;
 let hingesChecked    = false;
-let selectedPostKey  = null;
+let selectedPostKey  = null;   // ключ в POST_DATA
 let postQty          = 2;
 let selectedCityName = "";
 let selectedLat      = null;
@@ -191,12 +192,14 @@ function selectGateType(type) {
   document.getElementById('btnForged').classList.toggle('active', type === 'forged');
   document.getElementById('btnModern').classList.toggle('active', type === 'modern');
 
+  // Скинути модель
   document.getElementById('modelSelectText').textContent = '— Оберіть модель —';
   document.getElementById('modelSelectBtn').classList.add('placeholder');
   document.getElementById('modelSelectBtn').classList.remove('field-error');
   document.getElementById('modelPhoto').style.display = 'none';
   document.getElementById('includedBlock').style.display = 'none';
 
+  // Заповнити дропдаун моделей
   const dropdown = document.getElementById('modelDropdown');
   dropdown.innerHTML = '';
   GATE_MODELS[type].forEach((model, i) => {
@@ -207,8 +210,10 @@ function selectGateType(type) {
     dropdown.appendChild(opt);
   });
 
+  // Показати поле моделі
   showField('fieldGateModel');
 
+  // Скинути решту
   hideField('fieldConfig');
   hideField('fieldWidth');
   hideField('fieldCoating');
@@ -217,6 +222,7 @@ function selectGateType(type) {
   hideField('fieldPosts');
   hideField('fieldCity');
 
+  // Скинути radio
   resetRadioGroup('configGroup');
   resetPostSteps();
   document.getElementById('postQtyWrap').style.display = 'none';
@@ -260,15 +266,18 @@ function selectModel(idx) {
   document.getElementById('modelSelectBtn').classList.remove('placeholder', 'field-error');
   closeAllDropdowns();
 
+  // Фото
   const photo = document.getElementById('modelPhoto');
   photo.src = BASE_IMG + model.img;
   photo.alt = model.name;
   photo.style.display = 'block';
 
+  // Блок "входить у вартість"
   const incl = document.getElementById('includedBlock');
   incl.innerHTML = buildIncludedText(selectedType, selectedConfig);
   incl.style.display = 'block';
 
+  // Показати решту полів
   showField('fieldConfig');
   showField('fieldWidth');
   showField('fieldCoating');
@@ -276,7 +285,10 @@ function selectModel(idx) {
   showField('fieldPosts');
   showField('fieldCity');
 
+  // Покриття
   buildCoatingOptions();
+
+  // Замок
   buildLockField();
 
   clearError('modelSelectBtn');
@@ -306,7 +318,7 @@ function buildIncludedText(type, config) {
 }
 
 /* ============================================================
-   RADIO-ГРУПА
+   RADIO-ГРУПА (КОМПЛЕКТАЦІЯ, ПОКРИТТЯ)
    ============================================================ */
 function selectRadio(groupId, el, stateVar) {
   const group = document.getElementById(groupId);
@@ -316,14 +328,16 @@ function selectRadio(groupId, el, stateVar) {
   if (stateVar === 'selectedConfig') {
     selectedConfig = el.dataset.value;
 
+    // Оновити "входить у вартість"
     if (selectedModelIdx !== null) {
       const incl = document.getElementById('includedBlock');
       incl.innerHTML = buildIncludedText(selectedType, selectedConfig);
     }
 
-    // ЗМІНА 1: підказка ширини - оновити при зміні комплектації
-    updateWidthHint();
+    // Підказка "найдешевший варіант"
+    updateConfigHint();
 
+    // Оновити замок
     buildLockField();
   }
 
@@ -337,9 +351,35 @@ function resetRadioGroup(groupId) {
 }
 
 /* ============================================================
-   ПІДКАЗКА ШИРИНА (ЗМІНА 1 + 2)
-   Показуємо тільки при введенні ширини, крім "врізна калітка"
-   Прибрали "configHint" (верхній блок "Найдешевший варіант")
+   ПІДКАЗКА "НАЙДЕШЕВШИЙ ВАРІАНТ"
+   ============================================================ */
+function updateConfigHint() {
+  const hint = document.getElementById('configHint');
+  if (!hint) return;
+  hint.style.display = 'none';
+  hint.textContent = '';
+
+  if (!selectedType || !selectedConfig || selectedConfig === 'with_builtin_wicket') return;
+
+  let msg = '';
+  if (selectedConfig === 'with_separate_wicket') {
+    msg = selectedType === 'forged'
+      ? '💡 Найдешевший варіант: ворота 3,6 м + хвіртка 0,9 м = 4,5 м'
+      : '💡 Найдешевший варіант: ворота 4,0 м + хвіртка 0,9 м = 4,9 м';
+  } else if (selectedConfig === 'without_wicket') {
+    msg = selectedType === 'forged'
+      ? '💡 Найдешевший варіант — ширина 3,6 м'
+      : '💡 Найдешевший варіант — ширина 4,0 м';
+  }
+
+  if (msg) {
+    hint.textContent = msg;
+    hint.style.display = 'block';
+  }
+}
+
+/* ============================================================
+   ПІДКАЗКА ШИРИНА
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   const widthInput = document.getElementById('width');
@@ -354,12 +394,14 @@ function updateWidthHint() {
   hint.style.display = 'none';
   hint.textContent = '';
 
-  // Не показуємо для "врізна калітка"
   if (!selectedType || !selectedConfig || selectedConfig === 'with_builtin_wicket') return;
 
   const rawW = document.getElementById('width').value.replace(',', '.');
   const width = parseFloat(rawW);
   if (isNaN(width)) return;
+
+  const std = selectedType === 'forged' ? 4.5 : 4.9;
+  if (width === std) return;
 
   let msg = '';
   if (selectedConfig === 'with_separate_wicket') {
@@ -379,7 +421,7 @@ function updateWidthHint() {
 }
 
 /* ============================================================
-   ПОКРИТТЯ (ЗМІНА 3: зірочка тільки в бейджі, збільшена)
+   ПОКРИТТЯ
    ============================================================ */
 function buildCoatingOptions() {
   const group = document.getElementById('coatingGroup');
@@ -401,11 +443,10 @@ function buildCoatingOptions() {
       options = [{ value: 0, label: 'Без профнастилу — тільки ковані елементи', surcharge: 0, fixed: true }];
     } else {
       options = [
-        { value: 0,                   label: 'Базовий — глянець',                             surcharge: 0 },
-        { value: matoviy.surcharge,   label: `Кращий — матовий +${matoviy.surcharge} грн`,    surcharge: matoviy.surcharge },
-        // ЗМІНА 3: зірочка прибрана з тексту, залишається тільки в бейджі
-        { value: dvustoron.surcharge, label: `Матовий з обох боків +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
-        { value: derevo.surcharge,    label: `Під дерево / 3D +${derevo.surcharge} грн`,       surcharge: derevo.surcharge },
+        { value: 0,                  label: 'Базовий — глянець',                  surcharge: 0,                sub: '' },
+        { value: matoviy.surcharge,  label: `Кращий — матовий +${matoviy.surcharge} грн`,  surcharge: matoviy.surcharge,  sub: '' },
+        { value: dvustoron.surcharge, label: `Матовий з обох боків ⭐ +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
+        { value: derevo.surcharge,   label: `Під дерево / 3D +${derevo.surcharge} грн`,    surcharge: derevo.surcharge,   sub: '' },
       ];
     }
   }
@@ -415,9 +456,8 @@ function buildCoatingOptions() {
       options = [{ value: 0, label: 'Матовий двосторонній 0,45 мм — входить у вартість', surcharge: 0, fixed: true }];
     } else if (model.doubleSided) {
       options = [
-        { value: 0,                   label: 'Базовий — матовий односторонній',                     surcharge: 0 },
-        // ЗМІНА 3: зірочка прибрана з тексту
-        { value: dvustoron.surcharge, label: `Матовий з обох боків +${dvustoron.surcharge} грн`,   surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
+        { value: 0,                   label: 'Базовий — матовий односторонній',               surcharge: 0 },
+        { value: dvustoron.surcharge, label: `Матовий з обох боків ⭐ +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
       ];
     } else {
       options = [{ value: 0, label: 'Матовий кольоровий — входить у вартість', surcharge: 0, fixed: true }];
@@ -429,8 +469,7 @@ function buildCoatingOptions() {
     div.className = 'radio-option';
     div.dataset.idx = i;
 
-    // ЗМІНА 3: зірочка тільки в бейджі, клас badge-star для збільшення
-    const badge = opt.badge ? `<span class="radio-badge"><span class="badge-star">⭐</span> Обирають найчастіше</span>` : '';
+    const badge = opt.badge ? `<span class="radio-badge">${opt.badge}</span>` : '';
 
     div.innerHTML = `
       <div class="radio-dot"></div>
@@ -441,6 +480,7 @@ function buildCoatingOptions() {
     `;
 
     if (opt.fixed) {
+      // Автоматично вибрати фіксований варіант
       div.classList.add('selected');
       selectedCoating = opt;
     }
@@ -455,6 +495,7 @@ function buildCoatingOptions() {
     group.appendChild(div);
   });
 
+  // Якщо фіксований — один варіант вже обрано
   if (options.length === 1 && options[0].fixed) {
     selectedCoating = options[0];
   }
@@ -463,17 +504,15 @@ function buildCoatingOptions() {
 }
 
 /* ============================================================
-   ЗАМОК (ЗМІНА 4: "Замок вже включено" — без іконки, просто текст)
+   ЗАМОК
    ============================================================ */
 function buildLockField() {
   const field = document.getElementById('fieldLock');
   field.innerHTML = '';
+  
 
   if (selectedType === 'forged') {
-    if (selectedConfig === 'without_wicket') {
-      field.innerHTML = '';
-      return;
-    }
+    // Чекбокс замка для кованих
     field.innerHTML = `
       <div class="checkbox-option" id="lockOption" onclick="toggleCheckbox('lockOption', 'lockChecked')">
         <div class="checkbox-box"></div>
@@ -483,17 +522,20 @@ function buildLockField() {
         </div>
       </div>
     `;
-  } else if (selectedType === 'modern') {
+    // Показувати тільки якщо комплектація НЕ "тільки ворота"
     if (selectedConfig === 'without_wicket') {
-      field.innerHTML = '';
-      return;
+      document.getElementById('fieldLock').innerHTML = '';
     }
-    // ЗМІНА 4: просто текст без іконки
+  } else if (selectedType === 'modern') {
+    // Замок вже включено
     field.innerHTML = `
       <div class="lock-included-note">
-        Замок вже включено у вартість
+        ✅ Замок вже включено у вартість
       </div>
     `;
+    if (selectedConfig === 'without_wicket') {
+      document.getElementById('fieldLock').innerHTML = '';
+    }
   }
 }
 
@@ -507,23 +549,21 @@ function toggleCheckbox(optionId, stateVar) {
 
   if (stateVar === 'boltsChecked')  boltsChecked  = isChecked;
   if (stateVar === 'hingesChecked') hingesChecked = isChecked;
+  if (stateVar === 'lockChecked')   {}  // зберігається через DOM
 }
 
 /* ============================================================
    СТОВПИ — ПОКРОКОВИЙ ВИБІР
-   ЗМІНА 6: прибрані підписи "Крок 1", "Крок 2", "Крок 3"
-   ЗМІНА 7: фільтрація карток по типу, скидання при перемиканні
-   ЗМІНА 8: кількість показується після вибору будь-якої картки
-   ЗМІНА 9: всі назви українською
    ============================================================ */
-let _postType   = null;
-let _postHeight = null;
+let _postType   = null;  // 'painted' | 'unpainted' | 'none'
+let _postHeight = null;  // '2.0' | '2.4'
 
 function resetPostSteps() {
   _postType      = null;
   _postHeight    = null;
   selectedPostKey= null;
 
+  // Скинути активні кнопки кроку 1
   document.querySelectorAll('#postStep1 .step-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('postStep2').style.display = 'none';
   document.getElementById('postStep2').innerHTML = '';
@@ -541,15 +581,15 @@ function selectPostType(type) {
   _postHeight = null;
   selectedPostKey = null;
 
-  // ЗМІНА 7: скидаємо попередній вибір карток
+  // Активна кнопка
   document.querySelectorAll('#postStep1 .step-btn').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
 
+  // Скинути кроки 2/3
   document.getElementById('postStep2').style.display = 'none';
   document.getElementById('postStep2').innerHTML = '';
   document.getElementById('postStep3').style.display = 'none';
   document.getElementById('postStep3').innerHTML = '';
-  // ЗМІНА 8: скидаємо кількість при зміні типу
   document.getElementById('postQtyWrap').style.display = 'none';
   document.getElementById('fieldHinges').style.display = 'none';
   hingesChecked = false;
@@ -559,14 +599,14 @@ function selectPostType(type) {
   if (type === 'none') return;
 
   if (type === 'unpainted') {
-    // ЗМІНА 7: показуємо тільки нефарбовані
+    // Нефарбовані — одразу розмір (висота завжди 3.0 м)
     const unpainted = POST_DATA.filter(p => !p.painted);
-    renderPostCards('postStep2', unpainted);
+    renderPostSizeStep('postStep2', unpainted);
     document.getElementById('postStep2').style.display = 'block';
   }
 
   if (type === 'painted') {
-    // ЗМІНА 7: показуємо тільки фарбовані — спочатку висота
+    // Фарбовані — спочатку висота
     renderPostHeightStep('postStep2');
     document.getElementById('postStep2').style.display = 'block';
   }
@@ -574,9 +614,9 @@ function selectPostType(type) {
 
 function renderPostHeightStep(stepId) {
   const step = document.getElementById(stepId);
-  // ЗМІНА 6: без підпису "Крок 2 — Висота стовпа"
   step.innerHTML = `
     <div class="posts-step" style="margin-top:10px;">
+      <div class="posts-step-label">Крок 2 — Висота стовпа</div>
       <div class="step-btns">
         <button class="step-btn" onclick="selectPostHeight('2.0 м')">2,0 м</button>
         <button class="step-btn" onclick="selectPostHeight('2.4 м')">2,4 м</button>
@@ -588,23 +628,28 @@ function renderPostHeightStep(stepId) {
 function selectPostHeight(height) {
   _postHeight = height;
 
+  // Активна кнопка висоти
+  document.querySelectorAll('#postStep2 .step-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().replace(',', '.') === height.replace(',', '.').replace(' м', ',0 м') || b.textContent.trim() === height.replace('.', ','));
+  });
+  // Простіше — знайти кнопку з текстом що містить висоту
   document.querySelectorAll('#postStep2 .step-btn').forEach(b => {
     const h = b.textContent.trim();
     b.classList.toggle('active', height.includes(h.replace(',', '.')));
   });
 
-  // ЗМІНА 7: показуємо тільки фарбовані з обраною висотою
+  // Показати крок 3 — розмір для даної висоти
   const filtered = POST_DATA.filter(p => p.painted && p.height === height);
-  renderPostCards('postStep3', filtered);
+  renderPostSizeStep('postStep3', filtered);
   document.getElementById('postStep3').style.display = 'block';
 }
 
-// ЗМІНА 6: renderPostCards без підпису "Крок N — Розмір перерізу"
-// ЗМІНА 9: назви українською (вже є в POST_DATA)
-function renderPostCards(stepId, posts) {
+function renderPostSizeStep(stepId, posts) {
   const step = document.getElementById(stepId);
+  const stepNum = stepId === 'postStep2' ? 2 : 3;
   step.innerHTML = `
     <div class="posts-step" style="margin-top:10px;">
+      <div class="posts-step-label">Крок ${stepNum} — Розмір перерізу</div>
       <div class="step-btns">
         ${posts.map(p => `
           <button class="step-btn" onclick="selectPostFinal('${p.key}')">
@@ -620,14 +665,15 @@ function renderPostCards(stepId, posts) {
 function selectPostFinal(key) {
   selectedPostKey = key;
 
+  // Активна кнопка
   const allBtns = document.querySelectorAll('#postStep2 .step-btn, #postStep3 .step-btn');
   allBtns.forEach(b => {
-    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${key}'`)) {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(key)) {
       b.classList.add('active');
     }
   });
 
-  // ЗМІНА 8: показуємо кількість після вибору будь-якої картки
+  // Показати лічильник і петлі
   document.getElementById('postQtyWrap').style.display = 'flex';
   document.getElementById('fieldHinges').style.display = 'block';
 }
@@ -679,6 +725,7 @@ async function acFetch(q) {
       includedRegionCodes: ['ua'],
       language: 'uk',
     });
+    // Фільтр: тільки з назвою міста/села (не просто область)
     const filtered = (suggestions || []).filter(s => {
       const main = s.placePrediction.mainText ? s.placePrediction.mainText.toString() : '';
       return main.length > 0 && !main.toLowerCase().includes('область') && !main.toLowerCase().includes('район');
@@ -740,7 +787,7 @@ function acClose() {
 }
 
 /* ============================================================
-   ПЕРЕВІРКА "ГОТОВО"
+   ПЕРЕВІРКА "ГОТОВО" — ФРАЗА НАД КНОПКОЮ
    ============================================================ */
 function checkReadyMsg() {
   const msg = document.getElementById('calcReadyMsg');
@@ -855,11 +902,13 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   const lockEl = document.getElementById('lockOption');
   const lockChecked = lockEl ? lockEl.classList.contains('checked') : false;
 
+  // Ціна воріт
   let gatePrice = calcGatePrice(selectedType, model.price, selectedConfig, width);
   gatePrice += (selectedCoating ? selectedCoating.surcharge : 0);
   if (lockChecked && selectedType === 'forged' && selectedConfig !== 'without_wicket') gatePrice += LOCK_PRICE;
   if (boltsChecked) gatePrice += BOLTS_PRICE;
 
+  // Стовпи
   let postPrice = 0;
   let postInfo  = null;
   if (selectedPostKey && _postType !== 'none') {
@@ -867,6 +916,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     if (postInfo) postPrice = postInfo.price * postQty;
   }
 
+  // Петлі
   let hingePrice = 0;
   let hingeCount = 0;
   if (hingesChecked && postInfo) {
@@ -875,11 +925,13 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     hingePrice = hingeCount * HINGE_PRICE_PER_UNIT;
   }
 
+  // Кнопка — стан завантаження
   const btn = document.getElementById('calculateBtn');
   btn.textContent = '⏳ Розраховуємо...';
   btn.disabled = true;
   showResult(`<p class="loading">⏳ Розраховуємо доставку...</p>`, false);
 
+  // Доставка
   let deliveryPrice  = null;
   let deliveryStatus = '';
   let meetOnRoad     = null;
@@ -895,10 +947,10 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     meetOnRoad = data.meetOnRoad || null;
     window._lastDeliveryData = data;
 
-    if (data.status === 'on_route')           deliveryStatus = 'on_route';
-    else if (data.status === 'deviation')     { deliveryPrice = data.price; deliveryStatus = 'deviation'; }
-    else if (data.status === 'nova_poshta')   { deliveryPrice = 4000; deliveryStatus = 'nova_poshta'; }
-    else if (data.status === 'clarify')       deliveryStatus = 'clarify';
+    if (data.status === 'on_route')      deliveryStatus = 'on_route';
+    else if (data.status === 'deviation') { deliveryPrice = data.price; deliveryStatus = 'deviation'; }
+    else if (data.status === 'nova_poshta') { deliveryPrice = 4000; deliveryStatus = 'nova_poshta'; }
+    else if (data.status === 'clarify')  deliveryStatus = 'clarify';
     else if (data.status === 'clarify_extended') deliveryStatus = 'clarify_extended';
   } catch (e) {
     deliveryStatus = 'error';
@@ -907,9 +959,9 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   btn.disabled = false;
   btn.textContent = 'Показати мою ціну →';
 
-  const showPosts    = postInfo && deliveryStatus !== 'nova_poshta';
+  const showPosts   = postInfo && deliveryStatus !== 'nova_poshta';
   const totalComplex = gatePrice + (showPosts ? postPrice : 0) + (showPosts ? hingePrice : 0);
-  const totalPrice   = totalComplex + (deliveryPrice || 0);
+  const totalPrice  = totalComplex + (deliveryPrice || 0);
 
   const configLabels = {
     with_separate_wicket: 'Ворота + хвіртка окремо',
@@ -1000,12 +1052,13 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     html += `<div class="result-row alt-delivery-row"><span>💡 Альтернатива: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
   }
 
+  // Попередження
   html += `<p class="preliminary-note">Орієнтовна ціна. Менеджер уточнить деталі при замовленні 👍</p>`;
 
-  // ЗМІНА 10, 11, 12, 15: контакти, кнопки, баннер, рекламний блок
+  // Контакти
   html += `
     <div class="contacts-block">
-      <a href="tel:+380673990560" class="btn-call" onclick="track('phone_click', selectedCityName)">📞 Зателефонувати нам</a>
+      <a href="tel:+380673990560" class="btn-call" id="btnCall" onclick="track('phone_click', selectedCityName)">📞 Зателефонувати нам</a>
       <div class="phone-under">+38 (067) 399-05-60</div>
       <button class="btn-messenger" onclick="toggleMessengerList()">💬 Написати в месенджер</button>
       <div class="messenger-list" id="messengerList">
@@ -1018,14 +1071,13 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
         <img src="banner-share.png" alt="Поділитися калькулятором" />
       </a>
       <div class="bottom-btns">
-        <a class="btn-secondary" href="https://verbadom.com.ua/ua/g140836156-vorota-kalitkoj-raspashnye" target="_blank">Всі ворота на сайті</a>
-        <button class="btn-secondary" onclick="document.getElementById('resetBtn').click()">↺ Новий розрахунок</button>
+        <a class="btn-secondary" href="https://verbadom.com.ua/ua/g140836156-vorota-kalitkoj-raspashnye" target="_blank">Всі ворота на сайті →</a>
       </div>
-      <p class="promo-line">Потрібен калькулятор для вашого бізнесу? <a href="mailto:buildertools.pro@gmail.com" class="promo-email">buildertools.pro@gmail.com</a></p>
+      <p class="promo-line">Потрібен калькулятор для вашого бізнесу? <a href="mailto:buildertools.pro@gmail.com">buildertools.pro@gmail.com</a></p>
     </div>
   `;
 
-  showResult(html, false);
+  showResult(html, true);
 
   _lastCalcData = {
     city: selectedCityName,
@@ -1114,7 +1166,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 /* ============================================================
-   PDF (ЗМІНА 13: вертикальний список, ЗМІНА 14: зелений логотип)
+   PDF
    ============================================================ */
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
@@ -1131,10 +1183,8 @@ async function generatePDF() {
   const now     = new Date();
   const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  // ЗМІНА 13: збираємо дані для вертикального списку
   const rows = document.querySelectorAll('#result .result-row');
-  let verticalRowsHTML = '';
-
+  let rowsHTML = '';
   rows.forEach(row => {
     const spans = row.querySelectorAll('span');
     if (spans.length < 2) return;
@@ -1143,50 +1193,49 @@ async function generatePDF() {
     const isTotal    = row.classList.contains('total');
     const isSubtotal = row.classList.contains('result-subtotal');
     const isPopular  = row.classList.contains('popular-badge-row');
-    const pad        = isMobile ? '6px 12px' : '8px 14px';
+    const pad        = isMobile ? '7px 10px' : '10px 12px';
+    const padSm      = isMobile ? '5px 10px' : '8px 12px';
 
     if (isPopular) {
-      verticalRowsHTML += `<div style="padding:2px 12px 6px;color:#856404;font-size:${isMobile ? 10 : 11}px;">⭐ Найпопулярніший вибір</div>`;
+      rowsHTML += `<tr><td colspan="2" style="padding:${isMobile ? '2px 10px 6px' : '2px 12px 8px'};color:#856404;font-size:${isMobile ? 10 : 11}px;">⭐ Найпопулярніший вибір</td></tr>`;
     } else if (isTotal) {
-      verticalRowsHTML += `
-        <div style="background:#2E9B3F;padding:${pad};border-radius:8px;margin:10px 0 0;">
-          <div style="color:#fff;font-size:${isMobile ? 11 : 12}px;font-weight:600;opacity:0.85;">${label}</div>
-          <div style="color:#fff;font-weight:800;font-size:${isMobile ? 16 : 19}px;margin-top:2px;">${value}</div>
-        </div>`;
+      rowsHTML += `<tr style="background:#2E9B3F;">
+        <td style="padding:${pad};color:#fff;font-weight:700;font-size:${isMobile ? 13 : 15}px;">${label}</td>
+        <td style="padding:${pad};color:#fff;font-weight:700;font-size:${isMobile ? 13 : 15}px;text-align:right;">${value}</td>
+      </tr>`;
     } else if (isSubtotal) {
-      verticalRowsHTML += `
-        <div style="background:#E8F5EB;padding:${pad};border-radius:6px;margin:8px 0;">
-          <div style="color:#888;font-size:${isMobile ? 10 : 11}px;">${label}</div>
-          <div style="color:#1A6B28;font-weight:700;font-size:${isMobile ? 14 : 16}px;margin-top:1px;">${value}</div>
-        </div>`;
+      rowsHTML += `<tr style="background:#E8F5EB;">
+        <td style="padding:${padSm};font-weight:600;color:#1A6B28;">${label}</td>
+        <td style="padding:${padSm};font-weight:600;color:#1A6B28;text-align:right;">${value}</td>
+      </tr>`;
     } else {
-      verticalRowsHTML += `
-        <div style="padding:${isMobile ? '6px 12px' : '8px 14px'};border-bottom:1px solid #eee;">
-          <div style="color:#888;font-size:${isMobile ? 10 : 11}px;">${label}</div>
-          <div style="color:#1a1a2e;font-weight:600;font-size:${isMobile ? 13 : 14}px;margin-top:1px;">${value}</div>
-        </div>`;
+      rowsHTML += `<tr style="border-bottom:1px solid #eee;">
+        <td style="padding:${isMobile ? '5px 10px' : '7px 12px'};color:#444;">${label}</td>
+        <td style="padding:${isMobile ? '5px 10px' : '7px 12px'};color:#1a1a2e;font-weight:600;text-align:right;">${value}</td>
+      </tr>`;
     }
   });
 
   const delivNoteInline = document.querySelector('#result .delivery-note-inline');
   const delivNoteHTML   = delivNoteInline
-    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#555;margin:4px 12px 8px;">${delivNoteInline.innerText}</p>`
+    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#555;margin:4px ${isMobile ? 10 : 12}px 8px;">${delivNoteInline.innerText}</p>`
     : '';
 
   const errMsg  = document.querySelector('#result .error-msg');
   const errHTML = errMsg
-    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#c0392b;margin:6px 12px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>`
+    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#c0392b;margin:6px ${isMobile ? 10 : 12}px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>`
     : '';
 
   const p  = isMobile ? '14px 16px 12px' : '20px 24px 16px';
-  const p4 = isMobile ? '8px 12px' : '10px 14px';
-  const p5 = isMobile ? '0 12px 16px' : '0 14px 20px';
+  const p2 = isMobile ? '10px 16px 6px'  : '14px 24px 8px';
+  const p3 = isMobile ? '0 16px'         : '0 24px';
+  const p4 = isMobile ? '8px 16px'       : '12px 24px';
+  const p5 = isMobile ? '0 16px 16px'    : '0 24px 24px';
 
   pdfDiv.innerHTML = `
     <div style="border-top:4px solid #2E9B3F;padding:${p};border-bottom:1px solid #e8ecf4;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <!-- ЗМІНА 14: логотип зеленого кольору -->
           <div style="font-size:${isMobile ? 17 : 22}px;font-weight:900;color:#2E9B3F;letter-spacing:2px;">🌿 VERBADOM</div>
           <div style="font-size:${isMobile ? 10 : 11}px;color:#888;margin-top:2px;">Ворота з доставкою по всій Україні</div>
           <div style="font-size:${isMobile ? 10 : 11}px;color:#888;">verbadom.com.ua</div>
@@ -1198,12 +1247,13 @@ async function generatePDF() {
         </div>
       </div>
     </div>
-    <div style="padding:${isMobile ? '10px 12px 6px' : '14px 14px 8px'};">
+    <div style="padding:${p2};">
       <div style="font-size:${isMobile ? 13 : 16}px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div>
     </div>
-    <!-- ЗМІНА 13: вертикальний список -->
-    <div style="padding:0 0 8px;">
-      ${verticalRowsHTML}
+    <div style="padding:${p3};">
+      <table style="width:100%;border-collapse:collapse;font-size:${isMobile ? 11 : 13}px;">
+        ${rowsHTML}
+      </table>
       ${delivNoteHTML}
       ${errHTML}
     </div>
@@ -1219,7 +1269,7 @@ async function generatePDF() {
         <a href="https://wa.me/380673990560" style="display:inline-block;padding:5px 12px;background:#25d366;color:#fff;border-radius:20px;text-decoration:none;font-size:${isMobile ? 10 : 11}px;font-weight:600;">WhatsApp</a>
       </div>
     </div>
-    <div style="border-top:1px solid #eee;padding:8px 16px;text-align:center;">
+    <div style="border-top:1px solid #eee;padding:8px ${isMobile ? 16 : 24}px;text-align:center;">
       <span style="font-size:${isMobile ? 9 : 10}px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
     </div>
   `;

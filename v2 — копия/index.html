@@ -68,7 +68,7 @@
         <div class="radio-text">Ворота з хвірткою всередині</div>
       </div>
     </div>
-    <!-- ЗМІНА 1: прибрано configHint (верхній блок "Найдешевший варіант") -->
+    <div class="width-hint" id="configHint" style="display:none"></div>
   </div>
 
   <!-- 4. ШИРИНА -->
@@ -76,7 +76,6 @@
     <label class="field-label" for="width">Загальна ширина між стовпами (в метрах)</label>
     <input type="text" id="width" placeholder="наприклад: 4.53" inputmode="decimal" autocomplete="off" />
     <p class="field-note">Від 2,5 до 6 м — будь-який розмір</p>
-    <!-- ЗМІНА 2: підказка показується тільки при введенні ширини -->
     <div class="width-hint" id="widthHint"></div>
     <div class="height-notice">💡 Висота до 2,1 м — ціна не змінюється</div>
   </div>
@@ -90,12 +89,10 @@
     </div>
   </div>
 
-  <!-- 6+7. ДОДАТКОВІ ОПЦІЇ -->
+  <!-- 6+7. ДОДАТКОВІ ОПЦІЇ (замок + фіксатори) -->
   <div class="field hidden-field" id="fieldBolts">
     <label class="field-label">Додаткові опції</label>
-    <!-- ЗМІНА 4: fieldLock — замок без іконки -->
     <div id="fieldLock"></div>
-    <!-- ЗМІНА 5: фіксатори — чекбокс як є -->
     <div class="checkbox-option" id="boltsOption" onclick="toggleCheckbox('boltsOption', 'boltsChecked')">
       <div class="checkbox-box"></div>
       <div class="checkbox-text">
@@ -110,19 +107,20 @@
     <label class="field-label">Стовпи (не обов'язково)</label>
     <p class="field-note-top">Стовпи доставляємо лише разом з воротами машиною заводу. Нова Пошта такі вироби не приймає.</p>
     <div id="postsStepWrap">
-      <!-- ЗМІНА 6: прибрано підпис "Крок 1 — Тип" -->
+      <!-- Крок 1: Тип -->
       <div class="posts-step" id="postStep1">
+        <div class="posts-step-label">Крок 1 — Тип</div>
         <div class="step-btns">
           <button class="step-btn" onclick="selectPostType('painted')">Фарбовані</button>
           <button class="step-btn" onclick="selectPostType('unpainted')">Нефарбовані</button>
-          <button class="step-btn btn-no-posts" onclick="selectPostType('none')">Без стовпів</button>
+          <button class="step-btn" onclick="selectPostType('none')">Без стовпів</button>
         </div>
       </div>
-      <!-- Крок 2/3: динамічно, без підписів -->
+      <!-- Крок 2/3: динамічно -->
       <div id="postStep2" style="display:none"></div>
       <div id="postStep3" style="display:none"></div>
     </div>
-    <!-- ЗМІНА 8: лічильник — показується після вибору картки -->
+    <!-- Лічильник -->
     <div id="postQtyWrap" style="display:none" class="post-qty-wrap">
       <span class="post-qty-label">Кількість:</span>
       <div class="qty-counter">
@@ -160,7 +158,7 @@
   <!-- РЕЗУЛЬТАТ -->
   <div id="result" class="result hidden"></div>
 
-  <!-- КНОПКА СКИДАННЯ (прихована, використовується з JS) -->
+  <!-- КНОПКА СКИДАННЯ -->
   <button id="resetBtn" class="btn-reset" style="display:none">↺ Новий розрахунок</button>
 
 </div>
