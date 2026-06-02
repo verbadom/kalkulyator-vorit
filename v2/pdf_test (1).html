@@ -20,16 +20,16 @@
   .pdf-date { font-size: 13px; font-weight: 600; color: #1A6B28; }
   .pdf-phone { font-size: 11px; color: #888; margin-top: 3px; }
   .pdf-title { padding: 14px 24px 8px; font-size: 16px; font-weight: 700; color: #1A6B28; }
-  .pdf-row { padding: 12px 24px; border-bottom: 1px solid #eee; }
-  .pdf-row-label { color: #888; font-size: 13px; }
-  .pdf-row-value { color: #1a1a2e; font-weight: 600; font-size: 17px; margin-top: 3px; }
-  .pdf-popular { padding: 2px 24px 8px; color: #856404; font-size: 14px; }
-  .pdf-subtotal { background: #E8F5EB; padding: 14px 24px; margin: 10px 0; }
-  .pdf-subtotal .pdf-row-label { color: #888; font-size: 13px; }
-  .pdf-subtotal .pdf-row-value { color: #1A6B28; font-weight: 700; font-size: 20px; margin-top: 3px; }
-  .pdf-total { background: #2E9B3F; padding: 16px 24px; border-radius: 0; margin-top: 14px; }
-  .pdf-total .pdf-row-label { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600; }
-  .pdf-total .pdf-row-value { color: #fff; font-weight: 800; font-size: 26px; margin-top: 4px; }
+  .pdf-row { padding: 14px 24px; border-bottom: 1px solid #eee; }
+  .pdf-row-label { color: #888; font-size: 16px; }
+  .pdf-row-value { color: #1a1a2e; font-weight: 600; font-size: 22px; margin-top: 4px; }
+  .pdf-popular { padding: 2px 24px 8px; color: #856404; font-size: 16px; }
+  .pdf-subtotal { background: #E8F5EB; padding: 16px 24px; margin: 10px 0; }
+  .pdf-subtotal .pdf-row-label { color: #888; font-size: 16px; }
+  .pdf-subtotal .pdf-row-value { color: #1A6B28; font-weight: 700; font-size: 26px; margin-top: 4px; }
+  .pdf-total { background: #2E9B3F; padding: 18px 24px; border-radius: 0; margin-top: 14px; }
+  .pdf-total .pdf-row-label { color: rgba(255,255,255,0.85); font-size: 16px; font-weight: 600; }
+  .pdf-total .pdf-row-value { color: #fff; font-weight: 800; font-size: 32px; margin-top: 4px; }
   .pdf-warning { margin: 10px 24px; padding: 8px 12px; background: #fff8e1; border-radius: 6px; border-left: 3px solid #EF9F27; font-size: 12px; color: #7A5800; }
   .pdf-contacts { margin: 0 24px 20px; padding: 14px 16px; background: #E8F5EB; border-radius: 8px; border: 1px solid #A8D9B0; }
   .pdf-contacts-title { font-size: 12px; font-weight: 700; color: #1A6B28; margin-bottom: 8px; }
@@ -136,9 +136,9 @@
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
   const el = document.getElementById('pdfContent');
-  const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
+  const canvas = await html2canvas(el, { scale: 5, useCORS: true, backgroundColor: '#ffffff' });
   const imgData = canvas.toDataURL('image/png');
-  const pageW = 100;
+  const pageW = 210;
   const pageH = (canvas.height * pageW) / canvas.width;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
   doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
