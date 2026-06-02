@@ -976,9 +976,9 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   }
 
   if (showPosts && postInfo) {
-    html += `<div class="result-row"><span>${postInfo.name}, ${postInfo.height} — ${postQty} шт × ${postInfo.price.toLocaleString('uk-UA')} грн</span><span>${postPrice.toLocaleString('uk-UA')} грн</span></div>`;
+    html += `<div class="result-row"><span>Стовп: ${postInfo.name}, ${postInfo.height} — ${postQty} шт × ${postInfo.price.toLocaleString('uk-UA')} грн</span><span>${postPrice.toLocaleString('uk-UA')} грн</span></div>`;
     if (hingesChecked && hingeCount > 0) {
-      html += `<div class="result-row"><span>Петлі на заводі — ${hingeCount} шт × ${HINGE_PRICE_PER_UNIT.toLocaleString('uk-UA')} грн</span><span>${hingePrice.toLocaleString('uk-UA')} грн</span></div>`;
+      html += `<div class="result-row"><span>Заводська зварка петель — ${hingeCount} шт × ${HINGE_PRICE_PER_UNIT.toLocaleString('uk-UA')} грн</span><span>${hingePrice.toLocaleString('uk-UA')} грн</span></div>`;
     }
   }
 
