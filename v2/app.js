@@ -325,7 +325,6 @@ function selectRadio(groupId, el, stateVar) {
       incl.innerHTML = buildIncludedText(selectedType, selectedConfig);
     }
 
-    // ЗМІНА 1: підказка ширини - оновити при зміні комплектації
     updateWidthHint();
 
     buildLockField();
@@ -341,9 +340,7 @@ function resetRadioGroup(groupId) {
 }
 
 /* ============================================================
-   ПІДКАЗКА ШИРИНА (ЗМІНА 1 + 2)
-   Показуємо тільки при введенні ширини, крім "врізна калітка"
-   Прибрали "configHint" (верхній блок "Найдешевший варіант")
+   ПІДКАЗКА ШИРИНА
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   const widthInput = document.getElementById('width');
@@ -358,7 +355,6 @@ function updateWidthHint() {
   hint.style.display = 'none';
   hint.textContent = '';
 
-  // Не показуємо для "врізна калітка"
   if (!selectedType || !selectedConfig || selectedConfig === 'with_builtin_wicket') return;
 
   const rawW = document.getElementById('width').value.replace(',', '.').trim();
@@ -384,7 +380,7 @@ function updateWidthHint() {
 }
 
 /* ============================================================
-   ПОКРИТТЯ (ЗМІНА 3: зірочка тільки в бейджі, збільшена)
+   ПОКРИТТЯ
    ============================================================ */
 function buildCoatingOptions() {
   const group = document.getElementById('coatingGroup');
@@ -406,11 +402,10 @@ function buildCoatingOptions() {
       options = [{ value: 0, label: 'Без профнастилу — тільки ковані елементи', surcharge: 0, fixed: true }];
     } else {
       options = [
-        { value: 0,                   label: 'Базовий — глянець',                             surcharge: 0 },
-        { value: matoviy.surcharge,   label: `Кращий — матовий +${matoviy.surcharge} грн`,    surcharge: matoviy.surcharge },
-        // ЗМІНА 3: зірочка прибрана з тексту, залишається тільки в бейджі
-        { value: dvustoron.surcharge, label: `Матовий з обох боків +${dvustoron.surcharge} грн`, surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
-        { value: derevo.surcharge,    label: `Під дерево / 3D +${derevo.surcharge} грн`,       surcharge: derevo.surcharge },
+        { value: 0,                   label: 'Базовий — глянець',                                        surcharge: 0 },
+        { value: matoviy.surcharge,   label: `Матовий з одного боку +${matoviy.surcharge} грн`,          surcharge: matoviy.surcharge },
+        { value: dvustoron.surcharge, label: `Матовий з обох боків +${dvustoron.surcharge} грн`,         surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
+        { value: derevo.surcharge,    label: `Під дерево / 3D +${derevo.surcharge} грн`,                 surcharge: derevo.surcharge },
       ];
     }
   }
@@ -421,7 +416,6 @@ function buildCoatingOptions() {
     } else if (model.doubleSided) {
       options = [
         { value: 0,                   label: 'Базовий — матовий односторонній',                     surcharge: 0 },
-        // ЗМІНА 3: зірочка прибрана з тексту
         { value: dvustoron.surcharge, label: `Матовий з обох боків +${dvustoron.surcharge} грн`,   surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
       ];
     } else {
@@ -434,7 +428,6 @@ function buildCoatingOptions() {
     div.className = 'radio-option';
     div.dataset.idx = i;
 
-    // ЗМІНА 3: зірочка тільки в бейджі, клас badge-star для збільшення
     const badge = opt.badge ? `<span class="radio-badge"><span class="badge-star">⭐</span> Обирають найчастіше</span>` : '';
 
     div.innerHTML = `
@@ -468,7 +461,7 @@ function buildCoatingOptions() {
 }
 
 /* ============================================================
-   ЗАМОК (ЗМІНА 4: "Замок вже включено" — без іконки, просто текст)
+   ЗАМОК
    ============================================================ */
 function buildLockField() {
   const field = document.getElementById('fieldLock');
@@ -493,7 +486,6 @@ function buildLockField() {
       field.innerHTML = '';
       return;
     }
-    // ЗМІНА 4: просто текст без іконки
     field.innerHTML = `
       <div class="lock-included-note">
         Замок вже включено у вартість
@@ -516,10 +508,6 @@ function toggleCheckbox(optionId, stateVar) {
 
 /* ============================================================
    СТОВПИ — ПОКРОКОВИЙ ВИБІР
-   ЗМІНА 6: прибрані підписи "Крок 1", "Крок 2", "Крок 3"
-   ЗМІНА 7: фільтрація карток по типу, скидання при перемиканні
-   ЗМІНА 8: кількість показується після вибору будь-якої картки
-   ЗМІНА 9: всі назви українською
    ============================================================ */
 let _postType   = null;
 let _postHeight = null;
@@ -546,7 +534,6 @@ function selectPostType(type) {
   _postHeight = null;
   selectedPostKey = null;
 
-  // ЗМІНА 7: скидаємо попередній вибір карток
   document.querySelectorAll('#postStep1 .step-btn').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
 
@@ -554,7 +541,6 @@ function selectPostType(type) {
   document.getElementById('postStep2').innerHTML = '';
   document.getElementById('postStep3').style.display = 'none';
   document.getElementById('postStep3').innerHTML = '';
-  // ЗМІНА 8: скидаємо кількість при зміні типу
   document.getElementById('postQtyWrap').style.display = 'none';
   document.getElementById('fieldHinges').style.display = 'none';
   hingesChecked = false;
@@ -568,14 +554,12 @@ function selectPostType(type) {
   }
 
   if (type === 'unpainted') {
-    // ЗМІНА 7: показуємо тільки нефарбовані
     const unpainted = POST_DATA.filter(p => !p.painted);
     renderPostCards('postStep2', unpainted);
     document.getElementById('postStep2').style.display = 'block';
   }
 
   if (type === 'painted') {
-    // ЗМІНА 7: показуємо тільки фарбовані — спочатку висота
     renderPostHeightStep('postStep2');
     document.getElementById('postStep2').style.display = 'block';
   }
@@ -596,7 +580,6 @@ function renderPostHeightStep(stepId) {
 function selectPostHeight(height) {
   _postHeight = height;
 
-  // Скидаємо step3 і кількість при зміні висоти
   document.getElementById('postStep3').style.display = 'none';
   document.getElementById('postStep3').innerHTML = '';
   document.getElementById('postQtyWrap').style.display = 'none';
@@ -610,15 +593,12 @@ function selectPostHeight(height) {
     }
   });
 
-  // Висота в POST_DATA зберігається як "2.0 м" (з пробілом)
   const heightWithSpace = height.replace('м', ' м');
   const filtered = POST_DATA.filter(p => p.painted && p.height === heightWithSpace);
   renderPostCards('postStep3', filtered);
   document.getElementById('postStep3').style.display = 'block';
 }
 
-// ЗМІНА 6: renderPostCards без підпису "Крок N — Розмір перерізу"
-// ЗМІНА 9: назви українською (вже є в POST_DATA)
 function renderPostCards(stepId, posts) {
   const step = document.getElementById(stepId);
   step.innerHTML = `
@@ -638,7 +618,6 @@ function renderPostCards(stepId, posts) {
 function selectPostFinal(key) {
   selectedPostKey = key;
 
-  // Скидаємо всі активні кнопки в обох кроках, потім активуємо потрібну
   document.querySelectorAll('#postStep2 .step-btn, #postStep3 .step-btn').forEach(b => {
     const onc = b.getAttribute('onclick') || '';
     if (onc.startsWith('selectPostFinal')) {
@@ -647,10 +626,8 @@ function selectPostFinal(key) {
     }
   });
 
-  // Показуємо кількість
   document.getElementById('postQtyWrap').style.display = 'flex';
 
-  // Петлі — текст залежить від типу столба
   const post = POST_DATA.find(p => p.key === key);
   const fieldHinges = document.getElementById('fieldHinges');
   const hingesOption = document.getElementById('hingesOption');
@@ -984,7 +961,6 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   html += `<div class="result-row result-subtotal"><span>Ворота з комплектуючими</span><span>${totalComplex.toLocaleString('uk-UA')} грн</span></div>`;
 
-  // Доставка
   if (deliveryStatus === 'on_route') {
     const isKyiv = selectedCityName.toLowerCase().includes('київ') || selectedCityName.toLowerCase().includes('киев');
     if (isKyiv) {
@@ -1033,7 +1009,6 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   html += `<p class="preliminary-note">Орієнтовна ціна. Менеджер уточнить деталі при замовленні 👍</p>`;
 
-  // ЗМІНА 10, 11, 12, 15: контакти, кнопки, баннер, рекламний блок
   html += `
     <div class="contacts-block">
       <a href="tel:+380673990560" class="btn-call" onclick="track('phone_click', selectedCityName)">📞 Зателефонувати нам</a>
@@ -1145,7 +1120,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 /* ============================================================
-   PDF (ЗМІНА 13: вертикальний список, ЗМІНА 14: зелений логотип)
+   PDF
    ============================================================ */
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
@@ -1162,7 +1137,6 @@ async function generatePDF() {
   const now     = new Date();
   const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  // ЗМІНА 13: збираємо дані для вертикального списку
   const rows = document.querySelectorAll('#result .result-row');
   let verticalRowsHTML = '';
 
@@ -1174,7 +1148,6 @@ async function generatePDF() {
     const isTotal    = row.classList.contains('total');
     const isSubtotal = row.classList.contains('result-subtotal');
     const isPopular  = row.classList.contains('popular-badge-row');
-    const pad        = isMobile ? '6px 12px' : '8px 14px';
 
     if (isPopular) {
       verticalRowsHTML += `<div style="padding:2px 32px 10px;color:#856404;font-size:22px;">⭐ Найпопулярніший вибір</div>`;
@@ -1208,10 +1181,6 @@ async function generatePDF() {
   const errHTML = errMsg
     ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#c0392b;margin:6px 12px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>`
     : '';
-
-  const p  = isMobile ? '14px 16px 12px' : '20px 24px 16px';
-  const p4 = isMobile ? '8px 12px' : '10px 14px';
-  const p5 = isMobile ? '0 12px 16px' : '0 14px 20px';
 
   pdfDiv.innerHTML = `
     <div style="border-top:4px solid #2E9B3F;padding:20px 32px 16px;border-bottom:1px solid #e8ecf4;">
@@ -1312,10 +1281,9 @@ function track(eventName, city) {
 track('page_view');
 
 /* ============================================================
-   ТЕСТ PDF — для перевірки вигляду без заповнення форми
+   ТЕСТ PDF
    ============================================================ */
 function testPDF() {
-  // Підставляємо тестові дані в результат
   const resultDiv = document.getElementById('result');
   resultDiv.innerHTML = `
     <div class="result-title">✅ Ваш розрахунок готовий!</div>
@@ -1335,4 +1303,3 @@ function testPDF() {
   resultDiv.classList.remove('hidden');
   generatePDF();
 }
-

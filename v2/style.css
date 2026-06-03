@@ -401,16 +401,32 @@ input[type="number"].field-error {
   line-height: 1.5;
 }
 
-.height-notice {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 8px 14px;
-  background: var(--yellow-bg);
-  border-left: 3px solid var(--yellow-border);
-  border-radius: 6px;
+/* ============================================================
+   БЛОК "ВАЖЛИВО" — ВИСОТА ВОРІТ
+   ============================================================ */
+.hint-important {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #FFF4E5;
+  border-left: 6px solid #F59E0B;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+}
+
+.hint-important__label {
   font-size: 13px;
+  font-weight: 700;
+  color: #B45309;
+  letter-spacing: 0.04em;
+}
+
+.hint-important__text {
+  font-size: 16px;
   font-weight: 600;
-  color: #7A5800;
+  color: #1a1a1a;
+  line-height: 1.4;
 }
 
 /* ============================================================
@@ -518,14 +534,11 @@ input[type="number"].field-error {
 
 /* ============================================================
    СТОВПИ — ПОКРОКОВИЙ ВИБІР
-   ЗМІНА 6: прибрані підписи кроків
-   ЗМІНА 9: "Без стовпів" — окремий стиль
    ============================================================ */
 .posts-step {
   margin-bottom: 10px;
 }
 
-/* ЗМІНА 6: .posts-step-label більше не використовується, але залишаємо на випадок */
 .posts-step-label {
   display: none;
 }
@@ -564,7 +577,6 @@ input[type="number"].field-error {
   color: var(--green-dark);
 }
 
-/* ЗМІНА 9: "Без стовпів" — на всю ширину */
 .step-btn.btn-no-posts {
   flex: 0 0 100%;
   min-width: 100%;
@@ -727,7 +739,7 @@ input#city.has-selection {
 #calculateBtn:disabled { background: #C0C0C0; cursor: not-allowed; }
 
 /* ============================================================
-   КНОПКА "НОВИЙ РОЗРАХУНОК" (прихована зверху)
+   КНОПКА "НОВИЙ РОЗРАХУНОК"
    ============================================================ */
 .btn-reset {
   width: 100%;
@@ -993,7 +1005,6 @@ input#city.has-selection {
   border-radius: var(--radius);
 }
 
-/* ЗМІНА 10: дві кнопки в один рядок, сірий фон */
 .bottom-btns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1023,7 +1034,6 @@ input#city.has-selection {
   border-color: #999;
 }
 
-/* ЗМІНА 15: рекламний блок — текст чорний, email зелений */
 .promo-line {
   text-align: center;
   font-size: 13px;
