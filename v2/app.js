@@ -405,7 +405,7 @@ function buildCoatingOptions() {
         { value: 0,                   label: 'Базовий — глянець',                                        surcharge: 0 },
         { value: matoviy.surcharge,   label: `Матовий з одного боку +${matoviy.surcharge} грн`,          surcharge: matoviy.surcharge },
         { value: dvustoron.surcharge, label: `Матовий з обох боків +${dvustoron.surcharge} грн`,         surcharge: dvustoron.surcharge, badge: '⭐ Обирають найчастіше' },
-        { value: derevo.surcharge,    label: `Під дерево / 3D +${derevo.surcharge} грн`,                 surcharge: derevo.surcharge },
+        { value: derevo.surcharge,    label: `Під дерево (з одного боку) +${derevo.surcharge} грн`,      surcharge: derevo.surcharge },
       ];
     }
   }
