@@ -351,9 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function updateWidthHint() {
   const hint = document.getElementById('widthHint');
+  const separator = document.getElementById('widthHintSeparator');
   if (!hint) return;
+
   hint.style.display = 'none';
-  hint.textContent = '';
+  hint.innerHTML = '';
+  if (separator) separator.style.display = 'none';
 
   if (!selectedType || !selectedConfig || selectedConfig === 'with_builtin_wicket') return;
 
@@ -365,17 +368,18 @@ function updateWidthHint() {
   let msg = '';
   if (selectedConfig === 'with_separate_wicket') {
     msg = selectedType === 'forged'
-      ? '💡 Якщо розмір ще не визначено — ширина 4,5 м (ворота 3,6 м + хвіртка 0,9 м) зазвичай найвигідніша'
-      : '💡 Якщо розмір ще не визначено — ширина 4,9 м (ворота 4,0 м + хвіртка 0,9 м) зазвичай найвигідніша';
+      ? 'Якщо розмір ще не визначено — ширина 4,5 м (ворота 3,6 м + хвіртка 0,9 м) зазвичай найвигідніша'
+      : 'Якщо розмір ще не визначено — ширина 4,9 м (ворота 4,0 м + хвіртка 0,9 м) зазвичай найвигідніша';
   } else if (selectedConfig === 'without_wicket') {
     msg = selectedType === 'forged'
-      ? '💡 Якщо розмір ще не визначено — ширина 3,6 м зазвичай найвигідніша'
-      : '💡 Якщо розмір ще не визначено — ширина 4,0 м зазвичай найвигідніша';
+      ? 'Якщо розмір ще не визначено — ширина 3,6 м зазвичай найвигідніша'
+      : 'Якщо розмір ще не визначено — ширина 4,0 м зазвичай найвигідніша';
   }
 
   if (msg) {
-    hint.textContent = msg;
+    hint.innerHTML = `<span style="font-size:14px;color:#2E9B3F;margin-right:6px;">★</span>${msg}`;
     hint.style.display = 'block';
+    if (separator) separator.style.display = 'block';
   }
 }
 

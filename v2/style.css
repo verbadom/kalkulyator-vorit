@@ -388,17 +388,45 @@ input[type="number"].field-error {
 /* ============================================================
    ПІДКАЗКА ШИРИНА
    ============================================================ */
+.field-label-width {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--green-dark);
+  margin-bottom: 8px;
+}
+
+.width-arrow-icon {
+  font-size: 20px;
+  color: #1a6fe8;
+  line-height: 1;
+}
+
+.height-arrow-icon {
+  font-size: 15px;
+  color: #1a6fe8;
+  line-height: 1;
+}
+
 .width-hint {
   display: none;
-  margin-top: 8px;
+  margin-top: 10px;
   padding: 10px 14px;
-  background: var(--yellow-bg);
-  border-left: 3px solid var(--yellow-border);
+  background: #E8F5EB;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #7A5800;
+  color: #1A6B28;
   line-height: 1.5;
+}
+
+.width-hint-separator {
+  border: none;
+  border-top: 1px solid #DDE1E8;
+  margin: 16px 0;
+  display: none;
 }
 
 /* ============================================================

@@ -73,14 +73,14 @@
 
   <!-- 4. ШИРИНА -->
   <div class="field hidden-field" id="fieldWidth">
-    <label class="field-label" for="width">Загальна ширина між стовпами (в метрах)</label>
+    <label class="field-label-width" for="width"><span class="width-arrow-icon">↔️</span> Загальна ширина між стовпами (в метрах)</label>
     <input type="text" id="width" placeholder="наприклад: 4.53" inputmode="decimal" autocomplete="off" />
     <p class="field-note">Від 2,5 до 6 м — будь-який розмір</p>
     <!-- ЗМІНА 2: підказка показується тільки при введенні ширини -->
-    <div class="width-hint" id="widthHint"></div>
-    <!-- ВАЖЛИВО: блок висоти — новий стиль -->
+    <div class="width-hint" id="widthHint" style="display:none"></div>
+    <hr class="width-hint-separator" id="widthHintSeparator" style="display:none">
     <div class="hint-important">
-      <span class="hint-important__label">⚠️ ВАЖЛИВО</span>
+      <span class="hint-important__label"><span class="height-arrow-icon">↕️</span> ВАЖЛИВО</span>
       <span class="hint-important__text">Висота до 2,1 м — <strong>ЦІНА НЕ ЗМІНЮЄТЬСЯ</strong></span>
     </div>
   </div>
