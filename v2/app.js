@@ -95,7 +95,6 @@ async function loadPricesFromSheet() {
     }
 
     if (prices.coatings && prices.coatings.length > 0) {
-      // Очищаємо зірочки з назв які можуть прийти з таблиці
       window._COATINGS = prices.coatings.map(c => ({
         ...c,
         name: c.name ? c.name.replace(/⭐/g, '').trim() : c.name
@@ -326,7 +325,6 @@ function selectRadio(groupId, el, stateVar) {
     }
 
     updateWidthHint();
-
     buildLockField();
   }
 
@@ -1023,7 +1021,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
         <a href="https://t.me/+380673990560" class="msg-btn telegram" onclick="_leadTracker.onMessengerClick('Telegram', _lastCalcData); track('contact', selectedCityName);">Telegram</a>
         <a href="https://wa.me/380673990560" class="msg-btn whatsapp" onclick="_leadTracker.onMessengerClick('WhatsApp', _lastCalcData); track('contact', selectedCityName);">WhatsApp</a>
       </div>
-      <button class="btn-pdf" onclick="openReceiptSheet(); track('view_receipt', selectedCityName);">📄 Переглянути розрахунок</button>
+      <button class="btn-pdf" onclick="openPdfSheet(); track('pdf_sheet', selectedCityName);">📄 Зберегти розрахунок PDF</button>
       <a class="share-banner-wrap" onclick="sharePage(); track('share', selectedCityName);" style="cursor:pointer;">
         <img src="banner-share.png" alt="Поділитися калькулятором" />
       </a>
@@ -1124,23 +1122,23 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 /* ============================================================
-   ПАНЕЛЬ ПЕРЕГЛЯДУ РОЗРАХУНКУ
+   ШТОРКА PDF — ІНІЦІАЛІЗАЦІЯ
    ============================================================ */
-(function injectReceiptSheet() {
+(function initPdfSheet() {
   const style = document.createElement('style');
   style.textContent = `
-    .receipt-overlay {
+    .pdf-sheet-overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0);
       z-index: 500;
       pointer-events: none;
-      transition: background 0.3s;
+      transition: background 0.3s ease;
     }
-    .receipt-overlay.open {
+    .pdf-sheet-overlay.open {
       background: rgba(0,0,0,0.5);
       pointer-events: all;
     }
-    .receipt-sheet {
+    .pdf-sheet {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: #fff;
       border-radius: 20px 20px 0 0;
@@ -1153,240 +1151,128 @@ document.getElementById('resetBtn').addEventListener('click', () => {
       padding: 0 0 32px;
       font-family: 'Nunito', sans-serif;
     }
-    .receipt-sheet.open { transform: translateY(0); }
-    .receipt-sheet-handle {
+    .pdf-sheet.open { transform: translateY(0); }
+    .pdf-sheet-handle {
       width: 36px; height: 4px;
-      background: #DDE1E8;
-      border-radius: 2px;
-      margin: 12px auto 16px;
+      background: #DDE1E8; border-radius: 2px;
+      margin: 12px auto 0;
     }
-    .receipt-sheet-inner { padding: 0 20px; }
-    .receipt-sheet-card {
+    .pdf-sheet-close {
+      position: absolute; top: 14px; right: 18px;
+      width: 30px; height: 30px;
+      background: #F5F6F8; border: none; border-radius: 50%;
+      font-size: 18px; color: #888; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .pdf-sheet-close:hover { background: #E8E9EC; }
+    .pdf-sheet-inner { padding: 16px 20px 0; }
+    .pdf-sheet-receipt {
       background: #fff;
       border: 1px solid #DDE1E8;
       border-radius: 12px;
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-    .receipt-sheet-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 16px 18px 12px;
+    .pdf-sheet-head {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 16px 12px;
       border-bottom: 1px solid #EEF1F5;
     }
-    .receipt-sheet-logo {
-      font-size: 20px;
-      font-weight: 800;
-      color: #2E9B3F;
-      letter-spacing: 1px;
+    .pdf-sheet-logo { font-size: 18px; font-weight: 800; color: #2E9B3F; letter-spacing: 1px; }
+    .pdf-sheet-site { font-size: 12px; color: #888; margin-top: 2px; }
+    .pdf-sheet-date-lbl { font-size: 11px; color: #888; text-align: right; }
+    .pdf-sheet-date-val { font-size: 13px; font-weight: 700; color: #1A1A2E; text-align: right; margin-top: 2px; }
+    .pdf-sheet-phone { font-size: 12px; color: #888; text-align: right; margin-top: 2px; }
+    .pdf-sheet-rows { padding: 0 16px 10px; }
+    .pdf-sheet-section {
+      font-size: 11px; font-weight: 700; color: #888;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 10px 0 5px;
     }
-    .receipt-sheet-site {
-      font-size: 12px;
-      color: #888;
-      margin-top: 2px;
+    .pdf-sheet-row {
+      display: flex; justify-content: space-between;
+      font-size: 15px; color: #1A1A2E;
+      padding: 5px 0; border-bottom: 1px solid #F0F4F0;
+      gap: 10px;
     }
-    .receipt-sheet-date-label {
-      font-size: 11px;
-      color: #888;
-      text-align: right;
+    .pdf-sheet-row:last-child { border-bottom: none; }
+    .pdf-sheet-row-lbl { color: #555; flex: 0 0 55%; max-width: 55%; line-height: 1.4; }
+    .pdf-sheet-row-val { font-weight: 700; text-align: right; flex: 0 0 45%; max-width: 45%; }
+    .pdf-sheet-subtotal { background: #E8F5EB; padding: 12px 16px; }
+    .pdf-sheet-subtotal-lbl { font-size: 12px; color: #888; margin-bottom: 2px; }
+    .pdf-sheet-subtotal-val { font-size: 26px; font-weight: 800; color: #1A6B28; }
+    .pdf-sheet-total { background: #2E9B3F; padding: 14px 16px; }
+    .pdf-sheet-total-lbl { font-size: 13px; color: rgba(255,255,255,0.85); margin-bottom: 3px; }
+    .pdf-sheet-total-val { font-size: 30px; font-weight: 800; color: #fff; }
+    .pdf-sheet-note { font-size: 12px; color: #888; text-align: center; padding: 10px 16px 4px; }
+    .pdf-sheet-btn-share {
+      width: 100%; padding: 16px;
+      background: #2E9B3F; border: none; border-radius: 12px;
+      font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800;
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-sizing: border-box; margin-bottom: 10px;
     }
-    .receipt-sheet-date-val {
-      font-size: 14px;
-      font-weight: 700;
-      color: #1A1A2E;
-      text-align: right;
-      margin-top: 2px;
+    .pdf-sheet-btn-share:hover { background: #1A6B28; }
+    .pdf-sheet-btn-share:disabled { background: #A8D9B0; cursor: not-allowed; }
+    .pdf-sheet-fallback {
+      background: #F5F6F8; border-radius: 12px; padding: 14px; display: none;
     }
-    .receipt-sheet-phone {
-      font-size: 12px;
-      color: #888;
-      text-align: right;
-      margin-top: 2px;
+    .pdf-sheet-fallback.open { display: block; }
+    .pdf-sheet-fallback-title { font-size: 13px; color: #888; text-align: center; margin-bottom: 12px; }
+    .pdf-sheet-fallback-row { display: flex; justify-content: space-around; margin-bottom: 10px; }
+    .pdf-sheet-fallback-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+    .pdf-sheet-fallback-item:hover { opacity: 0.8; }
+    .pdf-sheet-fallback-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .pdf-sheet-fallback-lbl { font-size: 12px; color: #888; }
+    .pdf-sheet-fallback-btns { display: flex; gap: 8px; }
+    .pdf-sheet-fallback-btn {
+      flex: 1; padding: 10px;
+      background: #fff; border: 1px solid #DDE1E8; border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600;
+      color: #1A1A2E; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
     }
-    .receipt-sheet-rows { padding: 0 18px 12px; }
-    .receipt-sheet-section {
-      font-size: 11px;
-      font-weight: 700;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 12px 0 6px;
-    }
-    .receipt-sheet-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 7px 0;
-      border-bottom: 1px solid #F0F4F0;
-      gap: 12px;
-    }
-    .receipt-sheet-row:last-child { border-bottom: none; }
-    .receipt-sheet-row-label {
-      font-size: 14px;
-      color: #555;
-      flex: 0 0 55%;
-      max-width: 55%;
-      line-height: 1.4;
-    }
-    .receipt-sheet-row-value {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1A1A2E;
-      text-align: right;
-      flex: 0 0 45%;
-      max-width: 45%;
-    }
-    .receipt-sheet-subtotal {
-      background: #E8F5EB;
-      padding: 12px 18px;
-    }
-    .receipt-sheet-subtotal-label {
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 2px;
-    }
-    .receipt-sheet-subtotal-value {
-      font-size: 28px;
-      font-weight: 800;
-      color: #1A6B28;
-    }
-    .receipt-sheet-total {
-      background: #2E9B3F;
-      padding: 16px 18px;
-    }
-    .receipt-sheet-total-label {
-      font-size: 14px;
-      color: rgba(255,255,255,0.85);
-      margin-bottom: 4px;
-    }
-    .receipt-sheet-total-value {
-      font-size: 32px;
-      font-weight: 800;
-      color: #fff;
-    }
-    .receipt-sheet-note {
-      font-size: 12px;
-      color: #888;
-      text-align: center;
-      padding: 10px 18px 0;
-    }
-    .receipt-sheet-share-btn {
-      width: 100%;
-      padding: 16px;
-      background: #2E9B3F;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 17px;
-      font-weight: 800;
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-sizing: border-box;
-    }
-    .receipt-sheet-share-btn:hover { background: #1A6B28; }
-    .receipt-sheet-fallback {
-      background: #F5F6F8;
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 10px;
-      display: none;
-    }
-    .receipt-sheet-fallback.open { display: block; }
-    .receipt-sheet-fallback-title {
-      font-size: 13px;
-      color: #888;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-    .receipt-sheet-fallback-row {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 10px;
-    }
-    .receipt-sheet-fallback-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-    .receipt-sheet-fallback-item:hover { opacity: 0.8; }
-    .receipt-sheet-fallback-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-    }
-    .receipt-sheet-fallback-label {
-      font-size: 12px;
-      color: #888;
-    }
-    .receipt-sheet-fallback-btns {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .receipt-sheet-fallback-btn {
-      flex: 1;
-      padding: 11px;
-      background: #fff;
-      border: 1px solid #DDE1E8;
-      border-radius: 10px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: #1A1A2E;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .receipt-sheet-fallback-btn:hover { background: #F5F6F8; }
+    .pdf-sheet-fallback-btn:hover { background: #F5F6F8; }
   `;
   document.head.appendChild(style);
 
   const overlay = document.createElement('div');
-  overlay.className = 'receipt-overlay';
-  overlay.id = 'receiptOverlay';
-  overlay.addEventListener('click', closeReceiptSheet);
+  overlay.className = 'pdf-sheet-overlay';
+  overlay.id = 'pdfSheetOverlay';
+  overlay.addEventListener('click', closePdfSheet);
 
   const sheet = document.createElement('div');
-  sheet.className = 'receipt-sheet';
-  sheet.id = 'receiptSheet';
+  sheet.className = 'pdf-sheet';
+  sheet.id = 'pdfSheet';
   sheet.innerHTML = `
-    <div class="receipt-sheet-handle"></div>
-    <div class="receipt-sheet-inner">
-      <div class="receipt-sheet-card" id="receiptSheetCard"></div>
-      <button class="receipt-sheet-share-btn" onclick="handleReceiptShare()">
+    <div class="pdf-sheet-handle"></div>
+    <button class="pdf-sheet-close" onclick="closePdfSheet()" aria-label="Закрити">×</button>
+    <div class="pdf-sheet-inner">
+      <div class="pdf-sheet-receipt" id="pdfSheetReceipt"></div>
+      <button class="pdf-sheet-btn-share" id="pdfSheetShareBtn" onclick="sharePdf()">
         📤 Поділитися
       </button>
-      <div class="receipt-sheet-fallback" id="receiptSheetFallback">
-        <div class="receipt-sheet-fallback-title">Оберіть спосіб відправки</div>
-        <div class="receipt-sheet-fallback-row">
-          <div class="receipt-sheet-fallback-item" onclick="window.open('viber://forward?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
-            <div class="receipt-sheet-fallback-icon" style="background:#7360F2;">💜</div>
-            <span class="receipt-sheet-fallback-label">Viber</span>
+      <div class="pdf-sheet-fallback" id="pdfSheetFallback">
+        <div class="pdf-sheet-fallback-title">Оберіть спосіб відправки</div>
+        <div class="pdf-sheet-fallback-row">
+          <div class="pdf-sheet-fallback-item" onclick="window.open('viber://forward?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
+            <div class="pdf-sheet-fallback-icon" style="background:#7360F2;">💜</div>
+            <span class="pdf-sheet-fallback-lbl">Viber</span>
           </div>
-          <div class="receipt-sheet-fallback-item" onclick="window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent('Розрахунок воріт Verbadom'))">
-            <div class="receipt-sheet-fallback-icon" style="background:#2AABEE;">✈️</div>
-            <span class="receipt-sheet-fallback-label">Telegram</span>
+          <div class="pdf-sheet-fallback-item" onclick="window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent('Розрахунок воріт Verbadom'))">
+            <div class="pdf-sheet-fallback-icon" style="background:#2AABEE;">✈️</div>
+            <span class="pdf-sheet-fallback-lbl">Telegram</span>
           </div>
-          <div class="receipt-sheet-fallback-item" onclick="window.open('https://wa.me/?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
-            <div class="receipt-sheet-fallback-icon" style="background:#25D366;">💬</div>
-            <span class="receipt-sheet-fallback-label">WhatsApp</span>
+          <div class="pdf-sheet-fallback-item" onclick="window.open('https://wa.me/?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
+            <div class="pdf-sheet-fallback-icon" style="background:#25D366;">💬</div>
+            <span class="pdf-sheet-fallback-lbl">WhatsApp</span>
           </div>
         </div>
-        <div class="receipt-sheet-fallback-btns">
-          <button class="receipt-sheet-fallback-btn" onclick="generatePDF()">📄 Скачати PDF</button>
-          <button class="receipt-sheet-fallback-btn" id="receiptCopyBtn" onclick="receiptCopyLink()">🔗 Копіювати</button>
+        <div class="pdf-sheet-fallback-btns">
+          <button class="pdf-sheet-fallback-btn" onclick="generatePDF()">📄 Скачати PDF</button>
+          <button class="pdf-sheet-fallback-btn" id="pdfCopyBtn" onclick="pdfCopyLink()">🔗 Копіювати</button>
         </div>
       </div>
     </div>
@@ -1396,12 +1282,15 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   document.body.appendChild(sheet);
 })();
 
-function openReceiptSheet() {
+/* ============================================================
+   ШТОРКА PDF — ВІДКРИТИ / ЗАКРИТИ
+   ============================================================ */
+function openPdfSheet() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   const rows = document.querySelectorAll('#result .result-row');
-  let sectionHTML = '';
+  let rowsHTML = '';
   let subtotalHTML = '';
   let totalHTML = '';
 
@@ -1417,64 +1306,66 @@ function openReceiptSheet() {
 
     if (isTotal) {
       totalHTML = `
-        <div class="receipt-sheet-total">
-          <div class="receipt-sheet-total-label">${label}</div>
-          <div class="receipt-sheet-total-value">${value}</div>
+        <div class="pdf-sheet-total">
+          <div class="pdf-sheet-total-lbl">${label}</div>
+          <div class="pdf-sheet-total-val">${value}</div>
         </div>`;
     } else if (isSubtotal) {
       subtotalHTML = `
-        <div class="receipt-sheet-subtotal">
-          <div class="receipt-sheet-subtotal-label">${label}</div>
-          <div class="receipt-sheet-subtotal-value">${value}</div>
+        <div class="pdf-sheet-subtotal">
+          <div class="pdf-sheet-subtotal-lbl">${label}</div>
+          <div class="pdf-sheet-subtotal-val">${value}</div>
         </div>`;
     } else {
-      sectionHTML += `
-        <div class="receipt-sheet-row">
-          <div class="receipt-sheet-row-label">${label}</div>
-          <div class="receipt-sheet-row-value">${value}</div>
+      rowsHTML += `
+        <div class="pdf-sheet-row">
+          <div class="pdf-sheet-row-lbl">${label}</div>
+          <div class="pdf-sheet-row-val">${value}</div>
         </div>`;
     }
   });
 
-  const noteEl = document.querySelector('#result .delivery-note-inline');
-  const noteHTML = noteEl ? `<div class="receipt-sheet-note">${noteEl.innerText}</div>` : '';
-
-  document.getElementById('receiptSheetCard').innerHTML = `
-    <div class="receipt-sheet-head">
+  document.getElementById('pdfSheetReceipt').innerHTML = `
+    <div class="pdf-sheet-head">
       <div>
-        <div class="receipt-sheet-logo">🌿 VERBADOM</div>
-        <div class="receipt-sheet-site">verbadom.com.ua</div>
+        <div class="pdf-sheet-logo">🌿 VERBADOM</div>
+        <div class="pdf-sheet-site">verbadom.com.ua</div>
       </div>
       <div>
-        <div class="receipt-sheet-date-label">Розрахунок від</div>
-        <div class="receipt-sheet-date-val">${dateStr}</div>
-        <div class="receipt-sheet-phone">+38 (067) 399-05-60</div>
+        <div class="pdf-sheet-date-lbl">Розрахунок від</div>
+        <div class="pdf-sheet-date-val">${dateStr}</div>
+        <div class="pdf-sheet-phone">+38 (067) 399-05-60</div>
       </div>
     </div>
-    <div class="receipt-sheet-rows">
-      <div class="receipt-sheet-section">Склад замовлення</div>
-      ${sectionHTML}
+    <div class="pdf-sheet-rows">
+      <div class="pdf-sheet-section">Склад замовлення</div>
+      ${rowsHTML}
     </div>
     ${subtotalHTML}
     ${totalHTML}
-    ${noteHTML}
-    <div class="receipt-sheet-note">Орієнтовна ціна · Менеджер уточнить деталі при замовленні</div>
+    <div class="pdf-sheet-note">Орієнтовна ціна · Менеджер уточнить деталі при замовленні</div>
   `;
 
-  document.getElementById('receiptSheetFallback').classList.remove('open');
-  document.getElementById('receiptOverlay').classList.add('open');
-  document.getElementById('receiptSheet').classList.add('open');
+  document.getElementById('pdfSheetFallback').classList.remove('open');
+  document.getElementById('pdfSheetOverlay').classList.add('open');
+  document.getElementById('pdfSheet').classList.add('open');
 }
 
-function closeReceiptSheet() {
-  document.getElementById('receiptOverlay').classList.remove('open');
-  document.getElementById('receiptSheet').classList.remove('open');
-  document.getElementById('receiptSheetFallback').classList.remove('open');
+function closePdfSheet() {
+  document.getElementById('pdfSheetOverlay').classList.remove('open');
+  document.getElementById('pdfSheet').classList.remove('open');
+  document.getElementById('pdfSheetFallback').classList.remove('open');
 }
 
-async function handleReceiptShare() {
-  const btn = document.querySelector('.receipt-sheet-share-btn');
-  if (btn) { btn.textContent = '⏳ Готуємо файл...'; btn.disabled = true; }
+/* ============================================================
+   ШТОРКА PDF — КНОПКА "ПОДІЛИТИСЯ"
+   Генерує PDF у пам'яті і відправляє файл через Web Share API.
+   Фолбек: скачування або мессенджери.
+   ============================================================ */
+async function sharePdf() {
+  const btn = document.getElementById('pdfSheetShareBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Готуємо PDF...';
 
   try {
     const { jsPDF } = window.jspdf;
@@ -1482,6 +1373,7 @@ async function handleReceiptShare() {
     const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const filename = `Ворота_Verbadom_${dateStr.replace(/\./g, '-')}.pdf`;
 
+    // Будуємо прихований div для рендерингу PDF — та сама структура що й у generatePDF()
     const pdfDiv = document.createElement('div');
     pdfDiv.style.cssText = `
       position:fixed; left:-9999px; top:0;
@@ -1511,6 +1403,16 @@ async function handleReceiptShare() {
       }
     });
 
+    const delivNoteInline = document.querySelector('#result .delivery-note-inline');
+    const delivNoteHTML = delivNoteInline
+      ? `<p style="font-size:11px;color:#555;margin:4px 32px 8px;">${delivNoteInline.innerText}</p>`
+      : '';
+
+    const errMsg  = document.querySelector('#result .error-msg');
+    const errHTML = errMsg
+      ? `<p style="font-size:11px;color:#c0392b;margin:6px 32px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>`
+      : '';
+
     pdfDiv.innerHTML = `
       <div style="border-top:4px solid #2E9B3F;padding:20px 32px 16px;border-bottom:1px solid #e8ecf4;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -1529,13 +1431,22 @@ async function handleReceiptShare() {
       <div style="padding:20px 32px 12px;">
         <div style="font-size:26px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div>
       </div>
-      <div style="padding:0 0 8px;">${verticalRowsHTML}</div>
+      <div style="padding:0 0 8px;">
+        ${verticalRowsHTML}
+        ${delivNoteHTML}
+        ${errHTML}
+      </div>
       <div style="margin:14px 32px;padding:12px 16px;background:#fff8e1;border-radius:6px;border-left:3px solid #EF9F27;">
         <span style="font-size:20px;color:#7A5800;">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</span>
       </div>
       <div style="margin:0 32px 24px;padding:18px 20px;background:#E8F5EB;border-radius:8px;border:1px solid #A8D9B0;">
         <div style="font-size:22px;font-weight:700;color:#1A6B28;margin-bottom:10px;">Зв'яжіться з нами:</div>
-        <div style="font-size:26px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="font-size:26px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
+          <a href="viber://chat?number=%2B380673990560" style="display:inline-block;padding:8px 18px;background:#7360f2;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Viber</a>
+          <a href="https://t.me/+380673990560" style="display:inline-block;padding:8px 18px;background:#2aabee;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Telegram</a>
+          <a href="https://wa.me/380673990560" style="display:inline-block;padding:8px 18px;background:#25d366;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">WhatsApp</a>
+        </div>
       </div>
       <div style="border-top:1px solid #eee;padding:10px 32px;text-align:center;">
         <span style="font-size:18px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
@@ -1555,23 +1466,31 @@ async function handleReceiptShare() {
     const blob = doc.output('blob');
     const file = new File([blob], filename, { type: 'application/pdf' });
 
+    // Перевіряємо підтримку шеринга файлів
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      // Браузер підтримує шеринг файлів — відправляємо PDF
       await navigator.share({ files: [file], title: 'Розрахунок воріт — Verbadom' });
     } else if (navigator.share) {
+      // Шеринг є але файли не підтримує — відправляємо посилання
       await navigator.share({ title: 'Розрахунок воріт — Verbadom', url: window.location.href });
     } else {
+      // Десктоп або старий браузер — скачуємо файл
       doc.save(filename);
     }
+
   } catch (e) {
-    const fallback = document.getElementById('receiptSheetFallback');
-    if (fallback) fallback.classList.toggle('open');
+    // Користувач скасував або помилка — показуємо фолбек з мессенджерами
+    if (e.name !== 'AbortError') {
+      document.getElementById('pdfSheetFallback').classList.add('open');
+    }
   } finally {
-    if (btn) { btn.textContent = '📤 Поділитися'; btn.disabled = false; }
+    btn.disabled = false;
+    btn.innerHTML = '📤 Поділитися';
   }
 }
 
-function receiptCopyLink() {
-  const btn = document.getElementById('receiptCopyBtn');
+function pdfCopyLink() {
+  const btn = document.getElementById('pdfCopyBtn');
   navigator.clipboard.writeText(window.location.href).then(() => {
     btn.textContent = '✅ Скопійовано';
     setTimeout(() => { btn.textContent = '🔗 Копіювати'; }, 1500);
@@ -1579,7 +1498,7 @@ function receiptCopyLink() {
 }
 
 /* ============================================================
-   PDF
+   PDF — оригінальна функція збереження (залишена без змін)
    ============================================================ */
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
