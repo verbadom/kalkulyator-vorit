@@ -1021,7 +1021,24 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
         <a href="https://t.me/+380673990560" class="msg-btn telegram" onclick="_leadTracker.onMessengerClick('Telegram', _lastCalcData); track('contact', selectedCityName);">Telegram</a>
         <a href="https://wa.me/380673990560" class="msg-btn whatsapp" onclick="_leadTracker.onMessengerClick('WhatsApp', _lastCalcData); track('contact', selectedCityName);">WhatsApp</a>
       </div>
-      <button class="btn-pdf" onclick="openPdfSheet(); track('pdf_sheet', selectedCityName);">📄 Зберегти розрахунок PDF</button>
+      <button class="btn-pdf" onclick="toggleSaveOptions(); track('save_options', selectedCityName);">💾 Зберегти розрахунок</button>
+      <div class="save-options-menu" id="saveOptionsMenu">
+        <button class="save-option-item" onclick="copyCalcText(); track('copy_text', selectedCityName);">
+          <span class="save-option-item-icon">📋</span>
+          <div>
+            <div>Скопіювати текст</div>
+            <div class="save-option-item-desc">Вставити в будь-який месенджер або SMS</div>
+          </div>
+        </button>
+        <button class="save-option-item" onclick="generatePDF(); track('pdf_download', selectedCityName);">
+          <span class="save-option-item-icon">📄</span>
+          <div>
+            <div>Зберегти як документ</div>
+            <div class="save-option-item-desc">Файл PDF з логотипом та датою</div>
+          </div>
+        </button>
+      </div>
+      <div class="save-options-toast" id="saveOptionsToast"></div>
       <a class="share-banner-wrap" onclick="sharePage(); track('share', selectedCityName);" style="cursor:pointer;">
         <img src="banner-share.png" alt="Поділитися калькулятором" />
       </a>
@@ -1426,7 +1443,89 @@ async function savePdf() {
 }
 
 /* ============================================================
-   PDF — оригінальна функція збереження (залишена без змін)
+   ЗБЕРЕГТИ РОЗРАХУНОК — МЕНЮ ВИБОРУ
+   ============================================================ */
+(function injectSaveOptionsStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .save-options-menu {
+      display: none;
+      border: 1.5px solid #DDE1E8;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: -4px;
+    }
+    .save-options-menu.open { display: block; }
+    .save-option-item {
+      width: 100%; padding: 14px 16px;
+      background: #fff; border: none;
+      border-bottom: 1px solid #EEF1F5;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: #1A1A2E; cursor: pointer;
+      text-align: left;
+      display: flex; align-items: center; gap: 10px;
+      box-sizing: border-box;
+    }
+    .save-option-item:last-child { border-bottom: none; }
+    .save-option-item:hover { background: #F5F6F8; }
+    .save-option-item:active { background: #E8F5EB; }
+    .save-option-item-icon { font-size: 20px; flex-shrink: 0; }
+    .save-option-item-desc {
+      font-size: 12px; color: #888;
+      font-weight: 400; margin-top: 2px;
+    }
+    .save-options-toast {
+      font-size: 13px; color: #1A6B28;
+      text-align: center; min-height: 16px;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+function toggleSaveOptions() {
+  const menu = document.getElementById('saveOptionsMenu');
+  if (menu) menu.classList.toggle('open');
+}
+
+function copyCalcText() {
+  const menu = document.getElementById('saveOptionsMenu');
+  const toast = document.getElementById('saveOptionsToast');
+  if (menu) menu.classList.remove('open');
+
+  const rows = document.querySelectorAll('#result .result-row');
+  let lines = ['🌿 VERBADOM — Розрахунок воріт', ''];
+  rows.forEach(row => {
+    const spans = row.querySelectorAll('span');
+    if (spans.length < 2) return;
+    const label = spans[0].innerText.trim();
+    const value = spans[spans.length - 1].innerText.trim();
+    const isPopular = row.classList.contains('popular-badge-row');
+    if (isPopular) return;
+    if (row.classList.contains('result-subtotal') || row.classList.contains('total')) {
+      lines.push('');
+      lines.push(`${label}: ${value}`);
+    } else {
+      lines.push(`${label}: ${value}`);
+    }
+  });
+  lines.push('');
+  lines.push('Орієнтовна ціна. Менеджер уточнить деталі при замовленні.');
+  lines.push('📞 +38 (067) 399-05-60');
+  lines.push('verbadom.com.ua');
+
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    if (toast) {
+      toast.textContent = '✅ Скопійовано! Вставте в будь-який месенджер.';
+      setTimeout(() => { toast.textContent = ''; }, 3000);
+    }
+  }).catch(() => {
+    if (toast) toast.textContent = '⚠️ Не вдалося скопіювати';
+  });
+}
+
+/* ============================================================
+   PDF — функція збереження
    ============================================================ */
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
