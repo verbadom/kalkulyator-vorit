@@ -1023,7 +1023,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
         <a href="https://t.me/+380673990560" class="msg-btn telegram" onclick="_leadTracker.onMessengerClick('Telegram', _lastCalcData); track('contact', selectedCityName);">Telegram</a>
         <a href="https://wa.me/380673990560" class="msg-btn whatsapp" onclick="_leadTracker.onMessengerClick('WhatsApp', _lastCalcData); track('contact', selectedCityName);">WhatsApp</a>
       </div>
-      <button class="btn-pdf" onclick="generatePDF(); track('pdf_download', selectedCityName);">📄 Зберегти розрахунок PDF</button>
+      <button class="btn-pdf" onclick="openReceiptSheet(); track('view_receipt', selectedCityName);">📄 Переглянути розрахунок</button>
       <a class="share-banner-wrap" onclick="sharePage(); track('share', selectedCityName);" style="cursor:pointer;">
         <img src="banner-share.png" alt="Поділитися калькулятором" />
       </a>
@@ -1122,6 +1122,379 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   clearErrors();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+/* ============================================================
+   ПАНЕЛЬ ПЕРЕГЛЯДУ РОЗРАХУНКУ
+   ============================================================ */
+(function injectReceiptSheet() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .receipt-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0);
+      z-index: 500;
+      pointer-events: none;
+      transition: background 0.3s;
+    }
+    .receipt-overlay.open {
+      background: rgba(0,0,0,0.5);
+      pointer-events: all;
+    }
+    .receipt-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid #DDE1E8;
+      z-index: 501;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(.32,.72,0,1);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 0 0 32px;
+      font-family: 'Nunito', sans-serif;
+    }
+    .receipt-sheet.open { transform: translateY(0); }
+    .receipt-sheet-handle {
+      width: 36px; height: 4px;
+      background: #DDE1E8;
+      border-radius: 2px;
+      margin: 12px auto 16px;
+    }
+    .receipt-sheet-inner { padding: 0 20px; }
+    .receipt-sheet-card {
+      background: #fff;
+      border: 1px solid #DDE1E8;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .receipt-sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid #EEF1F5;
+    }
+    .receipt-sheet-logo {
+      font-size: 20px;
+      font-weight: 800;
+      color: #2E9B3F;
+      letter-spacing: 1px;
+    }
+    .receipt-sheet-site {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .receipt-sheet-date-label {
+      font-size: 11px;
+      color: #888;
+      text-align: right;
+    }
+    .receipt-sheet-date-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1A1A2E;
+      text-align: right;
+      margin-top: 2px;
+    }
+    .receipt-sheet-phone {
+      font-size: 12px;
+      color: #888;
+      text-align: right;
+      margin-top: 2px;
+    }
+    .receipt-sheet-rows { padding: 0 18px 12px; }
+    .receipt-sheet-section {
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 0 6px;
+    }
+    .receipt-sheet-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 7px 0;
+      border-bottom: 1px solid #F0F4F0;
+      gap: 12px;
+    }
+    .receipt-sheet-row:last-child { border-bottom: none; }
+    .receipt-sheet-row-label {
+      font-size: 14px;
+      color: #555;
+      flex: 0 0 55%;
+      max-width: 55%;
+      line-height: 1.4;
+    }
+    .receipt-sheet-row-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1A1A2E;
+      text-align: right;
+      flex: 0 0 45%;
+      max-width: 45%;
+    }
+    .receipt-sheet-subtotal {
+      background: #E8F5EB;
+      padding: 12px 18px;
+    }
+    .receipt-sheet-subtotal-label {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 2px;
+    }
+    .receipt-sheet-subtotal-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1A6B28;
+    }
+    .receipt-sheet-total {
+      background: #2E9B3F;
+      padding: 16px 18px;
+    }
+    .receipt-sheet-total-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 4px;
+    }
+    .receipt-sheet-total-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .receipt-sheet-note {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      padding: 10px 18px 0;
+    }
+    .receipt-sheet-share-btn {
+      width: 100%;
+      padding: 16px;
+      background: #2E9B3F;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-sizing: border-box;
+    }
+    .receipt-sheet-share-btn:hover { background: #1A6B28; }
+    .receipt-sheet-fallback {
+      background: #F5F6F8;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+    .receipt-sheet-fallback.open { display: block; }
+    .receipt-sheet-fallback-title {
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .receipt-sheet-fallback-row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 10px;
+    }
+    .receipt-sheet-fallback-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .receipt-sheet-fallback-item:hover { opacity: 0.8; }
+    .receipt-sheet-fallback-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .receipt-sheet-fallback-label {
+      font-size: 12px;
+      color: #888;
+    }
+    .receipt-sheet-fallback-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .receipt-sheet-fallback-btn {
+      flex: 1;
+      padding: 11px;
+      background: #fff;
+      border: 1px solid #DDE1E8;
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1A1A2E;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .receipt-sheet-fallback-btn:hover { background: #F5F6F8; }
+  `;
+  document.head.appendChild(style);
+
+  const overlay = document.createElement('div');
+  overlay.className = 'receipt-overlay';
+  overlay.id = 'receiptOverlay';
+  overlay.addEventListener('click', closeReceiptSheet);
+
+  const sheet = document.createElement('div');
+  sheet.className = 'receipt-sheet';
+  sheet.id = 'receiptSheet';
+  sheet.innerHTML = `
+    <div class="receipt-sheet-handle"></div>
+    <div class="receipt-sheet-inner">
+      <div class="receipt-sheet-card" id="receiptSheetCard"></div>
+      <button class="receipt-sheet-share-btn" onclick="handleReceiptShare()">
+        📤 Поділитися
+      </button>
+      <div class="receipt-sheet-fallback" id="receiptSheetFallback">
+        <div class="receipt-sheet-fallback-title">Оберіть спосіб відправки</div>
+        <div class="receipt-sheet-fallback-row">
+          <div class="receipt-sheet-fallback-item" onclick="window.open('viber://forward?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
+            <div class="receipt-sheet-fallback-icon" style="background:#7360F2;">💜</div>
+            <span class="receipt-sheet-fallback-label">Viber</span>
+          </div>
+          <div class="receipt-sheet-fallback-item" onclick="window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent('Розрахунок воріт Verbadom'))">
+            <div class="receipt-sheet-fallback-icon" style="background:#2AABEE;">✈️</div>
+            <span class="receipt-sheet-fallback-label">Telegram</span>
+          </div>
+          <div class="receipt-sheet-fallback-item" onclick="window.open('https://wa.me/?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
+            <div class="receipt-sheet-fallback-icon" style="background:#25D366;">💬</div>
+            <span class="receipt-sheet-fallback-label">WhatsApp</span>
+          </div>
+        </div>
+        <div class="receipt-sheet-fallback-btns">
+          <button class="receipt-sheet-fallback-btn" onclick="generatePDF()">📄 Скачати PDF</button>
+          <button class="receipt-sheet-fallback-btn" id="receiptCopyBtn" onclick="receiptCopyLink()">🔗 Копіювати</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(sheet);
+})();
+
+function openReceiptSheet() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  const rows = document.querySelectorAll('#result .result-row');
+  let sectionHTML = '';
+  let subtotalHTML = '';
+  let totalHTML = '';
+
+  rows.forEach(row => {
+    const spans = row.querySelectorAll('span');
+    if (spans.length < 2) return;
+    const label = spans[0].innerText.trim();
+    const value = spans[spans.length - 1].innerText.trim();
+    const isTotal    = row.classList.contains('total');
+    const isSubtotal = row.classList.contains('result-subtotal');
+    const isPopular  = row.classList.contains('popular-badge-row');
+    if (isPopular) return;
+
+    if (isTotal) {
+      totalHTML = `
+        <div class="receipt-sheet-total">
+          <div class="receipt-sheet-total-label">${label}</div>
+          <div class="receipt-sheet-total-value">${value}</div>
+        </div>`;
+    } else if (isSubtotal) {
+      subtotalHTML = `
+        <div class="receipt-sheet-subtotal">
+          <div class="receipt-sheet-subtotal-label">${label}</div>
+          <div class="receipt-sheet-subtotal-value">${value}</div>
+        </div>`;
+    } else {
+      sectionHTML += `
+        <div class="receipt-sheet-row">
+          <div class="receipt-sheet-row-label">${label}</div>
+          <div class="receipt-sheet-row-value">${value}</div>
+        </div>`;
+    }
+  });
+
+  const noteEl = document.querySelector('#result .delivery-note-inline');
+  const noteHTML = noteEl ? `<div class="receipt-sheet-note">${noteEl.innerText}</div>` : '';
+
+  document.getElementById('receiptSheetCard').innerHTML = `
+    <div class="receipt-sheet-head">
+      <div>
+        <div class="receipt-sheet-logo">🌿 VERBADOM</div>
+        <div class="receipt-sheet-site">verbadom.com.ua</div>
+      </div>
+      <div>
+        <div class="receipt-sheet-date-label">Розрахунок від</div>
+        <div class="receipt-sheet-date-val">${dateStr}</div>
+        <div class="receipt-sheet-phone">+38 (067) 399-05-60</div>
+      </div>
+    </div>
+    <div class="receipt-sheet-rows">
+      <div class="receipt-sheet-section">Склад замовлення</div>
+      ${sectionHTML}
+    </div>
+    ${subtotalHTML}
+    ${totalHTML}
+    ${noteHTML}
+    <div class="receipt-sheet-note">Орієнтовна ціна · Менеджер уточнить деталі при замовленні</div>
+  `;
+
+  document.getElementById('receiptSheetFallback').classList.remove('open');
+  document.getElementById('receiptOverlay').classList.add('open');
+  document.getElementById('receiptSheet').classList.add('open');
+}
+
+function closeReceiptSheet() {
+  document.getElementById('receiptOverlay').classList.remove('open');
+  document.getElementById('receiptSheet').classList.remove('open');
+  document.getElementById('receiptSheetFallback').classList.remove('open');
+}
+
+function handleReceiptShare() {
+  const totalEl = document.querySelector('#result .result-row.total span:last-child');
+  const total = totalEl ? totalEl.innerText.trim() : '';
+  const text = `Розрахунок воріт Verbadom: ${total}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Розрахунок воріт — Verbadom',
+      text: text,
+      url: window.location.href
+    }).catch(() => {});
+  } else {
+    document.getElementById('receiptSheetFallback').classList.toggle('open');
+  }
+}
+
+function receiptCopyLink() {
+  const btn = document.getElementById('receiptCopyBtn');
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    btn.textContent = '✅ Скопійовано';
+    setTimeout(() => { btn.textContent = '🔗 Копіювати'; }, 1500);
+  }).catch(() => {});
+}
 
 /* ============================================================
    PDF
