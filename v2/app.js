@@ -1472,19 +1472,101 @@ function closeReceiptSheet() {
   document.getElementById('receiptSheetFallback').classList.remove('open');
 }
 
-function handleReceiptShare() {
-  const totalEl = document.querySelector('#result .result-row.total span:last-child');
-  const total = totalEl ? totalEl.innerText.trim() : '';
-  const text = `Розрахунок воріт Verbadom: ${total}`;
+async function handleReceiptShare() {
+  const btn = document.querySelector('.receipt-sheet-share-btn');
+  if (btn) { btn.textContent = '⏳ Готуємо файл...'; btn.disabled = true; }
 
-  if (navigator.share) {
-    navigator.share({
-      title: 'Розрахунок воріт — Verbadom',
-      text: text,
-      url: window.location.href
-    }).catch(() => {});
-  } else {
-    document.getElementById('receiptSheetFallback').classList.toggle('open');
+  try {
+    const { jsPDF } = window.jspdf;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const filename = `Ворота_Verbadom_${dateStr.replace(/\./g, '-')}.pdf`;
+
+    const pdfDiv = document.createElement('div');
+    pdfDiv.style.cssText = `
+      position:fixed; left:-9999px; top:0;
+      width:595px; background:#fff; padding:0;
+      font-family:'Segoe UI',Arial,sans-serif;
+      color:#1a1a2e; font-size:16px; line-height:1.7;
+    `;
+
+    const rows = document.querySelectorAll('#result .result-row');
+    let verticalRowsHTML = '';
+    rows.forEach(row => {
+      const spans = row.querySelectorAll('span');
+      if (spans.length < 2) return;
+      const label      = spans[0].innerText.trim();
+      const value      = spans[spans.length - 1].innerText.trim();
+      const isTotal    = row.classList.contains('total');
+      const isSubtotal = row.classList.contains('result-subtotal');
+      const isPopular  = row.classList.contains('popular-badge-row');
+      if (isPopular) {
+        verticalRowsHTML += `<div style="padding:2px 32px 10px;color:#856404;font-size:22px;">⭐ Найпопулярніший вибір</div>`;
+      } else if (isTotal) {
+        verticalRowsHTML += `<div style="background:#2E9B3F;padding:22px 32px;margin:14px 0 0;"><div style="color:#fff;font-size:24px;font-weight:600;opacity:0.85;">${label}</div><div style="color:#fff;font-weight:800;font-size:44px;margin-top:4px;">${value}</div></div>`;
+      } else if (isSubtotal) {
+        verticalRowsHTML += `<div style="background:#E8F5EB;padding:18px 32px;margin:10px 0;"><div style="color:#888;font-size:20px;">${label}</div><div style="color:#1A6B28;font-weight:700;font-size:36px;margin-top:4px;">${value}</div></div>`;
+      } else {
+        verticalRowsHTML += `<div style="padding:18px 32px;border-bottom:1px solid #eee;"><div style="color:#888;font-size:20px;">${label}</div><div style="color:#1a1a2e;font-weight:600;font-size:30px;margin-top:4px;">${value}</div></div>`;
+      }
+    });
+
+    pdfDiv.innerHTML = `
+      <div style="border-top:4px solid #2E9B3F;padding:20px 32px 16px;border-bottom:1px solid #e8ecf4;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:36px;font-weight:900;color:#2E9B3F;letter-spacing:2px;">🌿 VERBADOM</div>
+            <div style="font-size:18px;color:#888;margin-top:2px;">Ворота з доставкою по всій Україні</div>
+            <div style="font-size:18px;color:#888;">verbadom.com.ua</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;color:#888;">Розрахунок від</div>
+            <div style="font-size:22px;font-weight:600;color:#1A6B28;">${dateStr}</div>
+            <div style="font-size:18px;color:#888;margin-top:3px;">+38 (067) 399-05-60</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:20px 32px 12px;">
+        <div style="font-size:26px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div>
+      </div>
+      <div style="padding:0 0 8px;">${verticalRowsHTML}</div>
+      <div style="margin:14px 32px;padding:12px 16px;background:#fff8e1;border-radius:6px;border-left:3px solid #EF9F27;">
+        <span style="font-size:20px;color:#7A5800;">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</span>
+      </div>
+      <div style="margin:0 32px 24px;padding:18px 20px;background:#E8F5EB;border-radius:8px;border:1px solid #A8D9B0;">
+        <div style="font-size:22px;font-weight:700;color:#1A6B28;margin-bottom:10px;">Зв'яжіться з нами:</div>
+        <div style="font-size:26px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
+      </div>
+      <div style="border-top:1px solid #eee;padding:10px 32px;text-align:center;">
+        <span style="font-size:18px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
+      </div>
+    `;
+
+    document.body.appendChild(pdfDiv);
+
+    const canvas  = await html2canvas(pdfDiv, { scale: 4, useCORS: true, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+    const pageW   = 100;
+    const pageH   = (canvas.height * pageW) / canvas.width;
+    const doc     = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
+    doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
+    document.body.removeChild(pdfDiv);
+
+    const blob = doc.output('blob');
+    const file = new File([blob], filename, { type: 'application/pdf' });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Розрахунок воріт — Verbadom' });
+    } else if (navigator.share) {
+      await navigator.share({ title: 'Розрахунок воріт — Verbadom', url: window.location.href });
+    } else {
+      doc.save(filename);
+    }
+  } catch (e) {
+    const fallback = document.getElementById('receiptSheetFallback');
+    if (fallback) fallback.classList.toggle('open');
+  } finally {
+    if (btn) { btn.textContent = '📤 Поділитися'; btn.disabled = false; }
   }
 }
 
