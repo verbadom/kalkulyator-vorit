@@ -1130,8 +1130,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     .pdf-sheet-overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0);
-      z-index: 500;
-      pointer-events: none;
+      z-index: 500; pointer-events: none;
       transition: background 0.3s ease;
     }
     .pdf-sheet-overlay.open {
@@ -1146,8 +1145,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
       z-index: 501;
       transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(.32,.72,0,1);
-      max-height: 92vh;
-      overflow-y: auto;
+      max-height: 92vh; overflow-y: auto;
       padding: 0 0 32px;
       font-family: 'Nunito', sans-serif;
     }
@@ -1163,21 +1161,16 @@ document.getElementById('resetBtn').addEventListener('click', () => {
       background: #F5F6F8; border: none; border-radius: 50%;
       font-size: 18px; color: #888; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      line-height: 1;
     }
     .pdf-sheet-close:hover { background: #E8E9EC; }
     .pdf-sheet-inner { padding: 16px 20px 0; }
     .pdf-sheet-receipt {
-      background: #fff;
-      border: 1px solid #DDE1E8;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 14px;
+      background: #fff; border: 1px solid #DDE1E8;
+      border-radius: 12px; overflow: hidden; margin-bottom: 14px;
     }
     .pdf-sheet-head {
       display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 14px 16px 12px;
-      border-bottom: 1px solid #EEF1F5;
+      padding: 14px 16px 12px; border-bottom: 1px solid #EEF1F5;
     }
     .pdf-sheet-logo { font-size: 18px; font-weight: 800; color: #2E9B3F; letter-spacing: 1px; }
     .pdf-sheet-site { font-size: 12px; color: #888; margin-top: 2px; }
@@ -1187,14 +1180,12 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     .pdf-sheet-rows { padding: 0 16px 10px; }
     .pdf-sheet-section {
       font-size: 11px; font-weight: 700; color: #888;
-      text-transform: uppercase; letter-spacing: 0.05em;
-      padding: 10px 0 5px;
+      text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 0 5px;
     }
     .pdf-sheet-row {
       display: flex; justify-content: space-between;
       font-size: 15px; color: #1A1A2E;
-      padding: 5px 0; border-bottom: 1px solid #F0F4F0;
-      gap: 10px;
+      padding: 5px 0; border-bottom: 1px solid #F0F4F0; gap: 10px;
     }
     .pdf-sheet-row:last-child { border-bottom: none; }
     .pdf-sheet-row-lbl { color: #555; flex: 0 0 55%; max-width: 55%; line-height: 1.4; }
@@ -1216,25 +1207,16 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     }
     .pdf-sheet-btn-share:hover { background: #1A6B28; }
     .pdf-sheet-btn-share:disabled { background: #A8D9B0; cursor: not-allowed; }
-    .pdf-sheet-fallback {
-      background: #F5F6F8; border-radius: 12px; padding: 14px; display: none;
+    .pdf-sheet-btn-save {
+      width: 100%; padding: 13px;
+      background: #fff; border: 1.5px solid #DDE1E8; border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700;
+      color: #555; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-sizing: border-box; margin-bottom: 10px;
     }
-    .pdf-sheet-fallback.open { display: block; }
-    .pdf-sheet-fallback-title { font-size: 13px; color: #888; text-align: center; margin-bottom: 12px; }
-    .pdf-sheet-fallback-row { display: flex; justify-content: space-around; margin-bottom: 10px; }
-    .pdf-sheet-fallback-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-    .pdf-sheet-fallback-item:hover { opacity: 0.8; }
-    .pdf-sheet-fallback-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-    .pdf-sheet-fallback-lbl { font-size: 12px; color: #888; }
-    .pdf-sheet-fallback-btns { display: flex; gap: 8px; }
-    .pdf-sheet-fallback-btn {
-      flex: 1; padding: 10px;
-      background: #fff; border: 1px solid #DDE1E8; border-radius: 10px;
-      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600;
-      color: #1A1A2E; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 5px;
-    }
-    .pdf-sheet-fallback-btn:hover { background: #F5F6F8; }
+    .pdf-sheet-btn-save:hover { background: #F5F6F8; }
+    .pdf-sheet-status { font-size: 13px; color: #888; text-align: center; min-height: 18px; }
   `;
   document.head.appendChild(style);
 
@@ -1251,30 +1233,9 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     <button class="pdf-sheet-close" onclick="closePdfSheet()" aria-label="Закрити">×</button>
     <div class="pdf-sheet-inner">
       <div class="pdf-sheet-receipt" id="pdfSheetReceipt"></div>
-      <button class="pdf-sheet-btn-share" id="pdfSheetShareBtn" onclick="sharePdf()">
-        📤 Поділитися
-      </button>
-      <div class="pdf-sheet-fallback" id="pdfSheetFallback">
-        <div class="pdf-sheet-fallback-title">Оберіть спосіб відправки</div>
-        <div class="pdf-sheet-fallback-row">
-          <div class="pdf-sheet-fallback-item" onclick="window.open('viber://forward?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
-            <div class="pdf-sheet-fallback-icon" style="background:#7360F2;">💜</div>
-            <span class="pdf-sheet-fallback-lbl">Viber</span>
-          </div>
-          <div class="pdf-sheet-fallback-item" onclick="window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent('Розрахунок воріт Verbadom'))">
-            <div class="pdf-sheet-fallback-icon" style="background:#2AABEE;">✈️</div>
-            <span class="pdf-sheet-fallback-lbl">Telegram</span>
-          </div>
-          <div class="pdf-sheet-fallback-item" onclick="window.open('https://wa.me/?text='+encodeURIComponent('Розрахунок воріт Verbadom. '+window.location.href))">
-            <div class="pdf-sheet-fallback-icon" style="background:#25D366;">💬</div>
-            <span class="pdf-sheet-fallback-lbl">WhatsApp</span>
-          </div>
-        </div>
-        <div class="pdf-sheet-fallback-btns">
-          <button class="pdf-sheet-fallback-btn" onclick="generatePDF()">📄 Скачати PDF</button>
-          <button class="pdf-sheet-fallback-btn" id="pdfCopyBtn" onclick="pdfCopyLink()">🔗 Копіювати</button>
-        </div>
-      </div>
+      <button class="pdf-sheet-btn-share" id="pdfSheetShareBtn" onclick="sharePdf()" style="display:none;">📤 Поділитися</button>
+      <button class="pdf-sheet-btn-save" id="pdfSheetSaveBtn" onclick="savePdf()" style="display:none;">📄 Скачати PDF</button>
+      <div class="pdf-sheet-status" id="pdfSheetStatus"></div>
     </div>
   `;
 
@@ -1285,9 +1246,13 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 /* ============================================================
    ШТОРКА PDF — ВІДКРИТИ / ЗАКРИТИ
    ============================================================ */
+let _pdfDocCached = null;
+let _pdfFilenameCached = '';
+
 function openPdfSheet() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  _pdfDocCached = null;
 
   const rows = document.querySelectorAll('#result .result-row');
   let rowsHTML = '';
@@ -1303,25 +1268,12 @@ function openPdfSheet() {
     const isSubtotal = row.classList.contains('result-subtotal');
     const isPopular  = row.classList.contains('popular-badge-row');
     if (isPopular) return;
-
     if (isTotal) {
-      totalHTML = `
-        <div class="pdf-sheet-total">
-          <div class="pdf-sheet-total-lbl">${label}</div>
-          <div class="pdf-sheet-total-val">${value}</div>
-        </div>`;
+      totalHTML = `<div class="pdf-sheet-total"><div class="pdf-sheet-total-lbl">${label}</div><div class="pdf-sheet-total-val">${value}</div></div>`;
     } else if (isSubtotal) {
-      subtotalHTML = `
-        <div class="pdf-sheet-subtotal">
-          <div class="pdf-sheet-subtotal-lbl">${label}</div>
-          <div class="pdf-sheet-subtotal-val">${value}</div>
-        </div>`;
+      subtotalHTML = `<div class="pdf-sheet-subtotal"><div class="pdf-sheet-subtotal-lbl">${label}</div><div class="pdf-sheet-subtotal-val">${value}</div></div>`;
     } else {
-      rowsHTML += `
-        <div class="pdf-sheet-row">
-          <div class="pdf-sheet-row-lbl">${label}</div>
-          <div class="pdf-sheet-row-val">${value}</div>
-        </div>`;
+      rowsHTML += `<div class="pdf-sheet-row"><div class="pdf-sheet-row-lbl">${label}</div><div class="pdf-sheet-row-val">${value}</div></div>`;
     }
   });
 
@@ -1346,7 +1298,17 @@ function openPdfSheet() {
     <div class="pdf-sheet-note">Орієнтовна ціна · Менеджер уточнить деталі при замовленні</div>
   `;
 
-  document.getElementById('pdfSheetFallback').classList.remove('open');
+  document.getElementById('pdfSheetStatus').textContent = '';
+
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (navigator.share && isMobile) {
+    document.getElementById('pdfSheetShareBtn').style.display = 'flex';
+    document.getElementById('pdfSheetSaveBtn').style.display = 'none';
+  } else {
+    document.getElementById('pdfSheetShareBtn').style.display = 'none';
+    document.getElementById('pdfSheetSaveBtn').style.display = 'flex';
+  }
+
   document.getElementById('pdfSheetOverlay').classList.add('open');
   document.getElementById('pdfSheet').classList.add('open');
 }
@@ -1354,147 +1316,113 @@ function openPdfSheet() {
 function closePdfSheet() {
   document.getElementById('pdfSheetOverlay').classList.remove('open');
   document.getElementById('pdfSheet').classList.remove('open');
-  document.getElementById('pdfSheetFallback').classList.remove('open');
+  document.getElementById('pdfSheetStatus').textContent = '';
 }
 
-/* ============================================================
-   ШТОРКА PDF — КНОПКА "ПОДІЛИТИСЯ"
-   Генерує PDF у пам'яті і відправляє файл через Web Share API.
-   Фолбек: скачування або мессенджери.
-   ============================================================ */
+async function _buildPdfBlob() {
+  const { jsPDF } = window.jspdf;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  _pdfFilenameCached = `Ворота_Verbadom_${dateStr.replace(/\./g, '-')}.pdf`;
+
+  const pdfDiv = document.createElement('div');
+  pdfDiv.style.cssText = `position:fixed;left:-9999px;top:0;width:595px;background:#fff;padding:0;font-family:'Segoe UI',Arial,sans-serif;color:#1a1a2e;font-size:16px;line-height:1.7;`;
+
+  const rows = document.querySelectorAll('#result .result-row');
+  let verticalRowsHTML = '';
+  rows.forEach(row => {
+    const spans = row.querySelectorAll('span');
+    if (spans.length < 2) return;
+    const label      = spans[0].innerText.trim();
+    const value      = spans[spans.length - 1].innerText.trim();
+    const isTotal    = row.classList.contains('total');
+    const isSubtotal = row.classList.contains('result-subtotal');
+    const isPopular  = row.classList.contains('popular-badge-row');
+    if (isPopular) {
+      verticalRowsHTML += `<div style="padding:2px 32px 10px;color:#856404;font-size:22px;">⭐ Найпопулярніший вибір</div>`;
+    } else if (isTotal) {
+      verticalRowsHTML += `<div style="background:#2E9B3F;padding:22px 32px;margin:14px 0 0;"><div style="color:#fff;font-size:24px;font-weight:600;opacity:0.85;">${label}</div><div style="color:#fff;font-weight:800;font-size:44px;margin-top:4px;">${value}</div></div>`;
+    } else if (isSubtotal) {
+      verticalRowsHTML += `<div style="background:#E8F5EB;padding:18px 32px;margin:10px 0;"><div style="color:#888;font-size:20px;">${label}</div><div style="color:#1A6B28;font-weight:700;font-size:36px;margin-top:4px;">${value}</div></div>`;
+    } else {
+      verticalRowsHTML += `<div style="padding:18px 32px;border-bottom:1px solid #eee;"><div style="color:#888;font-size:20px;">${label}</div><div style="color:#1a1a2e;font-weight:600;font-size:30px;margin-top:4px;">${value}</div></div>`;
+    }
+  });
+
+  const delivNoteInline = document.querySelector('#result .delivery-note-inline');
+  const delivNoteHTML = delivNoteInline ? `<p style="font-size:11px;color:#555;margin:4px 32px 8px;">${delivNoteInline.innerText}</p>` : '';
+  const errMsg = document.querySelector('#result .error-msg');
+  const errHTML = errMsg ? `<p style="font-size:11px;color:#c0392b;margin:6px 32px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>` : '';
+
+  pdfDiv.innerHTML = `
+    <div style="border-top:4px solid #2E9B3F;padding:20px 32px 16px;border-bottom:1px solid #e8ecf4;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><div style="font-size:36px;font-weight:900;color:#2E9B3F;letter-spacing:2px;">🌿 VERBADOM</div><div style="font-size:18px;color:#888;margin-top:2px;">Ворота з доставкою по всій Україні</div><div style="font-size:18px;color:#888;">verbadom.com.ua</div></div>
+        <div style="text-align:right;"><div style="font-size:18px;color:#888;">Розрахунок від</div><div style="font-size:22px;font-weight:600;color:#1A6B28;">${dateStr}</div><div style="font-size:18px;color:#888;margin-top:3px;">+38 (067) 399-05-60</div></div>
+      </div>
+    </div>
+    <div style="padding:20px 32px 12px;"><div style="font-size:26px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div></div>
+    <div style="padding:0 0 8px;">${verticalRowsHTML}${delivNoteHTML}${errHTML}</div>
+    <div style="margin:14px 32px;padding:12px 16px;background:#fff8e1;border-radius:6px;border-left:3px solid #EF9F27;"><span style="font-size:20px;color:#7A5800;">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</span></div>
+    <div style="margin:0 32px 24px;padding:18px 20px;background:#E8F5EB;border-radius:8px;border:1px solid #A8D9B0;">
+      <div style="font-size:22px;font-weight:700;color:#1A6B28;margin-bottom:10px;">Зв'яжіться з нами:</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="font-size:26px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
+        <a href="viber://chat?number=%2B380673990560" style="display:inline-block;padding:8px 18px;background:#7360f2;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Viber</a>
+        <a href="https://t.me/+380673990560" style="display:inline-block;padding:8px 18px;background:#2aabee;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Telegram</a>
+        <a href="https://wa.me/380673990560" style="display:inline-block;padding:8px 18px;background:#25d366;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">WhatsApp</a>
+      </div>
+    </div>
+    <div style="border-top:1px solid #eee;padding:10px 32px;text-align:center;"><span style="font-size:18px;color:#bbb;">Розрахунок: verbadom.com.ua</span></div>
+  `;
+
+  document.body.appendChild(pdfDiv);
+  const canvas  = await html2canvas(pdfDiv, { scale: 4, useCORS: true, backgroundColor: '#ffffff' });
+  const imgData = canvas.toDataURL('image/png');
+  const pageW   = 100;
+  const pageH   = (canvas.height * pageW) / canvas.width;
+  const doc     = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
+  doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
+  document.body.removeChild(pdfDiv);
+  _pdfDocCached = doc;
+  return doc;
+}
+
 async function sharePdf() {
   const btn = document.getElementById('pdfSheetShareBtn');
+  const status = document.getElementById('pdfSheetStatus');
   btn.disabled = true;
   btn.textContent = '⏳ Готуємо PDF...';
-
+  status.textContent = '';
   try {
-    const { jsPDF } = window.jspdf;
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const filename = `Ворота_Verbadom_${dateStr.replace(/\./g, '-')}.pdf`;
-
-    // Будуємо прихований div для рендерингу PDF — та сама структура що й у generatePDF()
-    const pdfDiv = document.createElement('div');
-    pdfDiv.style.cssText = `
-      position:fixed; left:-9999px; top:0;
-      width:595px; background:#fff; padding:0;
-      font-family:'Segoe UI',Arial,sans-serif;
-      color:#1a1a2e; font-size:16px; line-height:1.7;
-    `;
-
-    const rows = document.querySelectorAll('#result .result-row');
-    let verticalRowsHTML = '';
-    rows.forEach(row => {
-      const spans = row.querySelectorAll('span');
-      if (spans.length < 2) return;
-      const label      = spans[0].innerText.trim();
-      const value      = spans[spans.length - 1].innerText.trim();
-      const isTotal    = row.classList.contains('total');
-      const isSubtotal = row.classList.contains('result-subtotal');
-      const isPopular  = row.classList.contains('popular-badge-row');
-      if (isPopular) {
-        verticalRowsHTML += `<div style="padding:2px 32px 10px;color:#856404;font-size:22px;">⭐ Найпопулярніший вибір</div>`;
-      } else if (isTotal) {
-        verticalRowsHTML += `<div style="background:#2E9B3F;padding:22px 32px;margin:14px 0 0;"><div style="color:#fff;font-size:24px;font-weight:600;opacity:0.85;">${label}</div><div style="color:#fff;font-weight:800;font-size:44px;margin-top:4px;">${value}</div></div>`;
-      } else if (isSubtotal) {
-        verticalRowsHTML += `<div style="background:#E8F5EB;padding:18px 32px;margin:10px 0;"><div style="color:#888;font-size:20px;">${label}</div><div style="color:#1A6B28;font-weight:700;font-size:36px;margin-top:4px;">${value}</div></div>`;
-      } else {
-        verticalRowsHTML += `<div style="padding:18px 32px;border-bottom:1px solid #eee;"><div style="color:#888;font-size:20px;">${label}</div><div style="color:#1a1a2e;font-weight:600;font-size:30px;margin-top:4px;">${value}</div></div>`;
-      }
-    });
-
-    const delivNoteInline = document.querySelector('#result .delivery-note-inline');
-    const delivNoteHTML = delivNoteInline
-      ? `<p style="font-size:11px;color:#555;margin:4px 32px 8px;">${delivNoteInline.innerText}</p>`
-      : '';
-
-    const errMsg  = document.querySelector('#result .error-msg');
-    const errHTML = errMsg
-      ? `<p style="font-size:11px;color:#c0392b;margin:6px 32px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>`
-      : '';
-
-    pdfDiv.innerHTML = `
-      <div style="border-top:4px solid #2E9B3F;padding:20px 32px 16px;border-bottom:1px solid #e8ecf4;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-          <div>
-            <div style="font-size:36px;font-weight:900;color:#2E9B3F;letter-spacing:2px;">🌿 VERBADOM</div>
-            <div style="font-size:18px;color:#888;margin-top:2px;">Ворота з доставкою по всій Україні</div>
-            <div style="font-size:18px;color:#888;">verbadom.com.ua</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:18px;color:#888;">Розрахунок від</div>
-            <div style="font-size:22px;font-weight:600;color:#1A6B28;">${dateStr}</div>
-            <div style="font-size:18px;color:#888;margin-top:3px;">+38 (067) 399-05-60</div>
-          </div>
-        </div>
-      </div>
-      <div style="padding:20px 32px 12px;">
-        <div style="font-size:26px;font-weight:700;color:#1A6B28;">Попередній розрахунок вартості воріт</div>
-      </div>
-      <div style="padding:0 0 8px;">
-        ${verticalRowsHTML}
-        ${delivNoteHTML}
-        ${errHTML}
-      </div>
-      <div style="margin:14px 32px;padding:12px 16px;background:#fff8e1;border-radius:6px;border-left:3px solid #EF9F27;">
-        <span style="font-size:20px;color:#7A5800;">⚠️ Орієнтовна ціна. Менеджер уточнить деталі при замовленні.</span>
-      </div>
-      <div style="margin:0 32px 24px;padding:18px 20px;background:#E8F5EB;border-radius:8px;border:1px solid #A8D9B0;">
-        <div style="font-size:22px;font-weight:700;color:#1A6B28;margin-bottom:10px;">Зв'яжіться з нами:</div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <div style="font-size:26px;font-weight:700;color:#1A6B28;">📞 +38 (067) 399-05-60</div>
-          <a href="viber://chat?number=%2B380673990560" style="display:inline-block;padding:8px 18px;background:#7360f2;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Viber</a>
-          <a href="https://t.me/+380673990560" style="display:inline-block;padding:8px 18px;background:#2aabee;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">Telegram</a>
-          <a href="https://wa.me/380673990560" style="display:inline-block;padding:8px 18px;background:#25d366;color:#fff;border-radius:20px;text-decoration:none;font-size:20px;font-weight:600;">WhatsApp</a>
-        </div>
-      </div>
-      <div style="border-top:1px solid #eee;padding:10px 32px;text-align:center;">
-        <span style="font-size:18px;color:#bbb;">Розрахунок: verbadom.com.ua</span>
-      </div>
-    `;
-
-    document.body.appendChild(pdfDiv);
-
-    const canvas  = await html2canvas(pdfDiv, { scale: 4, useCORS: true, backgroundColor: '#ffffff' });
-    const imgData = canvas.toDataURL('image/png');
-    const pageW   = 100;
-    const pageH   = (canvas.height * pageW) / canvas.width;
-    const doc     = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
-    doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
-    document.body.removeChild(pdfDiv);
-
+    const doc = await _buildPdfBlob();
     const blob = doc.output('blob');
-    const file = new File([blob], filename, { type: 'application/pdf' });
-
-    // Перевіряємо підтримку шеринга файлів
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      // Браузер підтримує шеринг файлів — відправляємо PDF
+    const file = new File([blob], _pdfFilenameCached, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], title: 'Розрахунок воріт — Verbadom' });
-    } else if (navigator.share) {
-      // Шеринг є але файли не підтримує — відправляємо посилання
-      await navigator.share({ title: 'Розрахунок воріт — Verbadom', url: window.location.href });
     } else {
-      // Десктоп або старий браузер — скачуємо файл
-      doc.save(filename);
+      doc.save(_pdfFilenameCached);
+      status.textContent = '✅ PDF збережено';
     }
-
   } catch (e) {
-    // Користувач скасував або помилка — показуємо фолбек з мессенджерами
-    if (e.name !== 'AbortError') {
-      document.getElementById('pdfSheetFallback').classList.add('open');
-    }
+    if (e.name !== 'AbortError') status.textContent = '⚠️ Не вдалося. Спробуйте ще раз.';
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '📤 Поділитися';
+    btn.textContent = '📤 Поділитися';
   }
 }
 
-function pdfCopyLink() {
-  const btn = document.getElementById('pdfCopyBtn');
-  navigator.clipboard.writeText(window.location.href).then(() => {
-    btn.textContent = '✅ Скопійовано';
-    setTimeout(() => { btn.textContent = '🔗 Копіювати'; }, 1500);
-  }).catch(() => {});
+async function savePdf() {
+  const btn = document.getElementById('pdfSheetSaveBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Готуємо...';
+  try {
+    const doc = _pdfDocCached || await _buildPdfBlob();
+    doc.save(_pdfFilenameCached);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📄 Скачати PDF';
+  }
 }
 
 /* ============================================================
