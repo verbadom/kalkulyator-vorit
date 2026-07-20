@@ -930,6 +930,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   const coatingLabel = selectedCoating ? selectedCoating.label.replace(' ⭐', '').trim() : '';
   const isPopular    = selectedCoating && selectedCoating.badge;
   const showLockIncluded = selectedType === 'modern' && selectedConfig !== 'without_wicket';
+  const settlementName = selectedCityName.split(',')[0].trim();
 
   let html = `
     <div class="result-title">✅ Ваш розрахунок готовий!</div>
@@ -967,45 +968,46 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     const isKyiv = selectedCityName.toLowerCase().includes('київ') || selectedCityName.toLowerCase().includes('киев');
     if (isKyiv) {
       const kyivTotal = totalComplex + 900;
-      html += `<div class="result-row"><span>Доставка</span><span>900 грн</span></div>`;
+      html += `<div class="result-row"><span>Адресна доставка: ${settlementName}</span><span>900 грн</span></div>`;
       html += `<div class="result-row total"><span>Разом до сплати</span><span>${kyivTotal.toLocaleString('uk-UA')} грн</span></div>`;
     } else {
       const minT = totalComplex + 500;
       const maxT = totalComplex + 900;
-      html += `<div class="result-row"><span>Доставка</span><span>500–900 грн</span></div>`;
-      html += `<p class="delivery-note-inline">Точна сума залежить від адреси доставки</p>`;
+      html += `<div class="result-row"><span>Адресна доставка: ${settlementName}</span><span>500–900 грн</span></div>`;
+      html += `<p class="delivery-note-inline delivery-note-export">Точна сума залежить від адреси доставки</p>`;
       html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minT.toLocaleString('uk-UA')} до ${maxT.toLocaleString('uk-UA')} грн</span></div>`;
     }
   } else if (deliveryStatus === 'nova_poshta') {
-    html += `<div class="result-row"><span>Доставка (Нова Пошта на вантажне відділення)</span><span>4 000 грн</span></div>`;
+    html += `<div class="result-row"><span>Нова Пошта — на обране вантажне відділення</span><span>4 000 грн</span></div>`;
+    html += `<p class="delivery-note delivery-note-export">Ви можете обрати зручне вантажне відділення у своєму або найближчому населеному пункті.</p>`;
     if (postInfo) {
       html += `<p class="error-msg">⚠️ Стовпи доставляємо лише разом з воротами машиною заводу. Нова Пошта такі вироби не приймає.</p>`;
     }
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString('uk-UA')} грн</span></div>`;
   } else if (deliveryStatus === 'deviation') {
-    const zone = window._lastDeliveryData ? window._lastDeliveryData.zone : '';
-    html += `<div class="result-row"><span>Доставка до вашого двору${zone ? ' (' + zone + ')' : ''}</span><span>${deliveryPrice.toLocaleString('uk-UA')} грн</span></div>`;
+    html += `<div class="result-row"><span>Адресна доставка: ${settlementName}</span><span>${deliveryPrice.toLocaleString('uk-UA')} грн</span></div>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString('uk-UA')} грн</span></div>`;
   } else if (deliveryStatus === 'clarify') {
     const distKm = window._lastDeliveryData ? window._lastDeliveryData.distanceKm : '';
-    html += `<div class="result-row"><span>Доставка</span><span><span class="clarify-badge">Уточнюємо з менеджером</span></span></div>`;
-    html += `<p class="delivery-note">Відстань від маршруту — ${distKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Можливі варіанти:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — 4 000 грн</p>`;
+    html += `<div class="result-row"><span>Доставка: ${settlementName}</span><span><span class="clarify-badge">Уточнюємо з менеджером</span></span></div>`;
+    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${distKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Можливі варіанти:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — 4 000 грн</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
   } else if (deliveryStatus === 'clarify_extended') {
     const d = window._lastDeliveryData;
+    const routeName = d.routeName || '';
     const minDelivery = d.minDeliveryPrice || 0;
     const novaPrice = d.novaPoshtaPrice || 4000;
     const minTotal = totalComplex + minDelivery;
     const maxTotal = totalComplex + novaPrice;
-    html += `<div class="result-row"><span>Доставка</span><span><span class="clarify-badge">Потребує уточнення у логіста</span></span></div>`;
-    html += `<p class="delivery-note">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Альтернативи:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн</p>`;
+    html += `<div class="result-row"><span>Доставка: ${settlementName}</span><span><span class="clarify-badge">Потребує уточнення у логіста</span></span></div>`;
+    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Альтернативи:<br>• Зустріч з машиною на маршруті${routeName ? ' ' + routeName : ''} (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString('uk-UA')} до ${maxTotal.toLocaleString('uk-UA')} грн</span></div>`;
   } else {
     html += `<div class="result-row"><span>Доставка</span><span>Уточніть у менеджера</span></div>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
   }
 
-  if (meetOnRoad && deliveryStatus !== 'nova_poshta' && deliveryStatus !== 'on_route') {
+  if (meetOnRoad && deliveryStatus !== 'nova_poshta' && deliveryStatus !== 'on_route' && deliveryStatus !== 'clarify_extended') {
     html += `<div class="result-row alt-delivery-row"><span>💡 Альтернатива: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
   }
 
@@ -1366,8 +1368,10 @@ async function _buildPdfBlob() {
     }
   });
 
-  const delivNoteInline = document.querySelector('#result .delivery-note-inline');
-  const delivNoteHTML = delivNoteInline ? `<p style="font-size:11px;color:#555;margin:4px 32px 8px;">${delivNoteInline.innerText}</p>` : '';
+  const deliveryNotes = document.querySelectorAll('#result .delivery-note-export');
+  const delivNoteHTML = Array.from(deliveryNotes)
+    .map(note => `<p style="font-size:11px;color:#555;margin:4px 32px 8px;white-space:pre-line;">${note.innerText}</p>`)
+    .join('');
   const errMsg = document.querySelector('#result .error-msg');
   const errHTML = errMsg ? `<p style="font-size:11px;color:#c0392b;margin:6px 32px 0;">⚠️ ${errMsg.innerText.replace('⚠️','').trim()}</p>` : '';
 
@@ -1509,6 +1513,10 @@ function copyCalcText() {
       lines.push(`${label}: ${value}`);
     }
   });
+  document.querySelectorAll('#result .delivery-note-export').forEach(note => {
+    lines.push('');
+    lines.push(note.innerText.trim());
+  });
   lines.push('');
   lines.push('Орієнтовна ціна. Менеджер уточнить деталі при замовленні.');
   lines.push('📞 +38 (067) 399-05-60');
@@ -1577,10 +1585,10 @@ async function generatePDF() {
     }
   });
 
-  const delivNoteInline = document.querySelector('#result .delivery-note-inline');
-  const delivNoteHTML   = delivNoteInline
-    ? `<p style="font-size:${isMobile ? 10 : 11}px;color:#555;margin:4px 12px 8px;">${delivNoteInline.innerText}</p>`
-    : '';
+  const deliveryNotes = document.querySelectorAll('#result .delivery-note-export');
+  const delivNoteHTML = Array.from(deliveryNotes)
+    .map(note => `<p style="font-size:${isMobile ? 10 : 11}px;color:#555;margin:4px 12px 8px;white-space:pre-line;">${note.innerText}</p>`)
+    .join('');
 
   const errMsg  = document.querySelector('#result .error-msg');
   const errHTML = errMsg
