@@ -985,22 +985,28 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     }
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString('uk-UA')} грн</span></div>`;
   } else if (deliveryStatus === 'deviation') {
+    const zone = window._lastDeliveryData ? window._lastDeliveryData.zone : '';
     html += `<div class="result-row"><span>Адресна доставка: ${settlementName}</span><span>${deliveryPrice.toLocaleString('uk-UA')} грн</span></div>`;
+    if (zone) {
+      html += `<p class="delivery-note-inline delivery-note-export">${zone}</p>`;
+    }
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString('uk-UA')} грн</span></div>`;
   } else if (deliveryStatus === 'clarify') {
     const distKm = window._lastDeliveryData ? window._lastDeliveryData.distanceKm : '';
     html += `<div class="result-row"><span>Доставка: ${settlementName}</span><span><span class="clarify-badge">Уточнюємо з менеджером</span></span></div>`;
-    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${distKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Можливі варіанти:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — 4 000 грн</p>`;
+    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${distKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Можливі варіанти:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта — на обране вантажне відділення — 4 000 грн</p>`;
+    html += `<p class="delivery-note delivery-note-export">Ви можете обрати зручне вантажне відділення у своєму або найближчому населеному пункті.</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
   } else if (deliveryStatus === 'clarify_extended') {
     const d = window._lastDeliveryData;
-    const routeName = d.routeName || '';
+    const routeName = d.routeName;
     const minDelivery = d.minDeliveryPrice || 0;
     const novaPrice = d.novaPoshtaPrice || 4000;
     const minTotal = totalComplex + minDelivery;
     const maxTotal = totalComplex + novaPrice;
     html += `<div class="result-row"><span>Доставка: ${settlementName}</span><span><span class="clarify-badge">Потребує уточнення у логіста</span></span></div>`;
-    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Альтернативи:<br>• Зустріч з машиною на маршруті${routeName ? ' ' + routeName : ''} (забираєте самостійно) — 350 грн<br>• Нова Пошта на вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн</p>`;
+    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Альтернативи:<br>• Зустріч на трасі (маршрут: ${routeName}; забираєте самостійно) — 350 грн<br>• Нова Пошта — на обране вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн</p>`;
+    html += `<p class="delivery-note delivery-note-export">Ви можете обрати зручне вантажне відділення у своєму або найближчому населеному пункті.</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minTotal.toLocaleString('uk-UA')} до ${maxTotal.toLocaleString('uk-UA')} грн</span></div>`;
   } else {
     html += `<div class="result-row"><span>Доставка</span><span>Уточніть у менеджера</span></div>`;
