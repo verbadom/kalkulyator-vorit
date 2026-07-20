@@ -1512,11 +1512,19 @@ function copyCalcText() {
     const value = spans[spans.length - 1].innerText.trim();
     const isPopular = row.classList.contains('popular-badge-row');
     if (isPopular) return;
+
+    const isDeliveryLabel =
+      label.startsWith('Адресна доставка:') ||
+      label.startsWith('Доставка:');
+    const resultLine = isDeliveryLabel
+      ? `${label} — ${value}`
+      : `${label}: ${value}`;
+
     if (row.classList.contains('result-subtotal') || row.classList.contains('total')) {
       lines.push('');
-      lines.push(`${label}: ${value}`);
+      lines.push(resultLine);
     } else {
-      lines.push(`${label}: ${value}`);
+      lines.push(resultLine);
     }
   });
   document.querySelectorAll('#result .delivery-note-export').forEach(note => {
