@@ -1401,12 +1401,12 @@ async function _buildPdfBlob() {
   `;
 
   document.body.appendChild(pdfDiv);
-  const canvas  = await html2canvas(pdfDiv, { scale: 4, useCORS: true, backgroundColor: '#ffffff' });
-  const imgData = canvas.toDataURL('image/png');
+  const canvas  = await html2canvas(pdfDiv, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+  const imgData = canvas.toDataURL('image/jpeg', 0.85);
   const pageW   = 100;
   const pageH   = (canvas.height * pageW) / canvas.width;
   const doc     = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
-  doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
+  doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
   document.body.removeChild(pdfDiv);
   _pdfDocCached = doc;
   return doc;
@@ -1649,12 +1649,12 @@ async function generatePDF() {
   document.body.appendChild(pdfDiv);
 
   try {
-    const canvas  = await html2canvas(pdfDiv, { scale: 4, useCORS: true, backgroundColor: '#ffffff' });
-    const imgData = canvas.toDataURL('image/png');
+    const canvas  = await html2canvas(pdfDiv, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/jpeg', 0.85);
     const pageW   = 100;
     const pageH   = (canvas.height * pageW) / canvas.width;
     const doc     = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
-    doc.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
+    doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
 
     const filename = `Ворота_Verbadom_${dateStr.replace(/\./g, '-')}.pdf`;
     const isMobileDevice = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
