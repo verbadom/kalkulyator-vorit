@@ -490,7 +490,7 @@ function buildLockField() {
     }
     field.innerHTML = `
       <div class="lock-included-note">
-        Замок вже включено у вартість
+        Врізний механічний замок і ручки з обох боків хвіртки вже включені у вартість
       </div>
     `;
   }
@@ -946,7 +946,7 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   }
 
   if (showLockIncluded) {
-    html += `<div class="result-row"><span>Замок у хвіртку</span><span style="color:var(--green);">входить у вартість</span></div>`;
+    html += `<div class="result-row"><span>Врізний механічний замок і ручки з обох боків хвіртки</span><span style="color:var(--green);">входять у вартість</span></div>`;
   }
   if (lockChecked && selectedType === 'forged' && selectedConfig !== 'without_wicket') {
     html += `<div class="result-row"><span>Замок у хвіртку з встановленням</span><span>+${LOCK_PRICE.toLocaleString('uk-UA')} грн</span></div>`;
@@ -1717,7 +1717,7 @@ function testPDF() {
     <div class="result-row"><span>Ширина</span><span>4.9 м</span></div>
     <div class="result-row"><span>Покриття</span><span>Матовий з обох боків +500 грн</span></div>
     <div class="result-row popular-badge-row"><span></span><span>⭐ Найпопулярніший вибір</span></div>
-    <div class="result-row"><span>Замок у хвіртку</span><span style="color:var(--green);">входить у вартість</span></div>
+    <div class="result-row"><span>Врізний механічний замок і ручки з обох боків хвіртки</span><span style="color:var(--green);">входять у вартість</span></div>
     <div class="result-row"><span>Фіксатори створок (2 шт)</span><span>+600 грн</span></div>
     <div class="result-row result-subtotal"><span>Ворота з комплектуючими</span><span>28 000 грн</span></div>
     <div class="result-row"><span>Доставка до вашого двору</span><span>900 грн</span></div>
