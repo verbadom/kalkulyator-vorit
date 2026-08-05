@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uk" spellcheck="false">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тест: доставка спочатку — калькулятор воріт | Verbadom</title>
+  <meta name="description" content="Тестова версія калькулятора Verbadom: спочатку вартість доставки, потім розрахунок воріт." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://verbadom.github.io/kalkulyator-vorit/delivery-first/" />
+  <meta property="og:title" content="Розпашні ворота — розрахунок вартості онлайн | Verbadom" />
+  <meta property="og:description" content="Розрахуйте вартість розпашних воріт з доставкою по Україні." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="uk_UA" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="calculator">
+
+  <!-- ШАПКА -->
+  <div class="calc-header">
+    <div class="calc-logo">🌿 VERBADOM</div>
+    <div class="calc-logo-sub">Ворота з доставкою по всій Україні</div>
+    <div class="test-version-badge">Тестова версія</div>
+    <h1>Спочатку доставка — потім ворота</h1>
+    <div class="calc-welcome">
+      За хвилину дізнайтеся орієнтовну загальну вартість воріт з доставкою
+    </div>
+  </div>
+
+
+  <!-- 1. ДОСТАВКА -->
+  <section class="delivery-first-card" id="deliveryFirstCard">
+    <div class="flow-step-badge">Крок 1 з 2</div>
+    <h2>Дізнайтеся вартість доставки воріт</h2>
+    <p class="delivery-first-intro">Вкажіть населений пункт — покажемо доступні способи та орієнтовну вартість.</p>
+
+    <div class="field city-first-field" id="fieldCity">
+      <label class="field-label" for="city">Ваш населений пункт</label>
+      <div class="city-wrap">
+        <input type="text" id="city" autocomplete="off" placeholder="Наприклад, Кодима" />
+        <div id="city-dropdown"></div>
+      </div>
+      <p class="field-note">Введіть назву та оберіть населений пункт зі списку</p>
+    </div>
+
+    <button id="deliveryCalculateBtn" type="button">Розрахувати доставку</button>
+    <p class="delivery-privacy-note">Без номера телефону та оформлення заявки</p>
+    <div id="deliveryFirstResult" class="delivery-first-result hidden" aria-live="polite"></div>
+  </section>
+
+  <!-- 2. ВОРОТА -->
+  <div id="gateCalculatorFlow" class="gate-flow gate-flow--hidden">
+    <div class="gate-flow-heading">
+      <div class="flow-step-badge">Крок 2 з 2</div>
+      <h2>Оберіть ворота та порахуйте загальну вартість</h2>
+      <button type="button" class="change-delivery-link" onclick="changeDeliverySelection()">Змінити населений пункт або доставку</button>
+    </div>
+
+  <!-- 1. ТИП ВОРІТ -->
+  <div class="field" id="fieldGateType">
+    <label class="field-label">Які ворота вас цікавлять?</label>
+    <div class="type-btns">
+      <button class="type-btn" id="btnForged" onclick="selectGateType('forged')">КОВАНІ</button>
+      <button class="type-btn" id="btnModern" onclick="selectGateType('modern')">СУЧАСНІ</button>
+    </div>
+  </div>
+
+  <!-- 2. МОДЕЛЬ -->
+  <div class="field hidden-field" id="fieldGateModel">
+    <label class="field-label">Модель</label>
+    <div class="custom-select-wrap" id="modelSelectWrap">
+      <button class="custom-select-btn placeholder" id="modelSelectBtn" onclick="toggleDropdown('modelDropdown', 'modelSelectBtn')">
+        <span id="modelSelectText">— Оберіть модель —</span>
+        <svg class="custom-select-arrow" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1l5 5 5-5" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="custom-select-dropdown" id="modelDropdown"></div>
+    </div>
+    <img id="modelPhoto" src="" alt="" />
+    <div id="includedBlock" class="included-block" style="display:none"></div>
+  </div>
+
+  <!-- 3. КОМПЛЕКТАЦІЯ -->
+  <div class="field hidden-field" id="fieldConfig">
+    <label class="field-label">Що вам потрібно?</label>
+    <div class="radio-group" id="configGroup">
+      <div class="radio-option" data-value="with_separate_wicket" onclick="selectRadio('configGroup', this, 'selectedConfig')">
+        <div class="radio-dot"></div>
+        <div class="radio-text">Ворота + хвіртка окремо</div>
+      </div>
+      <div class="radio-option" data-value="without_wicket" onclick="selectRadio('configGroup', this, 'selectedConfig')">
+        <div class="radio-dot"></div>
+        <div class="radio-text">Тільки ворота</div>
+      </div>
+      <div class="radio-option" data-value="with_builtin_wicket" onclick="selectRadio('configGroup', this, 'selectedConfig')">
+        <div class="radio-dot"></div>
+        <div class="radio-text">Ворота з хвірткою всередині</div>
+      </div>
+    </div>
+    <!-- ЗМІНА 1: прибрано configHint (верхній блок "Найдешевший варіант") -->
+  </div>
+
+  <!-- 4. ШИРИНА -->
+  <div class="field hidden-field" id="fieldWidth">
+    <label class="field-label-width" for="width"><span class="width-arrow-icon">↔️</span> Загальна ширина між стовпами (в метрах)</label>
+    <input type="text" id="width" placeholder="наприклад: 4.53" inputmode="decimal" autocomplete="off" />
+    <p class="field-note">Від 2,5 до 6 м — будь-який розмір</p>
+    <!-- ЗМІНА 2: підказка показується тільки при введенні ширини -->
+    <div class="width-hint" id="widthHint" style="display:none"></div>
+    <hr class="width-hint-separator" id="widthHintSeparator" style="display:none">
+    <div class="hint-important">
+      <span class="hint-important__label"><span class="height-arrow-icon">↕️</span> ВАЖЛИВО</span>
+      <span class="hint-important__text">Висота до 2,1 м — <strong>ЦІНА НЕ ЗМІНЮЄТЬСЯ</strong></span>
+    </div>
+  </div>
+
+  <!-- 5. ПОКРИТТЯ -->
+  <div class="field hidden-field" id="fieldCoating">
+    <label class="field-label">Оберіть якість покриття:</label>
+    <p class="field-note-top">Колір не впливає на ціну — тільки якість покриття</p>
+    <div class="radio-group" id="coatingGroup">
+      <!-- Заповнюється динамічно -->
+    </div>
+  </div>
+
+  <!-- 6+7. ДОДАТКОВІ ОПЦІЇ -->
+  <div class="field hidden-field" id="fieldBolts">
+    <label class="field-label">Додаткові опції</label>
+    <!-- ЗМІНА 4: fieldLock — замок без іконки -->
+    <div id="fieldLock"></div>
+    <!-- ЗМІНА 5: фіксатори — чекбокс як є -->
+    <div class="checkbox-option" id="boltsOption" onclick="toggleCheckbox('boltsOption', 'boltsChecked')">
+      <div class="checkbox-box"></div>
+      <div class="checkbox-text">
+        Фіксатори створок — штирі в землю
+        <span class="checkbox-sub">Утримують ворота від вітру · +<span id="boltsPriceLabel">600</span> грн</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. СТОВПИ -->
+  <div class="field hidden-field" id="fieldPosts">
+    <label class="field-label">Стовпи (не обов'язково)</label>
+    <div class="delivery-warning">
+      <span class="delivery-warning__label">🚫 УМОВА ДОСТАВКИ</span>
+      <span class="delivery-warning__text">Стовпи доставляємо лише разом з воротами машиною заводу</span>
+      <span class="delivery-warning__text">Нова Пошта <strong>НЕ ПРИЙМАЄ</strong> такі вироби</span>
+    </div>
+    <div id="postsStepWrap">
+      <!-- ЗМІНА 6: прибрано підпис "Крок 1 — Тип" -->
+      <div class="posts-step" id="postStep1">
+        <div class="step-btns">
+          <button class="step-btn" onclick="selectPostType('painted')">Фарбовані</button>
+          <button class="step-btn" onclick="selectPostType('unpainted')">Нефарбовані</button>
+          <button class="step-btn btn-no-posts" onclick="selectPostType('none')">Без стовпів</button>
+        </div>
+      </div>
+      <!-- Крок 2/3: динамічно, без підписів -->
+      <div id="postStep2" style="display:none"></div>
+      <div id="postStep3" style="display:none"></div>
+    </div>
+    <!-- ЗМІНА 8: лічильник — показується після вибору картки -->
+    <div id="postQtyWrap" style="display:none" class="post-qty-wrap">
+      <span class="post-qty-label">Кількість:</span>
+      <div class="qty-counter">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-value" id="postQtyVal">2</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <!-- Петлі -->
+    <div id="fieldHinges" style="display:none; margin-top:12px;">
+      <div class="checkbox-option" id="hingesOption" onclick="toggleCheckbox('hingesOption', 'hingesChecked')">
+        <div class="checkbox-box"></div>
+        <div class="checkbox-text">
+          Приварити петлі на заводі
+          <span class="checkbox-sub">Заводська зварка + порошкове фарбування разом зі стовпами · +150 грн/шт</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ФРАЗА "ГОТОВО" + КНОПКА -->
+  <div class="calc-ready-msg" id="calcReadyMsg">Готово! Залишилось натиснути одну кнопку 👇</div>
+  <button id="calculateBtn">Показати мою ціну →</button>
+  </div>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div id="result" class="result hidden"></div>
+
+  <!-- КНОПКА СКИДАННЯ (прихована, використовується з JS) -->
+  <button id="resetBtn" class="btn-reset" style="display:none">↺ Новий розрахунок</button>
+
+  <!-- ТЕСТ PDF (тільки в режимі ?mode=test) -->
+  <script>
+    if (new URLSearchParams(window.location.search).get('mode') === 'test') {
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.createElement('button');
+        btn.textContent = '🧪 Тест PDF';
+        btn.style.cssText = 'width:100%;padding:12px;margin-top:10px;background:#FF6B35;color:#fff;font-family:Nunito,sans-serif;font-size:15px;font-weight:700;border:none;border-radius:10px;cursor:pointer;';
+        btn.onclick = testPDF;
+        document.querySelector('.calculator').appendChild(btn);
+      });
+    }
+  </script>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="app.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2N2N_0D0GVhjQ5t0zwc9TXxJwsfl8OGM&libraries=places&language=uk&v=weekly&callback=initGoogleAutocomplete" async defer></script>
+</body>
+</html>
+
