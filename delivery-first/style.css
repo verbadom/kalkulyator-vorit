@@ -1,54 +1,27 @@
 @import url("../v2/style.css");
 
-.test-version-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 10px;
-  margin-bottom: 10px;
-  border-radius: 999px;
-  background: #fff3cd;
-  color: #856404;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.calc-header {
+  padding-bottom: 0;
 }
 
 .delivery-first-card {
-  margin-top: 22px;
+  margin-top: 14px;
   padding: 22px;
   border: 2px solid var(--green-mid);
   border-radius: 16px;
   background: linear-gradient(180deg, #f7fff8 0%, #ffffff 100%);
 }
 
-.flow-step-badge {
-  display: inline-block;
-  margin-bottom: 8px;
-  color: var(--green);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.delivery-first-card h2,
+.delivery-first-card h1,
 .gate-flow-heading h2 {
   margin: 0;
   color: var(--green-dark);
-  font-size: 22px;
+  font-size: 24px;
   line-height: 1.25;
 }
 
-.delivery-first-intro {
-  margin: 8px 0 18px;
-  color: #555;
-  font-size: 15px;
-  line-height: 1.5;
-}
-
 .city-first-field {
-  margin: 0 0 14px;
+  margin: 18px 0 14px;
   padding: 0;
   border: 0;
 }
@@ -79,13 +52,6 @@
   cursor: not-allowed;
 }
 
-.delivery-privacy-note {
-  margin: 9px 0 0;
-  color: #777;
-  font-size: 12px;
-  text-align: center;
-}
-
 .delivery-first-result {
   margin-top: 20px;
   padding-top: 18px;
@@ -103,9 +69,10 @@
 }
 
 .delivery-first-result-note {
-  margin: 4px 0 12px;
-  color: #666;
-  font-size: 14px;
+  margin: 6px 0 14px;
+  color: var(--dark);
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .delivery-option-list {
@@ -164,19 +131,20 @@
 }
 
 .delivery-option-copy strong {
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.35;
 }
 
 .delivery-option-copy small {
-  margin-top: 3px;
-  color: #666;
-  font-size: 12px;
-  line-height: 1.35;
+  margin-top: 6px;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.45;
 }
 
 .delivery-option-price {
   color: var(--green-dark);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   text-align: right;
 }
@@ -207,7 +175,7 @@
   background: transparent;
   color: var(--green-dark);
   font-family: 'Nunito', sans-serif;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   text-decoration: underline;
   cursor: pointer;
@@ -222,7 +190,139 @@
   background: #fff;
   color: var(--green-dark);
   font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.model-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.model-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid var(--gray-border);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--dark);
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, transform .1s;
+}
+
+.model-card:hover {
+  border-color: var(--green-mid);
+}
+
+.model-card:active {
+  transform: scale(.99);
+}
+
+.model-card.selected {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(46, 155, 63, .14);
+}
+
+.model-card.field-error {
+  border-color: #d93025;
+}
+
+.model-card__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #f3f4f3;
+}
+
+.model-card__name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  padding: 10px 8px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.model-card__selected {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: none;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
   font-size: 14px;
+  font-weight: 800;
+}
+
+.model-card.selected .model-card__selected {
+  display: block;
+}
+
+.width-explanation,
+.field-note,
+.field-note-top,
+.checkbox-sub,
+.step-btn-sub,
+.delivery-warning__text,
+.included-block,
+.lock-included-note,
+.preliminary-note,
+.delivery-note,
+.delivery-note-inline,
+.hint-important__text,
+.width-hint,
+.width-hint span,
+.phone-under,
+.save-option-item-desc,
+.promo-line,
+.error-msg,
+.loading {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+
+.width-explanation {
+  margin: 8px 0 12px;
+  color: var(--dark);
+}
+
+.posts-offer {
+  margin-top: 18px;
+  padding: 18px;
+  border: 2px solid var(--green-mid);
+  border-radius: 14px;
+  background: var(--green-light);
+}
+
+.posts-offer__title {
+  margin-bottom: 12px;
+  color: var(--green-dark);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.posts-offer__button {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--green);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -232,9 +332,9 @@
     padding: 18px 14px;
   }
 
-  .delivery-first-card h2,
+  .delivery-first-card h1,
   .gate-flow-heading h2 {
-    font-size: 19px;
+    font-size: 21px;
   }
 
   .delivery-option-card {
@@ -245,5 +345,14 @@
     grid-column: 2;
     text-align: left;
   }
-}
 
+  .model-gallery {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .model-card__name {
+    min-height: 54px;
+    font-size: 18px;
+  }
+}

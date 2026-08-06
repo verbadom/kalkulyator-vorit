@@ -196,20 +196,35 @@ function selectGateType(type) {
   document.getElementById('btnForged').classList.toggle('active', type === 'forged');
   document.getElementById('btnModern').classList.toggle('active', type === 'modern');
 
-  document.getElementById('modelSelectText').textContent = '— Оберіть модель —';
-  document.getElementById('modelSelectBtn').classList.add('placeholder');
-  document.getElementById('modelSelectBtn').classList.remove('field-error');
-  document.getElementById('modelPhoto').style.display = 'none';
   document.getElementById('includedBlock').style.display = 'none';
 
-  const dropdown = document.getElementById('modelDropdown');
-  dropdown.innerHTML = '';
+  const gallery = document.getElementById('modelGallery');
+  gallery.innerHTML = '';
   GATE_MODELS[type].forEach((model, i) => {
-    const opt = document.createElement('div');
-    opt.className = 'custom-select-option';
-    opt.textContent = model.name;
-    opt.addEventListener('click', () => selectModel(i));
-    dropdown.appendChild(opt);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'model-card';
+    card.dataset.modelIndex = String(i);
+    card.setAttribute('aria-pressed', 'false');
+    card.addEventListener('click', () => selectModel(i));
+
+    const image = document.createElement('img');
+    image.className = 'model-card__image';
+    image.src = BASE_IMG + model.img;
+    image.alt = 'Ворота ' + model.name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+
+    const name = document.createElement('span');
+    name.className = 'model-card__name';
+    name.textContent = model.name;
+
+    const selected = document.createElement('span');
+    selected.className = 'model-card__selected';
+    selected.textContent = '✓ Обрано';
+
+    card.append(image, name, selected);
+    gallery.appendChild(card);
   });
 
   showField('fieldGateModel');
@@ -230,58 +245,31 @@ function selectGateType(type) {
 }
 
 /* ============================================================
-   КАСТОМНИЙ DROPDOWN
-   ============================================================ */
-function toggleDropdown(dropdownId, btnId) {
-  const dropdown = document.getElementById(dropdownId);
-  const btn      = document.getElementById(btnId);
-  const isOpen   = dropdown.classList.contains('open');
-  closeAllDropdowns();
-  if (!isOpen) {
-    dropdown.classList.add('open');
-    btn.classList.add('open');
-  }
-}
-
-function closeAllDropdowns() {
-  document.querySelectorAll('.custom-select-dropdown.open').forEach(d => d.classList.remove('open'));
-  document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
-}
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.custom-select-wrap')) closeAllDropdowns();
-});
-
-/* ============================================================
    ВИБІР МОДЕЛІ
    ============================================================ */
 function selectModel(idx) {
   selectedModelIdx = idx;
-  const model = GATE_MODELS[selectedType][idx];
 
-  document.getElementById('modelSelectText').textContent = model.name;
-  document.getElementById('modelSelectBtn').classList.remove('placeholder', 'field-error');
-  closeAllDropdowns();
-
-  const photo = document.getElementById('modelPhoto');
-  photo.src = BASE_IMG + model.img;
-  photo.alt = model.name;
-  photo.style.display = 'block';
+  document.querySelectorAll('#modelGallery .model-card').forEach(card => {
+    const isSelected = Number(card.dataset.modelIndex) === idx;
+    card.classList.toggle('selected', isSelected);
+    card.classList.remove('field-error');
+    card.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+  });
 
   const incl = document.getElementById('includedBlock');
-  incl.innerHTML = buildIncludedText(selectedType, selectedConfig);
-  incl.style.display = 'block';
+  incl.innerHTML = '';
+  incl.style.display = 'none';
 
   showField('fieldConfig');
   showField('fieldWidth');
   showField('fieldCoating');
   showField('fieldBolts');
-  showField('fieldPosts');
+  hideField('fieldPosts');
 
   buildCoatingOptions();
   buildLockField();
 
-  clearError('modelSelectBtn');
   checkReadyMsg();
 }
 
@@ -321,6 +309,7 @@ function selectRadio(groupId, el, stateVar) {
     if (selectedModelIdx !== null) {
       const incl = document.getElementById('includedBlock');
       incl.innerHTML = buildIncludedText(selectedType, selectedConfig);
+      incl.style.display = 'block';
     }
 
     updateWidthHint();
@@ -789,15 +778,14 @@ function deliveryOption(mode, title, description, priceLabel, price, status) {
 
 function buildDeliveryFirstOptions(data) {
   const options = [];
-  const city = selectedCityName.split(',')[0].trim();
   const isKyiv = selectedCityName.toLowerCase().includes('київ') ||
     selectedCityName.toLowerCase().includes('киев');
 
   if (data.status === 'on_route') {
     options.push(deliveryOption(
       'address',
-      'Адресна доставка',
-      'Привеземо ворота за вказаною адресою у ' + city,
+      'Адресна доставка до вашого дому',
+      '',
       isKyiv ? '900 грн' : '500–900 грн',
       isKyiv ? 900 : null,
       'on_route'
@@ -807,8 +795,8 @@ function buildDeliveryFirstOptions(data) {
   if (data.status === 'deviation') {
     options.push(deliveryOption(
       'address',
-      'Адресна доставка',
-      data.zone || ('Привеземо ворота за вказаною адресою у ' + city),
+      'Адресна доставка до вашого дому',
+      '',
       Number(data.price).toLocaleString('uk-UA') + ' грн',
       Number(data.price),
       'deviation'
@@ -818,30 +806,11 @@ function buildDeliveryFirstOptions(data) {
   if (data.status === 'clarify' || data.status === 'clarify_extended') {
     options.push(deliveryOption(
       'clarify',
-      'Адресна доставка',
-      'Можливість і ціну адресної доставки перевірить менеджер',
+      'Адресна доставка до вашого дому',
+      '',
       'Потребує уточнення',
       null,
       data.status
-    ));
-  }
-
-  const meeting = data.meetOnRoad || (
-    data.status === 'clarify_extended'
-      ? { price: 350, note: 'Зустріч на маршруті ' + (data.routeName ? '(' + data.routeName + ')' : '') }
-      : data.status === 'clarify'
-        ? { price: 350, note: 'Зустріч на маршруті — забираєте ворота самостійно' }
-        : null
-  );
-
-  if (meeting && data.status !== 'on_route' && data.status !== 'nova_poshta') {
-    options.push(deliveryOption(
-      'meet_on_road',
-      'Зустріч на маршруті',
-      meeting.note || 'Забираєте ворота у погодженому місці на маршруті',
-      Number(meeting.price || 350).toLocaleString('uk-UA') + ' грн',
-      Number(meeting.price || 350),
-      'meet_on_road'
     ));
   }
 
@@ -850,7 +819,7 @@ function buildDeliveryFirstOptions(data) {
     options.push(deliveryOption(
       'nova_poshta',
       'Нова Пошта',
-      'На обране вантажне відділення у вашому або найближчому населеному пункті',
+      '',
       novaPrice.toLocaleString('uk-UA') + ' грн',
       novaPrice,
       'nova_poshta'
@@ -873,11 +842,14 @@ function renderDeliveryFirstResult(data) {
 
   const city = escapeDeliveryText(selectedCityName.split(',')[0].trim());
   const optionHtml = options.map(function (option) {
+    const descriptionHtml = option.description
+      ? '<small>' + escapeDeliveryText(option.description) + '</small>'
+      : '';
     return '<button type="button" class="delivery-option-card" data-mode="' + escapeDeliveryText(option.mode) +
       '" onclick="selectDeliveryFirstOption(\'' + escapeDeliveryText(option.mode) + '\')">' +
       '<span class="delivery-option-radio" aria-hidden="true"></span>' +
       '<span class="delivery-option-copy"><strong>' + escapeDeliveryText(option.title) + '</strong>' +
-      '<small>' + escapeDeliveryText(option.description) + '</small></span>' +
+      descriptionHtml + '</span>' +
       '<span class="delivery-option-price">' + escapeDeliveryText(option.priceLabel) + '</span></button>';
   }).join('');
 
@@ -887,7 +859,7 @@ function renderDeliveryFirstResult(data) {
     '<div class="delivery-option-list">' + optionHtml + '</div>' +
     '<button id="continueToGatesBtn" type="button" class="continue-to-gates-btn" ' +
     'onclick="proceedToGateCalculator()" disabled>' +
-    'Обрати ворота та порахувати загальну вартість</button>';
+    'Перейти до вибору воріт</button>';
 
   result.classList.remove('hidden');
   result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -899,6 +871,11 @@ function selectDeliveryFirstOption(mode) {
   if (!option) return;
 
   selectedDeliveryChoice = option;
+
+  hideField('fieldPosts');
+  resetPostSteps();
+  const calculateBtn = document.getElementById('calculateBtn');
+  if (calculateBtn) calculateBtn.textContent = 'Показати загальну вартість';
 
   const finalResult = document.getElementById('result');
   if (finalResult) {
@@ -924,6 +901,23 @@ function proceedToGateCalculator() {
 function changeDeliverySelection() {
   const card = document.getElementById('deliveryFirstCard');
   if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function isFactoryAddressDelivery() {
+  return Boolean(
+    selectedDeliveryChoice &&
+    selectedDeliveryChoice.mode === 'address' &&
+    (selectedDeliveryChoice.status === 'on_route' || selectedDeliveryChoice.status === 'deviation')
+  );
+}
+
+function offerPostsAfterCalculation() {
+  if (!isFactoryAddressDelivery()) return;
+  showField('fieldPosts');
+  const calculateBtn = document.getElementById('calculateBtn');
+  if (calculateBtn) calculateBtn.textContent = 'Перерахувати загальну вартість';
+  const postsField = document.getElementById('fieldPosts');
+  if (postsField) postsField.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 document.getElementById('deliveryCalculateBtn').addEventListener('click', async () => {
@@ -1033,7 +1027,8 @@ function validateForm() {
   }
 
   if (selectedModelIdx === null) {
-    setError('modelSelectBtn'); valid = false;
+    document.querySelectorAll('#modelGallery .model-card').forEach(card => card.classList.add('field-error'));
+    valid = false;
   }
 
   if (!selectedConfig) {
@@ -1076,15 +1071,6 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     return;
   }
 
-  if (selectedDeliveryChoice && selectedDeliveryChoice.mode === 'nova_poshta' &&
-      selectedPostKey && _postType !== 'none') {
-    showResult(`
-      <p class="error-msg">⚠️ Нова Пошта не приймає обрані стовпи. Оберіть «Без стовпів» або змініть спосіб доставки.</p>
-      <button type="button" class="change-delivery-action" onclick="changeDeliverySelection()">Змінити доставку</button>
-    `, false);
-    return;
-  }
-
   const model  = GATE_MODELS[selectedType][selectedModelIdx];
   const width  = parseFloat(document.getElementById('width').value.replace(',', '.'));
   const lockEl = document.getElementById('lockOption');
@@ -1117,18 +1103,12 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
 
   let deliveryPrice  = null;
   let deliveryStatus = 'error';
-  let meetOnRoad     = null;
   const data = deliveryFirstData || window._lastDeliveryData;
 
   if (data && selectedDeliveryChoice) {
-    meetOnRoad = data.meetOnRoad || null;
-
     if (selectedDeliveryChoice.mode === 'address') {
       deliveryStatus = data.status;
       deliveryPrice = data.status === 'deviation' ? Number(data.price) : selectedDeliveryChoice.price;
-    } else if (selectedDeliveryChoice.mode === 'meet_on_road') {
-      deliveryStatus = 'meet_on_road';
-      deliveryPrice = selectedDeliveryChoice.price;
     } else if (selectedDeliveryChoice.mode === 'nova_poshta') {
       deliveryStatus = 'nova_poshta';
       deliveryPrice = selectedDeliveryChoice.price;
@@ -1138,9 +1118,9 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   }
 
   btn.disabled = false;
-  btn.textContent = 'Показати мою ціну →';
+  btn.textContent = selectedPostKey ? 'Перерахувати загальну вартість' : 'Показати загальну вартість';
 
-  const showPosts    = postInfo && deliveryStatus !== 'nova_poshta';
+  const showPosts    = postInfo && isFactoryAddressDelivery();
   const totalComplex = gatePrice + (showPosts ? postPrice : 0) + (showPosts ? hingePrice : 0);
   const totalPrice   = totalComplex + (deliveryPrice || 0);
 
@@ -1200,16 +1180,9 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
       html += `<p class="delivery-note-inline delivery-note-export">Точна сума залежить від адреси доставки</p>`;
       html += `<div class="result-row total"><span>Разом до сплати</span><span>від ${minT.toLocaleString('uk-UA')} до ${maxT.toLocaleString('uk-UA')} грн</span></div>`;
     }
-  } else if (deliveryStatus === 'meet_on_road') {
-    html += `<div class="result-row"><span>Зустріч на маршруті</span><span>${deliveryPrice.toLocaleString('uk-UA')} грн</span></div>`;
-    html += `<p class="delivery-note-inline delivery-note-export">${selectedDeliveryChoice.description}</p>`;
-    html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString('uk-UA')} грн</span></div>`;
   } else if (deliveryStatus === 'nova_poshta') {
-    html += `<div class="result-row"><span>Нова Пошта — на обране вантажне відділення</span><span>4 000 грн</span></div>`;
+    html += `<div class="result-row"><span>Нова Пошта — на обране вантажне відділення</span><span>${deliveryPrice.toLocaleString('uk-UA')} грн</span></div>`;
     html += `<p class="delivery-note delivery-note-export">Ви можете обрати зручне вантажне відділення у своєму або найближчому населеному пункті.</p>`;
-    if (postInfo) {
-      html += `<p class="error-msg">⚠️ Стовпи доставляємо лише разом з воротами машиною заводу. Нова Пошта такі вироби не приймає.</p>`;
-    }
     html += `<div class="result-row total"><span>Разом до сплати</span><span>${totalPrice.toLocaleString('uk-UA')} грн</span></div>`;
   } else if (deliveryStatus === 'deviation') {
     const zone = window._lastDeliveryData ? window._lastDeliveryData.zone : '';
@@ -1221,15 +1194,14 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
   } else if (deliveryStatus === 'clarify') {
     const distKm = window._lastDeliveryData ? window._lastDeliveryData.distanceKm : '';
     html += `<div class="result-row"><span>Доставка: ${settlementName}</span><span><span class="clarify-badge">Уточнюємо з менеджером</span></span></div>`;
-    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${distKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Можливі варіанти:<br>• Зустріч на трасі (забираєте самостійно) — 350 грн<br>• Нова Пошта — на обране вантажне відділення — 4 000 грн</p>`;
+    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${distKm} км. Можливість адресної доставки перевірить менеджер. Також можна обрати доставку Новою Поштою на вантажне відділення.</p>`;
     html += `<p class="delivery-note delivery-note-export">Ви можете обрати зручне вантажне відділення у своєму або найближчому населеному пункті.</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
   } else if (deliveryStatus === 'clarify_extended') {
     const d = window._lastDeliveryData;
-    const routeName = d.routeName;
     const novaPrice = d.novaPoshtaPrice || 4000;
     html += `<div class="result-row"><span>Доставка: ${settlementName}</span><span><span class="clarify-badge">Потребує уточнення у логіста</span></span></div>`;
-    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${d.distanceKm} км. Зазвичай машина заводу робить адресну доставку до 40 км від маршруту. Ваш випадок — нестандартний, але іноді завод іде назустріч. Зателефонуйте нам — уточнимо, чи можлива доставка машиною і скільки це коштуватиме.<br><br>Альтернативи:<br>• Зустріч на трасі (маршрут: ${routeName}; забираєте самостійно) — 350 грн<br>• Нова Пошта — на обране вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн</p>`;
+    html += `<p class="delivery-note delivery-note-export">Відстань від маршруту — ${d.distanceKm} км. Можливість адресної доставки перевірить логіст. Доставка Новою Поштою на вантажне відділення — ${novaPrice.toLocaleString('uk-UA')} грн.</p>`;
     html += `<p class="delivery-note delivery-note-export">Ви можете обрати зручне вантажне відділення у своєму або найближчому населеному пункті.</p>`;
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнить логіст</span></div>`;
   } else {
@@ -1237,8 +1209,13 @@ document.getElementById('calculateBtn').addEventListener('click', async () => {
     html += `<div class="result-row total"><span>Разом до сплати</span><span>уточнення</span></div>`;
   }
 
-  if (selectedDeliveryChoice && selectedDeliveryChoice.mode === 'address' && meetOnRoad && deliveryStatus !== 'on_route') {
-    html += `<div class="result-row alt-delivery-row"><span>💡 Альтернатива: ${meetOnRoad.note}</span><span>${meetOnRoad.price} грн</span></div>`;
+  if (isFactoryAddressDelivery() && !postInfo) {
+    html += `
+      <div class="posts-offer">
+        <div class="posts-offer__title">Додати стовпи до замовлення?</div>
+        <button type="button" class="posts-offer__button" onclick="offerPostsAfterCalculation()">Обрати стовпи</button>
+      </div>
+    `;
   }
 
   html += `<p class="preliminary-note">Орієнтовна ціна. Менеджер уточнить деталі при замовленні 👍</p>`;
@@ -1339,9 +1316,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   document.getElementById('btnForged').classList.remove('active', 'field-error');
   document.getElementById('btnModern').classList.remove('active', 'field-error');
 
-  document.getElementById('modelSelectText').textContent = '— Оберіть модель —';
-  document.getElementById('modelSelectBtn').classList.add('placeholder');
-  document.getElementById('modelPhoto').style.display = 'none';
+  document.getElementById('modelGallery').innerHTML = '';
   document.getElementById('includedBlock').style.display = 'none';
 
   document.getElementById('width').value = '';
@@ -1351,7 +1326,8 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   document.getElementById('result').classList.add('hidden');
   document.getElementById('result').innerHTML = '';
   document.getElementById('resetBtn').style.display = 'none';
-  document.getElementById('calcReadyMsg').style.display = 'none';
+  const calculateBtn = document.getElementById('calculateBtn');
+  if (calculateBtn) calculateBtn.textContent = 'Показати загальну вартість';
 
   resetPostSteps();
   document.getElementById('postQtyVal').textContent = '2';
