@@ -55,6 +55,7 @@
 
   <!-- 2. МОДЕЛЬ -->
   <div class="field hidden-field" id="fieldGateModel">
+    <div id="standardSizeGuide" class="standard-size-guide" aria-live="polite"></div>
     <label class="field-label">Оберіть модель</label>
     <div class="model-gallery" id="modelGallery"></div>
     <div id="includedBlock" class="included-block" style="display:none"></div>
@@ -84,11 +85,9 @@
   <div class="field hidden-field" id="fieldWidth">
     <label class="field-label-width" for="width"><span class="width-arrow-icon">↔️</span> Загальна ширина (м)</label>
     <p class="width-explanation">Для попереднього розрахунку вкажіть відстань між внутрішніми сторонами двох крайніх стовпів.</p>
+    <div class="width-hint" id="widthHint" style="display:none"></div>
     <input type="text" id="width" placeholder="Наприклад: 4,90" inputmode="decimal" autocomplete="off" />
     <p class="field-note">Допустимий розмір: від 2,5 до 6 м.</p>
-    <!-- ЗМІНА 2: підказка показується тільки при введенні ширини -->
-    <div class="width-hint" id="widthHint" style="display:none"></div>
-    <hr class="width-hint-separator" id="widthHintSeparator" style="display:none">
     <div class="hint-important">
       <span class="hint-important__label"><span class="height-arrow-icon">↕️</span> ВАЖЛИВО</span>
       <span class="hint-important__text">Висота до 2,1 м — <strong>ЦІНА НЕ ЗМІНЮЄТЬСЯ</strong></span>
