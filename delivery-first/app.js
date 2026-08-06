@@ -166,6 +166,7 @@ let _acDebounce      = null;
 let _acActiveIndex   = -1;
 let selectedDeliveryChoice = null;
 let deliveryFirstData = null;
+let lastAutoStandardWidth = '';
 
 /* ============================================================
    ПРОГРЕСИВНЕ РОЗКРИТТЯ
@@ -192,11 +193,19 @@ function selectGateType(type) {
   hingesChecked    = false;
   selectedPostKey  = null;
   postQty          = 2;
+  lastAutoStandardWidth = '';
+
+  const widthInput = document.getElementById('width');
+  if (widthInput) {
+    widthInput.value = '';
+    widthInput.dataset.userEdited = 'false';
+  }
 
   document.getElementById('btnForged').classList.toggle('active', type === 'forged');
   document.getElementById('btnModern').classList.toggle('active', type === 'modern');
 
   document.getElementById('includedBlock').style.display = 'none';
+  renderStandardSizeGuide(type);
 
   const gallery = document.getElementById('modelGallery');
   gallery.innerHTML = '';
@@ -313,6 +322,7 @@ function selectRadio(groupId, el, stateVar) {
     }
 
     updateWidthHint();
+    applyStandardWidth(false);
     buildLockField();
   }
 
@@ -331,42 +341,85 @@ function resetRadioGroup(groupId) {
 document.addEventListener('DOMContentLoaded', () => {
   const widthInput = document.getElementById('width');
   if (widthInput) {
-    widthInput.addEventListener('input', updateWidthHint);
+    widthInput.addEventListener('input', () => {
+      widthInput.dataset.userEdited = 'true';
+      updateWidthHint();
+    });
   }
 });
 
+function getStandardSize(type, config) {
+  const gateWidth = type === 'forged' ? 3.6 : 4.0;
+  const wicketWidth = 0.9;
+  const totalWidth = config === 'with_separate_wicket' ? gateWidth + wicketWidth : gateWidth;
+  return { gateWidth, wicketWidth, totalWidth };
+}
+
+function formatWidth(value) {
+  return Number(value).toFixed(2).replace('.', ',');
+}
+
+function renderStandardSizeGuide(type) {
+  const guide = document.getElementById('standardSizeGuide');
+  if (!guide || !type) return;
+  const standard = getStandardSize(type, 'with_separate_wicket');
+  guide.innerHTML = `
+    <strong class="standard-size-guide__title">Найвигідніший стандартний розмір</strong>
+    <div class="standard-size-guide__sizes">Ворота — ${formatWidth(standard.gateWidth)} м · Хвіртка — ${formatWidth(standard.wicketWidth)} м</div>
+    <p>Саме для цих розмірів діє ціна, зазначена на сайті. Інші розміри виготовляємо індивідуально, тому вартість може бути вищою.</p>
+  `;
+}
+
+function applyStandardWidth(force) {
+  if (!selectedType || !selectedConfig) return;
+  const input = document.getElementById('width');
+  if (!input) return;
+
+  const mayReplace = force || !input.value.trim() || input.dataset.userEdited !== 'true' || input.value === lastAutoStandardWidth;
+  if (!mayReplace) return;
+
+  const standard = getStandardSize(selectedType, selectedConfig);
+  lastAutoStandardWidth = formatWidth(standard.totalWidth);
+  input.value = lastAutoStandardWidth;
+  input.dataset.userEdited = 'false';
+  updateWidthHint();
+}
+
+function restoreStandardWidth() {
+  applyStandardWidth(true);
+  const input = document.getElementById('width');
+  if (input) input.focus();
+}
+
 function updateWidthHint() {
   const hint = document.getElementById('widthHint');
-  const separator = document.getElementById('widthHintSeparator');
   if (!hint) return;
 
   hint.style.display = 'none';
+  hint.className = 'width-hint';
   hint.innerHTML = '';
-  if (separator) separator.style.display = 'none';
 
-  if (!selectedType || !selectedConfig || selectedConfig === 'with_builtin_wicket') return;
+  if (!selectedType || !selectedConfig) return;
 
   const rawW = document.getElementById('width').value.replace(',', '.').trim();
   if (!rawW) return;
   const width = parseFloat(rawW);
   if (isNaN(width)) return;
 
-  let msg = '';
-  if (selectedConfig === 'with_separate_wicket') {
-    msg = selectedType === 'forged'
-      ? 'Якщо розмір ще не визначено — ширина 4,5 м (ворота 3,6 м + хвіртка 0,9 м) зазвичай найвигідніша'
-      : 'Якщо розмір ще не визначено — ширина 4,9 м (ворота 4,0 м + хвіртка 0,9 м) зазвичай найвигідніша';
-  } else if (selectedConfig === 'without_wicket') {
-    msg = selectedType === 'forged'
-      ? 'Якщо розмір ще не визначено — ширина 3,6 м зазвичай найвигідніша'
-      : 'Якщо розмір ще не визначено — ширина 4,0 м зазвичай найвигідніша';
-  }
+  const standard = getStandardSize(selectedType, selectedConfig);
+  if (Math.abs(width - standard.totalWidth) < 0.001) return;
 
-  if (msg) {
-    hint.innerHTML = `<span style="font-size:14px;color:#2E9B3F;margin-right:6px;">★</span>${msg}`;
-    hint.style.display = 'block';
-    if (separator) separator.style.display = 'block';
-  }
+  const standardLabel = selectedConfig === 'with_separate_wicket'
+    ? `${formatWidth(standard.gateWidth)} м + ${formatWidth(standard.wicketWidth)} м`
+    : `${formatWidth(standard.gateWidth)} м`;
+
+  hint.classList.add('individual-size-note');
+  hint.innerHTML = `
+    <strong class="individual-size-note__title">Індивідуальний розмір</strong>
+    Виготовимо ворота точно під ваш проріз. Вартість буде автоматично перерахована.
+    <button type="button" class="restore-standard-size" onclick="restoreStandardWidth()">Повернути стандартний розмір ${standardLabel}</button>
+  `;
+  hint.style.display = 'block';
 }
 
 /* ============================================================
@@ -847,7 +900,6 @@ function renderDeliveryFirstResult(data) {
       : '';
     return '<button type="button" class="delivery-option-card" data-mode="' + escapeDeliveryText(option.mode) +
       '" onclick="selectDeliveryFirstOption(\'' + escapeDeliveryText(option.mode) + '\')">' +
-      '<span class="delivery-option-radio" aria-hidden="true"></span>' +
       '<span class="delivery-option-copy"><strong>' + escapeDeliveryText(option.title) + '</strong>' +
       descriptionHtml + '</span>' +
       '<span class="delivery-option-price">' + escapeDeliveryText(option.priceLabel) + '</span></button>';
@@ -855,17 +907,14 @@ function renderDeliveryFirstResult(data) {
 
   result.innerHTML =
     '<div class="delivery-first-result-title">Доставка у ' + city + '</div>' +
-    '<p class="delivery-first-result-note">Оберіть зручний варіант:</p>' +
-    '<div class="delivery-option-list">' + optionHtml + '</div>' +
-    '<button id="continueToGatesBtn" type="button" class="continue-to-gates-btn" ' +
-    'onclick="proceedToGateCalculator()" disabled>' +
-    'Перейти до вибору воріт</button>';
+    (options.length > 1 ? '<p class="delivery-first-result-note">За потреби оберіть інший варіант доставки:</p>' : '') +
+    '<div class="delivery-option-list">' + optionHtml + '</div>';
 
   result.classList.remove('hidden');
-  result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  selectDeliveryFirstOption(options[0].mode, false);
 }
 
-function selectDeliveryFirstOption(mode) {
+function selectDeliveryFirstOption(mode, shouldScroll = true) {
   const options = window._deliveryFirstOptions || [];
   const option = options.find(item => item.mode === mode);
   if (!option) return;
@@ -887,15 +936,14 @@ function selectDeliveryFirstOption(mode) {
     card.classList.toggle('selected', card.dataset.mode === mode);
   });
 
-  const continueBtn = document.getElementById('continueToGatesBtn');
-  if (continueBtn) continueBtn.disabled = false;
+  proceedToGateCalculator(shouldScroll);
 }
 
-function proceedToGateCalculator() {
+function proceedToGateCalculator(shouldScroll = true) {
   if (!selectedDeliveryChoice) return;
   const gateFlow = document.getElementById('gateCalculatorFlow');
   gateFlow.classList.remove('gate-flow--hidden');
-  gateFlow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (shouldScroll) gateFlow.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function changeDeliverySelection() {
@@ -1320,6 +1368,8 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   document.getElementById('includedBlock').style.display = 'none';
 
   document.getElementById('width').value = '';
+  document.getElementById('width').dataset.userEdited = 'false';
+  lastAutoStandardWidth = '';
   document.getElementById('city').value  = '';
   document.getElementById('city').classList.remove('has-selection');
 
